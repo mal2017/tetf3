@@ -1,0 +1,115 @@
+
+
+#############################################################################
+# references
+#############################################################################
+GENOME_FA: resources/dmel-all-chromosome-r6.41.fasta.gz
+GTF: resources/dmel-all-r6.41.gtf.gz
+
+
+#############################################################################
+# Various utility data
+#############################################################################
+EMBRYO_EXPRESSED_GENES: resources/embryo_expressed.FlyBase_IDs.txt
+WPP_EXPRESSED_GENES: resources/wpp_expressed.FlyBase_IDs.txt
+TFS: resources/Drosophila_melanogaster_TF.txt
+COFACS: resources/Drosophila_melanogaster_TF_cofactors.txt
+REMAP_PEAKS: resources/remap2022_nr_macs2_dm6_v1_0.bed.gz
+
+
+#############################################################################
+# Expression data
+#############################################################################
+THIS_STUDY_RNAI: upstream/kd.se.gene.0.rds
+THIS_STUDY_DGRP_RNA: upstream/se.gene.0.rds
+
+
+#############################################################################
+# TE data collated from TIDAL project or repeatmasker
+#############################################################################
+TE_FA: upstream/Tidalbase_transposon_sequence.dmel.fixed.sensechecked.fa.gz
+TE_CLASSES: resources/Tidalbase_Dmel_TE_classifications_2015.txt
+DGRP_TIDAL: upstream/DGRP_flies.tsv
+REF_INS: "upstream/reference_insertions.bed" # this is just from repeatmasker
+ALL_INS: upstream/dgrp_tidal_insertions.bb
+PENETRANCE: upstream/dgrp_tidal_insertions.unique.bb
+
+
+#############################################################################
+# Coexpression results
+#############################################################################
+MERGED_MODELS: upstream/final-models.collected-info.tsv.gz
+INDEPENDENT_DATASET: upstream/final-models.collected-info.reps.tsv.gz
+
+#############################################################################
+# Independent knockdown data
+#############################################################################
+S2RPLUS_RNAI_SE: upstream/tfrnai.se.gene.0.rds
+S2RPLUS_RNAI_RUNSELECTOR: resources/full_tfrnai_srarunselector.txt
+S2RPLUS_RNAI_BATCH: resources/batch_data.tsv.gz
+
+
+#############################################################################
+# Relationship between sequence similarity and coexpression
+#############################################################################
+DASHING_ARGS: "-k 8 -L 11 --full --distance"
+DASHING_TYPE: "distance" # 'distance' or 'similarity'. Used determing whether to use 1 - x or x directly for tree generation
+DASHING_PATH: "/home/mlawlor/repos/dashing2/dashing2" # currently 2.1.19
+
+#############################################################################
+# ChIP-seq data/repetitive element enrichment
+#############################################################################
+ENCODE_SAMPLE_SHEET: upstream/sample_table_encode.csv
+ENCODE_FINGERPRINT_DEEPTOOLS: upstream/all_fingerprint.metrics.txt
+ENCODE_MASKED_IDXSTATS: upstream/masked_idxstats.txt
+
+
+#############################################################################
+# Gene group phylogeny analysis params (ZADs)
+#############################################################################
+# should be MFP to run model finder, unless best model
+# already determined for the same alignment
+IQTREE_MODEL: 
+  PF07776: LG+I+I+R4
+
+CLIPKIT_MODEL:
+  PF07776: smart-gap
+
+# for genes with > 1 pfam domain hit take the first N
+# this is mostly there to filter ZADs, for which the hit
+# near the n terminus is characteristic. this seems to
+# only matter for ouib.
+ALIGN_N_HITS:
+  PF07776: 1
+
+
+##################################################################################
+# Peak/te overlap analysis
+###################################################################################
+BOOTRANGES_REPS: 100
+BOOTRANGES_SEGLENGTH: 1e5
+BOOTRANGES_BLOCKLENGTH: 5e5
+BOOTRANGES_NSEG: 3
+
+
+
+##################################################################################
+# MOTIF analysis
+###################################################################################
+BBMASK_ENTROPY: 0.7
+BBMASK_W: 12
+
+
+############################################################################
+# Rewiring analysis params
+###############################################################################
+REWIRING_ANALYSIS:
+  TSS_DIST: 5000
+  MAX_TES_PER_GENE: 100 # effectively inf
+  COEF_QUANTILE_CUTOFF: 0.5 # effectively inf
+  MIN_PCT_FIXATION: 0.25
+  MAX_PCT_FIXATION: 0.75
+
+
+
+

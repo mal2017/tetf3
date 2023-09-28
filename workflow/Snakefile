@@ -1,0 +1,46 @@
+configfile: "config/config.yaml"
+
+# stuff primarily associated with figure 1 and related supp materials
+include: "rules/make_resources.smk"
+include: "rules/exploratory_and_descriptive.smk"
+include: "rules/coexpression_replication.smk"
+include: "rules/te_sequence_similarity.smk"
+include: "rules/rankings.smk"
+include: "rules/enrichment.smk"
+include: "rules/differential_expression.smk"
+include: "rules/motifs.smk"
+include: "rules/signatures.smk"
+include: "rules/zad_phylo.smk"
+include: "rules/phylosignal.smk"
+include: "rules/scrna.smk"
+include: "rules/integrative.smk"
+include: "rules/repetitiveness.smk"
+include: "rules/figures.smk"
+
+
+
+rule all:
+    input:
+        rules.exploratory_and_descriptive.output,
+        rules.coexpression_replication.output,
+        rules.te_sequence_similarity.output,
+        rules.enrichment.output,
+        rules.signatures.output,
+        rules.motifs.output,
+
+
+
+
+# include: "rules/single-cell-rna.smk"
+# include: "rules/rankings.smk"
+# include: "rules/enrichment.smk"
+# include: "rules/differential_expression.smk"
+# include: "rules/signatures.smk"
+# # include: "rules/direct_binding.smk"
+# include: "rules/rewiring.smk"
+# include: "rules/motifs.smk"
+# include: "rules/specific_genes.smk"
+# include: "rules/ine1.smk"
+# include: "rules/stats.smk"
+# include: "rules/figures.smk"
+
