@@ -99,6 +99,8 @@ BOOTRANGES_NSEG: 3
 BBMASK_ENTROPY: 0.7
 BBMASK_W: 12
 
+STREME_ARGS: "--order 0"
+
 
 ############################################################################
 # Rewiring analysis params

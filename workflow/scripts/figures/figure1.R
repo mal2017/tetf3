@@ -92,14 +92,12 @@ digraph boxes_and_circles {
   node [shape = box,
         fontname = Arial]
   model [label='TEX ~ GEX + TE copies + gene/insertion proximity + wolbachia'];
-  qnorm [label='quantile normalize GEX coeficients\nby feature expression level'];
+  qnorm [label='quantile normalize coefficients\nby feature expression level'];
   filter [label='extract correlated\ngene/TE pairs'];
   quant [label='TE/gene expression\n(TEX/GEX)'];
   infect [label='wolbachia infection status'];
   cnv [label='WGS-based\nTE copy number estimate'];
   novel [label='novel TE regulating genes'];
-  enrich [label='enriched gene groups'];
-  rewire [label='TE-mediated \ngene regulation changes'];
 
   quant -> model;
   infect -> model;
@@ -107,8 +105,6 @@ digraph boxes_and_circles {
   model -> qnorm;
   qnorm -> filter;
   filter -> novel;
-  filter -> enrich;
-  filter -> rewire;
 }
 ")
 

@@ -78,15 +78,45 @@ rule calderon22_reanalysis_supplement:
 
 rule figure5:
     input:
-        pan_tree = "results/integrative/motif_and_coex_on_tree.pan.plot.rds",
-        repetitiveness = rules.chip_repetitiveness.output.rds,
         motif_comparison = "results/motifs/comparison/pan_denovo_comparison.rds",
         motif_similarity = "results/motifs/comparison/pan_denovo_similarity.rds",
-        n_denovo_vs_sig_coef = "results/integrative/n_denovo_vs_sig_coef.pan.rds"
     output:
        "results/figures/figure5.pdf"
     script:
-      "../scripts/figures/figure5.R"
+      "../scripts/figures/figure5_v2.R"
+
+rule denovo_motifs_on_tes_supplement:
+    input:
+        #denovo_empirical_fdr = ,
+        n_denovo_vs_sig_coef = "results/integrative/n_denovo_vs_sig_coef.pan.rds",
+        pan_tree = "results/integrative/motif_and_coex_on_tree.pan.plot.rds",
+    output:
+        pdf="results/figures/denovo-motifs-on-tes-supplement-01.pdf"
+    script:
+        "../scripts/figures/denovo-motifs-on-tes-supplement-01.R"
+
+rule csem_tracks_and_quality_supplement_01:
+    """
+    pan tracks and qc
+    """
+    output:
+        pdf="results/figures/csem-tracks-and-quality-supplement-pan-profile.pdf",
+    script:
+        "../scripts/figures/csem-tracks-and-quality-supplement-01.R"
+
+
+rule csem_tracks_and_quality_supplement_02:
+    """
+    h3k9 profiles and repetitiveness
+    """
+    input:
+        repetitiveness = rules.chip_repetitiveness.output.rds,
+    output:
+        pdf ="results/figures/csem-tracks-h3k9me3-profile.pdf",
+    script:
+        "../scripts/figures/csem-tracks-and-quality-supplement-02.R"
+
+
 
 # ---------------------------------------------------------------------------------------------------
 # bring it together
@@ -95,9 +125,15 @@ rule figure5:
 rule figures:
     input:
         rules.figure1.output,
+        rules.basic_exploratory_supplement_01.output,
+
         rules.figure2.output,
         rules.figure3.output,
+
         rules.figure4.output,
-        rules.figure5.output,
-        rules.basic_exploratory_supplement_01.output,
         rules.calderon22_reanalysis_supplement.output,
+
+        rules.figure5.output,
+        rules.denovo_motifs_on_tes_supplement.output,
+        rules.csem_tracks_and_quality_supplement_01.output,
+        rules.csem_tracks_and_quality_supplement_02.output,

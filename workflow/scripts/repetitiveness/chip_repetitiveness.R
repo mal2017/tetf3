@@ -20,9 +20,7 @@ idxstats <- read_tsv(idxstats_fl, col_names = c("seqname","seqlen","n_mapped","n
 qc_fl <- "results/repetitiveness/chip_qual_assessment.rds"
 qc_fl <-  snakemake@input$qc
 chip_qual_df <- read_rds(qc_fl)
-# just filter for samples that have some detectable IP enrichment
-# see deeptools metrics docs for details
-acceptable_chips <- chip_qual_df |> filter(AUC_diff < 0 & signed.js > 0) |> pull(sample)
+
 
 # ------------------------------------------------------------------------------
 # te mapping ratio analysis
@@ -57,7 +55,6 @@ df2 <- df |>
   left_join(df, by="sample")
 
 fish_df <- df2 |>
-  filter(sample %in% acceptable_chips) |>
   filter(str_detect(target,regex("H3K|pan|egg|setdb|var|gro|arm|nej",ignore_case=T))) |>
   nest(data=c(mapping,n_mapped.IP, n_mapped.input)) |>
   mutate(data=map(data,column_to_rownames,"mapping")) |>

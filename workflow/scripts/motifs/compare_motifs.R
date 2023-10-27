@@ -39,8 +39,8 @@ known_pan <- imap(known_pan, ~{.x@name <- .y; .x})
 # ------------------------------------------------------------------------------
 # de novo motifs
 # ------------------------------------------------------------------------------
-motifs <- ifelse(exists("snakemake"),paste0(snakemake@input[["meme"]],"/combined.meme"),
-                 "results/motifs/xstreme_per_tf/pan/combined.meme") %>%
+motifs <- ifelse(exists("snakemake"),paste0(snakemake@input[["meme"]],"/streme.txt"),
+                 "results/motifs/streme_per_tf/pan/streme.txt") %>%
   read_meme()
 
 names(motifs) <- motifs %>% map_chr( `@`, name)

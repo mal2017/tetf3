@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - wget 
+  - samtools 
+  - r-essentials 
+  - bioconductor-deseq2 
+  - bioconductor-edger

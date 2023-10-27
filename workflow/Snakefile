@@ -15,7 +15,9 @@ include: "rules/phylosignal.smk"
 include: "rules/scrna.smk"
 include: "rules/integrative.smk"
 include: "rules/repetitiveness.smk"
+include: "rules/pirna.smk"
 include: "rules/figures.smk"
+
 
 
 
