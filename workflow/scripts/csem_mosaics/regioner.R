@@ -74,9 +74,9 @@ get_replicated_pks <- function(glb, extraction_pattern = "(?<=mosaics/mosaics\\/
   pks
 }
 
-pan_pks <- get_replicated_pks("~/amarel-matt/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_*_rep*/pan_*rep*.mosaics.bed")
+pan_pks <- get_replicated_pks("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_*_rep*/pan_*DSI*rep*.mosaics.bed")
 
-gro_pks <- get_replicated_pks("~/amarel-matt/tetf_csem_mosaics/results/csem_mosaics/mosaics/gro*rep*/gro*rep*.mosaics.bed")
+gro_pks <- get_replicated_pks("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/gro*rep*/gro*rep*.mosaics.bed")
 
 # ----------------------------------------------------------------------------------------------------------
 # generate segmentations used for controlling randomization further on
@@ -124,20 +124,7 @@ res <- list(pan_all_te = pan_all_te_overlap.pt,
      gro_all_te = gro_all_te_overlap.pt,
      pan_pan_te = pan_pan_te_overlap.pt,
      pan_euch_te = pan_euch_te_overlap.pt,
-     pan_euch_pan_te = pan_euch_pan_te_overlap.pt)
+     pan_euch_pan_te = pan_euch_pan_te_overlap.pt,
+     segmentation = list(gg = g_segments, gr = te_density_seg))
 
-save_rds(res,snakemake@output$rds)
-
-# function for nicely plotting randomization results
-plot_regioner <- function(x) {
-  permuted_overlaps <- tibble(overlaps = x$numOverlaps$permuted)
-  observed_overlaps <- tibble(overlaps = x$numOverlaps$observed)
-  pval <- x$numOverlaps$pval
-  z <- x$numOverlaps$zscore
-  alt <- x$numOverlaps$alternative
-  
-  ggplot(permuted_overlaps, aes(overlaps)) +
-    geom_histogram() +
-    geom_vline(data = observed_overlaps, aes(xintercept = overlaps), color="darkgreen") +
-    annotate("text", x=-Inf, y=Inf, label=sprintf("z=%s, p=%s, alternative=%s", z, pval, alt), hjust=0, vjust=1)
-}
+write_rds(res,snakemake@output$rds)

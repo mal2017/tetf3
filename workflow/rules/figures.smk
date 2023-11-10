@@ -63,6 +63,14 @@ rule figure4:
     script:
         "../scripts/figures/figure4.R"
 
+rule s2rplus_supplement_01:
+    input:
+        "results/deg/s2rplus.res.tsv.gz"
+    output:
+        pdf="results/figures/s2rplus_supplement-01.pdf"
+    script:
+        "../scripts/figures/s2rplus_supplement_01.R"
+
 rule calderon22_reanalysis_supplement:
     input:
         rules.calderon22_reanalysis.output,
@@ -78,22 +86,52 @@ rule calderon22_reanalysis_supplement:
 
 rule figure5:
     input:
-        motif_comparison = "results/motifs/comparison/pan_denovo_comparison.rds",
-        motif_similarity = "results/motifs/comparison/pan_denovo_similarity.rds",
+        motif_comparison = "results/motifs/comparison/pan_denovo_comparison.meme.rds",
+        motif_similarity = "results/motifs/comparison/pan_denovo_similarity.meme.rds",
     output:
        "results/figures/figure5.pdf"
     script:
       "../scripts/figures/figure5_v2.R"
 
+rule archbold_merging_supplement_01:
+    input:
+        sils = rules.archbold2motifs.output.sils,
+        meme = rules.archbold2motifs.output.meme,
+    output:
+        pdf="results/figures/archbold_merging_supplement-01.pdf"
+    script:
+        "../scripts/figures/archbold_merging_supplement-01.R"
+
 rule denovo_motifs_on_tes_supplement:
     input:
-        #denovo_empirical_fdr = ,
         n_denovo_vs_sig_coef = "results/integrative/n_denovo_vs_sig_coef.pan.rds",
         pan_tree = "results/integrative/motif_and_coex_on_tree.pan.plot.rds",
     output:
         pdf="results/figures/denovo-motifs-on-tes-supplement-01.pdf"
     script:
         "../scripts/figures/denovo-motifs-on-tes-supplement-01.R"
+
+
+rule denovo_motifs_on_tes_supplement_homer:
+    input:
+        motif_comparison = "results/motifs/comparison/pan_denovo_comparison.homer.rds",
+        motif_similarity = "results/motifs/comparison/pan_denovo_similarity.homer.rds",
+    output:
+        pdf="results/figures/denovo-motifs-on-tes-homer-supplement-01.pdf"
+    script:
+        "../scripts/figures/denovo-motifs-on-tes-homer-supplement-01.R"
+
+
+rule denovo_motifs_on_tes_supplement_streme:
+    input:
+        denovo_empirical_fdr = "results/motifs/streme_per_tf_empirical_fdr/pan_empirical_fdr.tsv",
+        motif_comparison = "results/motifs/comparison/pan_denovo_comparison.streme.rds",
+        motif_similarity = "results/motifs/comparison/pan_denovo_similarity.streme.rds",
+    output:
+        pdf="results/figures/denovo-motifs-on-tes-streme-supplement-02.pdf"
+    script:
+        "../scripts/figures/denovo-motifs-on-tes-streme-supplement-02.R"
+
 
 rule csem_tracks_and_quality_supplement_01:
     """
@@ -117,6 +155,24 @@ rule csem_tracks_and_quality_supplement_02:
         "../scripts/figures/csem-tracks-and-quality-supplement-02.R"
 
 
+rule csem_regioner_supplement_01:
+    input:
+        rules.csem_peaks_regioner.output,
+    output:
+        pdf="results/figures/csem-regioner-supplement-01.pdf",
+    script:
+        "../scripts/figures/csem-regioner-supplement-01.R"
+
+rule exemplary_bound_loci_supplement:
+    input:
+        "resources/putatively_bound_insertions.rds",
+        "workflow/scripts/utils/plotting.R"
+    output:
+        pdf1="results/figures/exemplary_bound_loci/exemplary_bound_locus_1.pdf",
+    script:
+        "../scripts/figures/exemplary_bound_loci_supplement-01.R"
+
+
 
 # ---------------------------------------------------------------------------------------------------
 # bring it together
@@ -131,9 +187,15 @@ rule figures:
         rules.figure3.output,
 
         rules.figure4.output,
+        rules.s2rplus_supplement_01.output,
         rules.calderon22_reanalysis_supplement.output,
 
         rules.figure5.output,
+        rules.archbold_merging_supplement_01.output,
         rules.denovo_motifs_on_tes_supplement.output,
-        rules.csem_tracks_and_quality_supplement_01.output,
-        rules.csem_tracks_and_quality_supplement_02.output,
+        rules.denovo_motifs_on_tes_supplement_homer.output,
+        rules.denovo_motifs_on_tes_supplement_streme.output,
+        #rules.csem_tracks_and_quality_supplement_01.output,
+        #rules.csem_tracks_and_quality_supplement_02.output,
+        rules.csem_regioner_supplement_01.output,
+        rules.exemplary_bound_loci_supplement.output,

@@ -10,7 +10,7 @@ library(GenomicFeatures)
 library(rtracklayer)
 library(plyranges)
 library(GenomicRanges)
-
+library(ggsignif)
 source("workflow/scripts/utils/plotting.R")
 
 
@@ -18,16 +18,80 @@ source("workflow/scripts/utils/plotting.R")
 # repetitivess scires for pan and select others
 # ------------------------------------------------------------------------------
 repet <- "results/repetitiveness/chip_repetitiveness.rds"
-repet <- read_rds(repet)
+repet <- read_rds(repet) |>
+  mutate(target = fct_reorder(target,estimate))
+
+pw <- \(x) {crossing(x,set_names(x,paste0(colnames(x),".2")),.name_repair = "universal")}
+
+# performed t tests for pairs of normally distributed
+# values
+repet_test <-repet |>
+  dplyr::select(target,ratio.te) |>
+  group_by(target) |>
+  summarise(data=list(ratio.te)) |>
+  filter(map_dbl(data,length) > 2) |>
+  mutate(normality = map(data, ~broom::tidy(shapiro.test(.x)))) |>
+  unnest(normality,names_sep = "_") |>
+  filter(normality_p.value>0.05) |>
+  pw() |>
+  filter(target == "pan" &target.2!="pan") |>
+  mutate(ct = map2(data,data.2,~broom::tidy(t.test(.x,.y)))) |>
+  unnest(ct) |>
+  arrange(p.value) |>
+  mutate(padj = p.adjust(p.value,method="BH")) |>
+  mutate(cmp=map2(target,target.2,.f=~(c(.x,.y)))) |>
+  filter(padj < 0.1)
 
 g_e_repetitiveness <- repet |>
-  mutate(target = fct_reorder(target,estimate)) |>
   ggplot(aes(target,estimate)) +
   geom_boxplot() +
   geom_jitter(width = 0.1) +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  ggpubr::stat_compare_means(size=rel(2),label.x.npc = "center",label.y.npc = 0.9) +
+  ggsignif::geom_signif(comparisons = map(repet_test$cmp,as.character),annotations = format(repet_test$padj,scientific = T,digits = 2),step_increase = 0.5) +
+  #ggpubr::stat_compare_means(size=rel(2),label.x.npc = "center",label.y.npc = 0.9,ref.group = "pan") +
   ylab("mapped read ratio:\n(IP TE/IP genomic) / (WCE TE/WCE genomic)")
+
+
+# ------------------------------------------------------------------------------
+# quality vs repetitiveness
+# ------------------------------------------------------------------------------
+
+qc_df0 <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_basic_chip/results/basic_chip/qc/masked/pan*_rep*.fingerprint.metrics.txt") |>
+  map_df(read_tsv)
+
+qc_df <- filter(qc_df0, !str_detect(Sample,"input")) |> 
+  mutate(experiment = str_extract(Sample,"ENCSR.+(?=_rep)")) |>
+  mutate(qc_df, library = str_extract(Sample,"pan_.+_rep\\d")) |>
+  dplyr::select(library,c("JS Distance","diff. enrichment","CHANCE divergence"))
+
+supporting <- c('pan_ENCSR058DSI_rep1',
+                'pan_ENCSR058DSI_rep2',
+                'pan_ENCSR636FRF_rep1',
+                'pan_ENCSR636FRF_rep2',
+                'pan_ENCSR636FRF_rep3',
+                'pan_ENCSR033IIP_rep1',
+                'pan_ENCSR074LKQ_rep2',
+                'pan_ENCSR455AWG_rep2',
+                'pan_ENCSR455AWG_rep3')
+
+toplot <- inner_join(dplyr::select(repet,library=sample,repetitiveness_index=estimate),
+                     qc_df, by="library") |>
+  mutate(supporting = library %in% supporting) |>
+  pivot_longer(-c(library,supporting),names_to = "metric", values_to = "score")
+
+# all normal
+repet_normality <- toplot |>
+  group_by(supporting,metric) |>
+  summarise(data=list(score)) |>
+  mutate(normality = map(data, ~broom::tidy(shapiro.test(.x)))) |>
+  unnest(normality,names_sep = "_")
+  
+toplot |> 
+ggplot(aes(supporting, score)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width=0.3) +
+  facet_wrap(~metric, scales="free") +
+  ggpubr::stat_compare_means(method='t.test')
 
 # ------------------------------------------------------------------------------
 # whole genome tracks

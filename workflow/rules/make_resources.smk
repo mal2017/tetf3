@@ -74,6 +74,19 @@ rule te_sequences_split:
         seqkit split -i {input.fa} -O {output.odir}
         """
 
+rule coexpressed_tes_json:
+    """
+    json with  top level elements all, male, female
+    each of which has a separate entry for every gene_id and every gene_symbol
+    holding the character vector of coexpressed tes for that gene
+    """
+    input:
+        mods = config.get("MERGED_MODELS"),
+    output:
+        json = "results/resources/coexpressed_tes.json"
+    script:
+        "../scripts/make_resources/coexpressed_te_json.R"
+
 rule make_resources:
     """
     convenience rule to get all resources in one place
@@ -84,3 +97,4 @@ rule make_resources:
         rules.ref_preproc.output.genome_fa,
         rules.make_txdb.output.txdb,
         rules.get_zad_genes.output.tsv,
+        rules.coexpressed_tes_json.output.json,

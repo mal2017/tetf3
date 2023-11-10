@@ -1,33 +1,12 @@
 
 library(tidyverse)
 library(universalmotif)
-
-# ------------------------------------------------------------------------------
-# - archbold motifs
-# ------------------------------------------------------------------------------
-# no longer used - see below for known pan motifs
+library(memes)
 library(tesseract)
-eng <- tesseract("eng")
-text <- tesseract::ocr("https://doi.org/10.1371/journal.pgen.1004591.s007", engine = eng)
 
-hmg_motifs_df <- read_delim(text, skip = 8)
-
-hmg_motifs_df <- hmg_motifs_df  %>%
-  unite(dm3_location, c("Chr.","Location"),sep = ":")
-
-hmg_motifs_df  <- hmg_motifs_df %>% dplyr::select(dm3_location, Sequence)
-
-hmg_motifs_df <- hmg_motifs_df %>% mutate(nm = paste0("Archbold14-degenerate::",Sequence))
-
-degenerate_hmgs <- hmg_motifs_df %>%
-  dplyr::select(nm,Sequence) %>%
-  deframe() %>%
-  map(universalmotif::create_motif)
-
-degenerate_hmgs <- degenerate_hmgs %>% imap(~{.x@name <- .y; .x})
 
 # ------------------------------------------------------------------------------
-# known motifs - other than archbold
+# known motifs
 # ------------------------------------------------------------------------------
 known_pan_meme <- "results/motifs/known_motifs/all_known.meme"
 known_pan_meme <- snakemake@input$known_meme
@@ -39,24 +18,35 @@ known_pan <- imap(known_pan, ~{.x@name <- .y; .x})
 # ------------------------------------------------------------------------------
 # de novo motifs
 # ------------------------------------------------------------------------------
-motifs <- ifelse(exists("snakemake"),paste0(snakemake@input[["meme"]],"/streme.txt"),
-                 "results/motifs/streme_per_tf/pan/streme.txt") %>%
-  read_meme()
+motifs_dir <- ifelse(exists("snakemake"), snakemake@input[["denovo"]],
+                 "results/motifs/streme_per_tf/pan/")
 
-names(motifs) <- motifs %>% map_chr( `@`, name)
+# get the motifs worth comparing to known (eval/pval < 0.05 (lower for homer, bc it reports more seemngly significant motifs))
+if (snakemake@params$motif_program == "streme") {
+  motifs <- paste0(motifs_dir, "/streme.xml") |> memes::importStremeXML() |> pull(motif)
+  names(motifs) <- motifs %>% map_chr( `@`, name)
+} else if (snakemake@params$motif_program == "meme") {
+  motifs <- paste0(motifs_dir, "/meme.txt") |> memes::importMeme() |> filter(eval<0.05) |> pull(motif)
+  names(motifs) <- motifs %>% map_chr( `@`, name)
+} else if (snakemake@params$motif_program == "homer") {
+  motifs <-paste0(motifs_dir, "/homerMotifs.all.motifs")
+  motifs <- read_homer(motifs)
+  names(motifs) <- map_chr(motifs,`@`,consensus)
+  motifs <- motifs[map_lgl(motifs, ~{.x@pval <= 0.001})]
+}
+
 names(motifs) <- paste0("denovo::", names(motifs))
 motifs <- imap(motifs, ~{.x@name <- .y; .x})
 # ------------------------------------------------------------------------------
 # comparison
 # ------------------------------------------------------------------------------
-all_motifs <- c(motifs, degenerate_hmgs,known_pan)
+all_motifs <- c(motifs, known_pan)
 
 # default args, except for score.strat - the sampling distribution
 # of pearson's rho is skewed, so averaging after FZT makes more sense
-# I used the same approach to average the rho's for gene x gene correlation
+# I used the same approach to average the rho values for gene x gene correlation
 # among salmon replicates
 # and normalize scores, which favors more complete alignments
-
 
 # settings
 METHOD = "PCC"

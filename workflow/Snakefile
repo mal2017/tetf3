@@ -16,6 +16,7 @@ include: "rules/scrna.smk"
 include: "rules/integrative.smk"
 include: "rules/repetitiveness.smk"
 include: "rules/pirna.smk"
+include: "rules/csem_mosaics.smk"
 include: "rules/figures.smk"
 
 

@@ -12,7 +12,7 @@ rule plot_motif_and_coex_on_tree:
     params:
         tf = "{tf}",
     script:
-        "../scripts/integrative/plot_motif_and_coex_on_tree.R"
+        "../scripts/integrative/plot_motif_and_coex_on_tree2.R"
 
 
 rule n_denovo_vs_sig_coef:

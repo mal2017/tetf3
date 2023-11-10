@@ -89,7 +89,7 @@ rule meme_per_tf:
     params:
         dir = rules.split_cons_tes_per_tf.output.odir.replace("(","\\(").replace(")","\\)"),
     threads:
-        4
+        8
     #singularity:
         #"docker://memesuite/memesuite:5.5.4"
     shell:
@@ -191,6 +191,14 @@ rule homer_per_tf:
 # comparison to known motifs
 # -----------------------------------------------------------------------------
 
+rule archbold2motifs:
+    output:
+        meme = "results/motifs/known_motifs/archbold_degenerate.meme",
+        sils = "results/motifs/known_motifs/archbold_degenerate_clustering.rds",
+        seqs = "results/motifs/known_motifs/archbold_degenerate_seqs.fasta",
+    script:
+        "../scripts/motifs/archbold_degenerate_2_motifs.R"
+
 rule get_known_motifs:
     """
     motifs id'd by downloading the meme docker image, starting a shell, and running the following shell command:
@@ -201,6 +209,8 @@ rule get_known_motifs:
     cisbp motif, flyreg, flyfactor, etc are all the same or very similar to jaspar1.1, so I don't include them here.
     i add the awk command to remove the space before the A in the nucleotide freqs record. this breaks universalmotif::read_meme.
     """
+    input:
+        arch = rules.archbold2motifs.output.meme,
     output:
         jaspar = "results/motifs/known_motifs/jaspar_pan.meme",
         jaspar2 = "results/motifs/known_motifs/jaspar2_pan.meme",
@@ -220,50 +230,58 @@ rule get_known_motifs:
         iupac2meme -dna SCTTTGWSW > {output.archbold_hmg} &&
         meme2meme {output.jaspar} {output.jaspar2} {output.archbold_hmg} {output.archbold_helper} | \
             awk '/^ A 0.25/{{sub(/^ /, "", $0)}}1' > {output.combined_pan}
-        meme2meme {output.archbold_hmg} {output.archbold_helper} /opt/meme/share/meme-5.5.4/db/motif_databases/JASPAR/JASPAR2022_CORE_insects_redundant_v2.meme | \
+        meme2meme {input.arch} {output.archbold_hmg} {output.archbold_helper} /opt/meme/share/meme-5.5.4/db/motif_databases/JASPAR/JASPAR2022_CORE_insects_redundant_v2.meme | \
             awk '/^ A 0.25/{{sub(/^ /, "", $0)}}1' > {output.all_known}
         """
 
 rule compare_motifs:
     input:
-        meme = rules.streme_per_tf.output.odir,
+        denovo = "results/motifs/{motif_program}_per_tf/{tf}/",
+        #meme = rules.streme_per_tf.output.odir,
         known_meme= rules.get_known_motifs.output.all_known,
+    params:
+        motif_program = "{motif_program}",
     output:
-        motif_comparison = "results/motifs/comparison/{tf}_denovo_comparison.rds",
-        motif_similarity = "results/motifs/comparison/{tf}_denovo_similarity.rds",
+        motif_comparison = "results/motifs/comparison/{tf}_denovo_comparison.{motif_program}.rds",
+        motif_similarity = "results/motifs/comparison/{tf}_denovo_similarity.{motif_program}.rds",
     script:
         "../scripts/motifs/compare_motifs.R"
 
-# -----------------------------------------------------------------------------
-# Downstreama analysis
-# -----------------------------------------------------------------------------
+rule sea_denovo_motifs_on_tes:
+    input:
+        dir = rules.split_cons_tes_per_tf.output.odir,
+        meme = rules.meme_per_tf.output.odir,
+    output:
+        odir = directory("results/motifs/sea_denovo_motifs_on_tes/{tf}")
+    singularity:
+        "docker://memesuite/memesuite:5.5.3"
+    shell:
+        """
+        sea -p '{input.dir}/{wildcards.tf}/coex.fasta' -n '{input.dir}/{wildcards.tf}/other.fasta' -m '{input.meme}/meme.txt' -oc '{output.odir}'
+        """
 
+checkpoint get_remap_peak_seqs:
+    input:
+        bed = rules.annotate_fixed_insertions.output.remap,
+        rpm = config.get("REF_INS"),
+        fa = config.get("GENOME_FA")
+    output:
+        odir = directory("results/motifs/remap_peaks/")
+    script:
+        "../scripts/motifs/get_remap_peak_seqs.R"
 
-
-# checkpoint get_remap_peak_seqs:
-#     input:
-#         bed = rules.annotate_fixed_insertions.output.remap,
-#         rpm = config.get("REF_INS"),
-#         fa = config.get("GENOME_FA")
-#     output:
-#         odir = directory("results/motifs/remap_peaks/")
-#     script:
-#         "../scripts/motifs/get_remap_peak_seqs.R"
-
-# rule sea_remap_peaks:
-#     input:
-#         dir = rules.get_remap_peak_seqs.output.odir,
-#         #xstreme = rules.combine_xstreme_motifs.output.meme # to run on all motifs, comment this out and delete '/combined.meme' from sea command
-#         xstreme = rules.xstreme_per_tf.output.odir,
-#         #known_motifs = rules.get_pan_motifs.output.combined,
-#     output:
-#         odir = directory("results/motifs/sea_remap_peaks/{tf}")
-#     singularity:
-#         "docker://memesuite/memesuite:5.5.3"
-#     shell:
-#         """
-#         sea -p '{input.dir}/{wildcards.tf}.fasta' -m '{input.xstreme}/combined.meme' --order 0 -oc '{output.odir}'
-#         """
+rule sea_remap_peaks:
+    input:
+        dir = rules.get_remap_peak_seqs.output.odir,
+        meme = rules.meme_per_tf.output.odir,
+    output:
+        odir = directory("results/motifs/sea_denovo_on_remap_peaks/{tf}")
+    singularity:
+        "docker://memesuite/memesuite:5.5.3"
+    shell:
+        """
+        sea -p '{input.dir}/{wildcards.tf}.fasta' -m '{input.meme}/meme.txt' -oc '{output.odir}'
+        """
 
 # def aggregate_sea(wildcards):
 #     lms_checkpoint_output = checkpoints.split_cons_tes_per_tf.get(**wildcards).output.odir
@@ -288,21 +306,20 @@ rule compare_motifs:
 rule fimo_denovo_motifs_tes:
     input:
         tes = config.get("TE_FA"),
-        streme = rules.streme_per_tf.output.odir,
+        meme = rules.meme_per_tf.output.odir,
     output:
         odir = directory("results/motifs/fimo_on_tes/denovo/{tf}"),
         tmp = temp("results/motifs/fimo_on_tes/denovo/tmp/all_tes_for_{tf}_fimo.fa")
     singularity:
         "docker://memesuite/memesuite:5.5.3"
     params:
-        streme = rules.streme_per_tf.output.odir.replace("(","\(").replace(")","\)"),
+        meme = rules.meme_per_tf.output.odir.replace("(","\(").replace(")","\)"),
         tmp = "results/motifs/fimo_on_tes/denovo/tmp/all_tes_for_{tf}_fimo.fa".replace("(","\(").replace(")","\)"),
     shell:
         """
         gunzip -c {input.tes} > "{params.tmp}" &&
         fimo --oc "{output.odir}" \
-            --thresh 0.1  --qv-thresh \
-            "{params.streme}/streme.txt" \
+            "{params.meme}/meme.txt" \
             "{params.tmp}"
         """
 
@@ -316,13 +333,12 @@ def aggregate_fimo_on_tes(wildcards):
 
 rule motifs:
     input:
-        expand("results/motifs/streme_per_tf/{tf}/", tf=TFSOI),
-        expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=TFSOI),
+        #expand("results/motifs/streme_per_tf/{tf}/", tf=TFSOI),
+        #expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=TFSOI),
         expand("results/motifs/meme_per_tf/{tf}/", tf=TFSOI),
-        expand("results/motifs/homer_per_tf/{tf}/", tf=TFSOI),
-        #rules.collect_remap_peak_sea.output,
-        #expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,
-        #expand("results/motifs/fimo_genome_wide/{tf}", tf=TFSOI),
-        #expand("results/motifs/comparison/{tf}_denovo_comparison.rds", tf=TFSOI),
-        #expand("results/motifs/fimo_on_tes/known/{known_motif_set}", known_motif_set=["combined_pan","all_known"]),
+        #expand("results/motifs/homer_per_tf/{tf}/", tf=TFSOI),
+        expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=TFSOI,p=["streme","meme","homer"]),
+        "results/motifs/sea_denovo_motifs_on_tes/pan/",
+        "results/motifs/sea_denovo_on_remap_peaks/pan",
+        expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,
         
