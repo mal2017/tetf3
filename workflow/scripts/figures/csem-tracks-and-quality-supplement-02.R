@@ -19,13 +19,14 @@ source("workflow/scripts/utils/plotting.R")
 # ------------------------------------------------------------------------------
 repet <- "results/repetitiveness/chip_repetitiveness.rds"
 repet <- read_rds(repet) |>
+  filter(str_detect(target,"H3K|pan")) |>
   mutate(target = fct_reorder(target,estimate))
 
 pw <- \(x) {crossing(x,set_names(x,paste0(colnames(x),".2")),.name_repair = "universal")}
 
 # performed t tests for pairs of normally distributed
 # values
-repet_test <-repet |>
+repet_test <- repet |>
   dplyr::select(target,ratio.te) |>
   group_by(target) |>
   summarise(data=list(ratio.te)) |>
@@ -61,7 +62,7 @@ qc_df0 <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_basic_chip/results/basi
 
 qc_df <- filter(qc_df0, !str_detect(Sample,"input")) |> 
   mutate(experiment = str_extract(Sample,"ENCSR.+(?=_rep)")) |>
-  mutate(qc_df, library = str_extract(Sample,"pan_.+_rep\\d")) |>
+  mutate(library = str_extract(Sample,"pan_.+_rep\\d")) |>
   dplyr::select(library,c("JS Distance","diff. enrichment","CHANCE divergence"))
 
 supporting <- c('pan_ENCSR058DSI_rep1',
@@ -136,7 +137,7 @@ theme_set(theme_classic() +
 
 dir.create("results/figures/")
 
-pdf("results/figures/csem-tracks-h3k9me3-profile.pdf",width = 8.5, height = 11)
+pdf("results/figures/csem-tracks-h3k9me3-profile-repetitiveness-supplement.pdf",width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
 

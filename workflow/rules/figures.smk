@@ -143,14 +143,14 @@ rule csem_tracks_and_quality_supplement_01:
         "../scripts/figures/csem-tracks-and-quality-supplement-01.R"
 
 
-rule csem_tracks_and_quality_supplement_02:
+rule csem_tracks_h3k9me3_profile_repetitiveness_supplement:
     """
     h3k9 profiles and repetitiveness
     """
     input:
         repetitiveness = rules.chip_repetitiveness.output.rds,
     output:
-        pdf ="results/figures/csem-tracks-h3k9me3-profile.pdf",
+        pdf ="results/figures/csem-tracks-h3k9me3-profile-repetitiveness-supplement.pdf",
     script:
         "../scripts/figures/csem-tracks-and-quality-supplement-02.R"
 
@@ -197,5 +197,6 @@ rule figures:
         rules.denovo_motifs_on_tes_supplement_streme.output,
         #rules.csem_tracks_and_quality_supplement_01.output,
         #rules.csem_tracks_and_quality_supplement_02.output,
+        rules.csem_tracks_h3k9me3_profile_repetitiveness_supplement.output,
         rules.csem_regioner_supplement_01.output,
         rules.exemplary_bound_loci_supplement.output,

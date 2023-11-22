@@ -25,6 +25,3 @@ rule n_denovo_vs_sig_coef:
         tf= "{tf}"
     script:
         "../scripts/integrative/n_denovo_vs_sig_coef.R"
-
-
-    
