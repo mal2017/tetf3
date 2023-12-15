@@ -29,19 +29,33 @@ res <- mutate(res, kd = str_extract(comparison,"(?<=knockdown2_).+?(?=_)"))
 
 res <- res %>% mutate(kd=if_else(kd == "NFI","NfI",kd))
 
+#pirna_path <- "results/resources/pirna_pathway.tsv"
+pirna_path <- snakemake@input$pirna
+
+pirna <-  read_tsv(pirna_path) |>
+  dplyr::select(ensembl_gene=gene_ID) |>
+  distinct() |>
+  mutate(gs_name="TE.regulators") |>
+  dplyr::select(gs_name, ensembl_gene)
+
 
 # tbl holds a TE signature for each host gene
 t2g <- lms %>% 
   dplyr::select(gs_name=gene_symbol,ensembl_gene=feature.y) %>%
   distinct() %>%
-  arrange(gs_name)
+  arrange(gs_name) |>
+  bind_rows(pirna)
+
+
+
+
 
 # add a signature containing all TEs
 at2g <- unnest(enframe(list(all_tes=unique(t2g$ensembl_gene)),name = "gs_name", value = "ensembl_gene"),"ensembl_gene") |>
   bind_rows(t2g,y=_) |>
   mutate(signature_name = gs_name) |> nest(data=-signature_name) |>
   dplyr::rename(signature = data) |>
-  filter(signature_name %in% res$kd | signature_name == "all_tes")
+  filter(signature_name %in% res$kd | signature_name == "all_tes" | signature_name == "TE.regulators")
 
 # make df with a row for every comparison we want
 # per kd, one row for the knocked-down gene's TE signature
@@ -51,7 +65,7 @@ res <- res %>%
   arrange(-score) %>% 
   nest(data=c(feature,score)) %>%
   cross_join(at2g) |>
-  filter(kd == signature_name | signature_name == "all_tes")
+  filter(kd == signature_name | signature_name == "all_tes" | signature_name == "TE.regulators")
 
 # run gsea
 possibly_gsea <- possibly(function(.x,.y){GSEA(deframe(.x), TERM2GENE = .y,seed=2022,pvalueCutoff = 1,minGSSize = 5, eps=0)},otherwise = NULL)

@@ -80,6 +80,15 @@ rule calderon22_reanalysis_supplement:
     script:
         "../scripts/figures/calderon22_reanalysis_supplement.R"
 
+rule candidate_tfs_and_piRNA_pathway_supplement:
+    input:
+        rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
+        rules.remap_peaks_dist_to_pirna.output.rds,
+    output:
+        pdf="results/figures/candidate_tfs_and_piRNA_pathway_supplement.pdf"
+    script:
+        "../scripts/figures/candidate_tfs_and_piRNA_pathway_supplement.R"
+
 # ---------------------------------------------------------------------------------------------------
 # figures related to results section 5
 # ---------------------------------------------------------------------------------------------------
@@ -184,7 +193,9 @@ rule figures:
         rules.basic_exploratory_supplement_01.output,
 
         rules.figure2.output,
+        
         rules.figure3.output,
+        rules.candidate_tfs_and_piRNA_pathway_supplement.output,
 
         rules.figure4.output,
         rules.s2rplus_supplement_01.output,

@@ -23,7 +23,7 @@ sig_mod_stats <- dat %>%
     bind_rows(.,mutate(., model="all")) %>%
     dplyr::select(-contains("p.value")) %>%
     group_by(model) %>%
-    summarise(across(contains("var_exp_") | contains("r2"), .fns = list(~sd(.x, na.rm=T), ~mean(.x, na.rm=T), ~median(.x, na.rm=T), ~min(.x, na.rm=T), ~max(.x, na.rm=T))))
+    summarise(across(contains("var_exp_") | contains("r2"), .fns = list(sd=~sd(.x, na.rm=T), mean=~mean(.x, na.rm=T), median=~median(.x, na.rm=T), min=~min(.x, na.rm=T), max=~max(.x, na.rm=T))))
 
 sig_mod_stats <- sig_mod_stats %>% 
   pivot_longer(-model, names_to = "statistic", values_to = "value")
@@ -37,7 +37,7 @@ where_x_sig_mod_stats <- dat %>%
   bind_rows(.,mutate(., model="all")) %>%
   dplyr::select(-contains("p.value")) %>%
   group_by(model) %>%
-  summarise(across(contains("var_exp_") | contains("r2"), .fns = list(~sd(.x, na.rm=T), ~mean(.x, na.rm=T), ~median(.x, na.rm=T), ~min(.x, na.rm=T), ~max(.x, na.rm=T)))) %>%
+  summarise(across(contains("var_exp_") | contains("r2"), .fns = list(sd=~sd(.x, na.rm=T), mean=~mean(.x, na.rm=T), median=~median(.x, na.rm=T), min=~min(.x, na.rm=T), max=~max(.x, na.rm=T)))) %>%
   pivot_longer(-model, names_to = "statistic", values_to = "value")
 
 # ------------------------------------------------------------------------------
