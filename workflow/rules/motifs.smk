@@ -1,4 +1,4 @@
-TFSOI=["pan"]
+TFSOI=["pan","NfI","CG16779","vvl","Unr"]
 
 
 # -----------------------------------------------------------------------------
@@ -98,7 +98,12 @@ rule meme_per_tf:
             -neg "{params.dir}/{wildcards.tf}/other.fasta" \
             -oc '{output.odir}' \
             -nmotifs 15 -dna -mod anr -minw 6 -maxw 18 -p {threads} \
-            -objfun se -revcomp
+            -objfun se -revcomp || \
+        meme "{params.dir}/{wildcards.tf}/coex.fasta" \
+            -neg "{params.dir}/{wildcards.tf}/other.fasta" \
+            -oc '{output.odir}' \
+            -nmotifs 15 -dna -mod anr -minw 6 -maxw 18 -p {threads} \
+            -objfun de -revcomp
         """
 
 
@@ -237,7 +242,7 @@ rule get_known_motifs:
 rule compare_motifs:
     input:
         denovo = "results/motifs/{motif_program}_per_tf/{tf}/",
-        #meme = rules.streme_per_tf.output.odir,
+        archbold = rules.archbold2motifs.output.meme,
         known_meme= rules.get_known_motifs.output.all_known,
     params:
         motif_program = "{motif_program}",
@@ -258,6 +263,20 @@ rule sea_denovo_motifs_on_tes:
     shell:
         """
         sea -p '{input.dir}/{wildcards.tf}/coex.fasta' -n '{input.dir}/{wildcards.tf}/other.fasta' -m '{input.meme}/meme.txt' -oc '{output.odir}'
+        """
+
+rule sea_known_motifs_on_tes:
+    input:
+        dir = "results/motifs/consensus_tes_per_tf/pan/",
+        meme = rules.get_known_motifs.output.combined_pan,
+        meme2 = rules.archbold2motifs.output.meme,
+    output:
+        odir = directory("results/motifs/sea_known_motifs_on_tes/pan")
+    singularity:
+        "docker://memesuite/memesuite:5.5.3"
+    shell:
+        """
+        sea -p '{input.dir}/coex.fasta' -n '{input.dir}/other.fasta' -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
         """
 
 checkpoint get_remap_peak_seqs:
@@ -331,14 +350,16 @@ def aggregate_fimo_on_tes(wildcards):
 
     return expand("results/motifs/fimo_on_tes/{tf}", tf=tfs)
 
+
 rule motifs:
     input:
-        #expand("results/motifs/streme_per_tf/{tf}/", tf=TFSOI),
-        #expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=TFSOI),
-        expand("results/motifs/meme_per_tf/{tf}/", tf=TFSOI),
-        #expand("results/motifs/homer_per_tf/{tf}/", tf=TFSOI),
-        expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=TFSOI,p=["streme","meme","homer"]),
-        "results/motifs/sea_denovo_motifs_on_tes/pan/",
-        "results/motifs/sea_denovo_on_remap_peaks/pan",
-        expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,
+        "results/motifs/sea_known_motifs_on_tes/pan",
+        expand("results/motifs/streme_per_tf/{tf}/", tf=TFSOI),
+        expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=["pan"]),
+        expand("results/motifs/meme_per_tf/{tf}/", tf=[x for x in TFSOI if x != "NfI"]),
+        expand("results/motifs/homer_per_tf/{tf}/", tf=TFSOI),
+        expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=TFSOI,p=["meme","streme","homer"]),
+        #"results/motifs/sea_denovo_motifs_on_tes/pan/",
+        #"results/motifs/sea_denovo_on_remap_peaks/pan",
+        #expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,
         

@@ -5,28 +5,35 @@ tfs <- ifelse(exists("snakemake"),snakemake@input[["tfs"]],
                "resources/Drosophila_melanogaster_TF.txt") %>%
   read_tsv()
 
-lms <- ifelse(exists("snakemake"),snakemake@input[["mods"]],
+lms0 <- ifelse(exists("snakemake"),snakemake@input[["mods"]],
     "upstream/final-models.collected-info.tsv.gz") %>% 
     read_tsv() %>%
     filter(significant_x) #%>%
     #filter(feature.x %in% tfs$Ensembl)
 
-# finds number of TEs per TF
-lms <- lms %>% 
-    dplyr::select(gene_symbol,feature.y) %>%
-    distinct() %>%
-    group_by(gene_symbol) %>%
-    summarise(n = n()) %>%
-    arrange(desc(n)) %>%
-    left_join(lms,.) %>%
-    filter(n>=10)
+tes_2_use_0 <- lms0 %>% 
+  dplyr::select(gene_symbol,feature.y) %>%
+  distinct() %>%
+  group_by(gene_symbol) %>%
+  summarise(n = n()) |>
+  filter(n >=10) |>
+  left_join(lms0) |>
+  pull(feature.y) |>
+  unique()
 
+lms <- lms0 |>
+    filter(gene_symbol %in% c("pan","CG16779","vvl","Unr","NfI"))
 
 fa <- ifelse(exists("snakemake"),snakemake@input[["tes"]],
         "resources/Tidalbase_transposon_sequence.fasta") %>%
         import(format="fasta")
 
-fa <- fa[names(fa) %in% lms$feature.y]
+# restrict to TEs that are coexpressed with factors
+# coexpressed with many TEs - this is presumably
+# enriched for non-sequence-specific TE/gene interactions and
+# therefore a reasonable background set  for comparing putatively
+# TF-regulated groups of TEs to groups that may not be TF-regulated
+fa <- fa[names(fa) %in% tes_2_use_0]
 
 seqs <- lms %>% 
     dplyr::select(gene_symbol,feature.y) %>%
@@ -34,6 +41,8 @@ seqs <- lms %>%
     split(.,.$gene_symbol) %>%
     map(pull,feature.y) %>%
     map(.f = ~{list(coex = fa[.x],other = fa[!names(fa) %in% .x])})
+
+seqs <- seqs[c("pan","CG16779","vvl","Unr","NfI")]
 
 odir0 <- ifelse(exists("snakemake"),snakemake@output[["odir"]],
                "results/analysis/motifs/consensus_tes_per_tf/")
