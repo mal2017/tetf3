@@ -266,6 +266,12 @@ g_negcon_panel <- plot_indiv_relationship("pan","ci") +
   plot_indiv_relationship("pan","Odj") +patchwork::plot_layout(nrow=2,guides = "collect") &
   guides(size="none")
 
+# simplified trio of plots for figures v2 (simplified figs)
+g_pan_vs <- c("nkd","1360","invader2") |>
+set_names() |>
+  map(~plot_indiv_relationship("pan",.x))
+
+
 write_rds(df_lineages, snakemake@output$df)
 write_rds(g_supercell_size, snakemake@output$g_supercell_size)
 write_rds(gg_spqn,snakemake@output$gg_spqn)
@@ -275,4 +281,5 @@ write_rds(g_all_cell_overlapping_features_coexpressed, snakemake@output$g_all_ce
 write_rds(g_pan_highly_corr_with_tes, snakemake@output$g_pan_highly_corr_with_tes)
 write_rds(g_poscon_and_hits_panel,snakemake@output$g_poscon_and_hits_panel)
 write_rds(g_negcon_panel,snakemake@output$g_negcon_panel)
+write_rds(g_pan_vs,snakemake@output$g_pan_vs)
 

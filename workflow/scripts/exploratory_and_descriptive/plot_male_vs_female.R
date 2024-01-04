@@ -46,8 +46,7 @@ gs <- dat2 %>%
       #ggtitle(.y) +
       #coord_cartesian(xlim = c(-0.5,0.5), ylim=c(-0.5,0.5)) +
       ylim(c(-0.5,0.5)) + xlim(c(-0.5,0.5)) +
-      ggpubr::stat_cor(method="spearman", size=1, label.x = -0.5, label.y=0.4) +
-      theme(aspect.ratio = 1)
+      ggpubr::stat_cor(method="spearman", size=1, label.x = -0.5, label.y=0.4)
   })
 
 #gs$estimate.qnorm

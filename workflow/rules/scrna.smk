@@ -13,5 +13,6 @@ rule calderon22_reanalysis:
         g_pan_highly_corr_with_tes = "results/calderon22/g_pan_highly_corr_with_tes.rds",
         g_poscon_and_hits_panel = "results/calderon22/g_poscon_and_hits_panel.rds",
         g_negcon_panel = "results/calderon22/g_negcon_panel.rds",
+        g_pan_vs = "results/calderon22/g_pan_vs.rds",
     script:
         "../scripts/scrna/calderon22.R"

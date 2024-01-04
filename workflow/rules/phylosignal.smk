@@ -14,15 +14,20 @@ rule plot_control_correlograms:
     input:
         phylosignal = rules.phylosignal_te_tree.output.phylosignal,
     output:
-        rds = "results/phylosignal/correlograms.rds",
+        rds = "results/phylosignal/control_correlograms.rds",
+    threads:
+        4
     script:
         "../scripts/phylosignal/plot_control_correlograms.R"
 
-rule plot_sig_correlograms:
+rule filter_phylo_and_plot_correlograms:
     input:
         phylosignal = rules.phylosignal_te_tree.output.phylosignal,
         df = rules.phylosignal_te_tree.output.tab,
+    threads:
+        4   
     output:
-        rds = "results/phylosignal/sig_correlograms.rds",
+        rds = "results/phylosignal/goi_correlograms.rds",
+        tsv = "results/phylosignal/phylosignal_filtered_hits.tsv.gz",
     script:
-        "../scripts/phylosignal/plot_sig_correlograms.R"
+        "../scripts/phylosignal/filter_phylo_and_plot_correlograms.R"

@@ -32,7 +32,7 @@ plot_scatter <- function(data, label) {
     geom_smooth(method="lm") +
     xlab("male results") +
     ylab("female results") +
-    annotate("text", -Inf, Inf, label = str_wrap(label,width = 20), hjust = 0, vjust = 1)
+    annotate("text", -Inf, Inf, label = str_wrap(label,width = 20), hjust = 0, vjust = 1, size=2)
 }
 
 res <- dat %>% 

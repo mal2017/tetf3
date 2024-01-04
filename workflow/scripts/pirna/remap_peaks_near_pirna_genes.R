@@ -27,7 +27,7 @@ remap <- ifelse(exists("snakemake"),
     readRDS()
 
 # get the remap peaks we're interested in
-remap <- remap[c("pan","CG16779","NfI")]
+remap <- remap[names(remap) %in% c("pan","CG16779","NfI","vvl","Unr")]
 
 remap <- remap %>%
   unlist() %>%

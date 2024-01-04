@@ -16,8 +16,8 @@ dat <- mods %>%
 dat <- dat %>% mutate(coef = ifelse(coef == "x", "gene expression", coef))
 
 dat <- dat %>% 
-  mutate(coef = fct_reorder(coef,var.explained,.fun = function(.x) {mean(.x,na.rm=T)})) %>%
-  mutate(var.explained = var.explained + 1)
+  mutate(coef = fct_reorder(coef,var.explained,.fun = function(.x) {median(.x,na.rm=T)})) %>%
+  mutate(var.explained = var.explained)
 
 g <-  dat %>% ggplot(aes(coef,var.explained,fill=model)) +
   geom_boxplot(outlier.size = 0.01) +

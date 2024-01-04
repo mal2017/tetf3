@@ -39,7 +39,7 @@ PENETRANCE: upstream/dgrp_tidal_insertions.unique.bb
 # Coexpression results
 #############################################################################
 MERGED_MODELS: upstream/final-models.collected-info.tsv.gz
-INDEPENDENT_DATASET: upstream/final-models.collected-info.reps.tsv.gz
+INDEPENDENT_DATASET: upstream/final-models.d2.collected-info.tsv.gz
 
 #############################################################################
 # Independent knockdown data

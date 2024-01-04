@@ -7,22 +7,19 @@ df_fl <- snakemake@input$df
 
 ps_df <- read_rds(df_fl)
 
- cutoff <- 2
+cutoff <- 1
 
-hits <- ps_df |>
+hits0 <- ps_df |>
    filter(score_type == "score") |>
    filter(metric!="Lambda") |>
       group_by(sex,TF, coef) |>
    summarise(n_tests_passed = sum(padj < 0.1),  .groups="drop") |>
-   group_by(TF) |>
-   filter(sum(n_tests_passed >= cutoff) == 2) |>
-   ungroup()
+  filter(n_tests_passed >= cutoff)
 
-#hits <- ps_df |>   filter(score_type == "score") |> filter(metric == "I" & pval < 0.01) |>
-#  count(TF) |>
-#  filter(n==2)
-
-hits <- ps_df |> filter(TF %in% hits$TF) |> pull(coef) |> unique()
+hits <- ps_df |> 
+  filter(coef %in% hits0$coef) |> 
+  filter(TF %in% c("pan","CG16779","vvl","Unr","NfI")) |>
+  pull(coef) |> unique()
 
 ps_fl <- "results/phylosignal/phylosignal.rds"
 ps_fl <- snakemake@input$phylosignal
@@ -35,7 +32,6 @@ names(tfs) <- tfs
 
 # only hi-conf m/f hits for now. these take forever to generate.
 tfs <- tfs[hits]
-
 
 mc <- getOption("mc.cores", 4)
 
