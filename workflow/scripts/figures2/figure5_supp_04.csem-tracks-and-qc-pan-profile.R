@@ -61,41 +61,53 @@ g_pan_profile <- gs$pan@ggplot + aes(color=grl_name, fill=grl_name) +
   guides(fill="none",color="none") +
   theme(strip.text.y=element_blank())
 
+
 # ------------------------------------------------------------------------------
-# qc for pan chips
+# quality vs repetitiveness
 # ------------------------------------------------------------------------------
+
+repet <- "results/repetitiveness/chip_repetitiveness.rds"
+repet <- read_rds(repet) |>
+  filter(str_detect(target,"H3K|pan")) |>
+  mutate(target = fct_reorder(target,estimate))
 
 qc_df0 <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_basic_chip/results/basic_chip/qc/masked/pan*_rep*.fingerprint.metrics.txt") |>
   map_df(read_tsv)
 
-qc_df <- filter(qc_df0, !str_detect(Sample,"input"))
+qc_df <- filter(qc_df0, !str_detect(Sample,"input")) |> 
+  mutate(experiment = str_extract(Sample,"ENCSR.+(?=_rep)")) |>
+  mutate(library = str_extract(Sample,"pan_.+_rep\\d")) |>
+  dplyr::select(library,c("JS Distance","diff. enrichment","CHANCE divergence"))
 
-qc_df <- qc_df |> mutate(experiment = str_extract(Sample,"ENCSR.+(?=_rep)"))
+supporting <- c('pan_ENCSR058DSI_rep1',
+                'pan_ENCSR058DSI_rep2',
+                'pan_ENCSR636FRF_rep1',
+                'pan_ENCSR636FRF_rep2',
+                'pan_ENCSR636FRF_rep3',
+                'pan_ENCSR033IIP_rep1',
+                'pan_ENCSR074LKQ_rep2',
+                'pan_ENCSR455AWG_rep2',
+                'pan_ENCSR455AWG_rep3')
 
-qc_df <- mutate(qc_df, library = str_extract(Sample,"pan_.+_rep\\d"))
-  
-qc_df <- qc_df |>
-  pivot_longer(-c(Sample,experiment, library), names_to = "metric",values_to = "score") |>
-  filter(metric == "JS Distance") 
+toplot <- inner_join(dplyr::select(repet,library=sample,repetitiveness_index=estimate),
+                     qc_df, by="library") |>
+  mutate(supporting = library %in% supporting) |>
+  pivot_longer(-c(library,supporting),names_to = "metric", values_to = "score")
 
-qc_df <- qc_df |> mutate(experiment=factor(experiment, levels=levels(colrtbl$experiment)))
+# all normal
+repet_normality <- toplot |>
+  group_by(supporting,metric) |>
+  summarise(data=list(score)) |>
+  mutate(normality = map(data, ~broom::tidy(shapiro.test(.x)))) |>
+  unnest(normality,names_sep = "_")
 
-qc_df <- qc_df |> left_join(x=colrtbl, y=_, by=c("Sample"="library",experiment="experiment"))
-
-qc_df <- qc_df |> arrange(experiment, Sample) |> mutate(Sample= factor(Sample))
-
-g_js <- qc_df |> mutate(Sample=fct_reorder(Sample,-as.numeric(experiment))) |>
-  arrange(Sample) |>
-ggplot(aes(score,Sample, fill=as.character(`cl`), color=as.character(`cl`))) +
-    geom_point(size=rel(2)) +
-  geom_path(aes(group=experiment)) +
-  #geom_col() +
-  theme(axis.text.x=element_text(angle=45, hjust=1)) +
-   xlab("JS Distance") +
-  scale_color_identity() +
-  scale_fill_identity() +
-  xlim(c(0,1)) +
-  scale_x_sqrt()
+g_b <- toplot |> 
+  ggplot(aes(supporting, score)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width=0.3) +
+  facet_wrap(~metric, scales="free") +
+  ggpubr::stat_compare_means(method="wilcox.test",label.y.npc = 0.9) +
+  xlab("supports pericentromeric enrichment")
 
 # ------------------------------------------------------------------------------
 # create page 1
@@ -111,11 +123,11 @@ pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
 
-plotGG(g_pan_profile, x = 3, y=0.5, width = 4.5,height = 5)
+plotGG(g_pan_profile, x = 0.5, y=0.5, width = 7.5,height = 5)
 
-plotGG(g_js, x = 0.25, y=0.5, width = 2.75,height = 5.2)
+plotGG(g_b, x = 0.5, y=6, width = 3.25,height = 3.5)
 
 plotText("A", x = 0.5, y=0.5)
-plotText("B", x = 3, y=0.5)
+plotText("B", x = 0.5, y=6)
 
 dev.off()

@@ -6,9 +6,9 @@ rule figure1:
         ncoex_scatter_and_hist = rules.ncoex_scatter_and_hist.output.rds,
         pirna_coex_w_te_prop = rules.pirna_coex_w_te_prop.output.rds,
     output:
-        "results/figures2/figure1.pdf"
+        pdf="results/figures2/figure1.overview.pdf"
     script:
-        "../scripts/figures2/figure1.R"
+        "../scripts/figures2/figure1.overview.R"
 
 rule figure1_supp_01:
     input:
@@ -19,9 +19,9 @@ rule figure1_supp_01:
         coex_dist = rules.coex_metric_distributions.output.rds,
         n_models = rules.n_models_per_filtering_step.output.rds,
     output:
-        pdf="results/figures2/figure1_supp_01.pdf"
+        pdf="results/figures2/figure1_supp_01.extra-overview.pdf"
     script:
-        "../scripts/figures2/figure1-supp-01.R"
+        "../scripts/figures2/figure1-supp-01.extra-overiew.R"
 
 # ---------------------------------------------------------------------------------------------------
 # figures related to results section 2
@@ -33,9 +33,9 @@ rule figure2:
         female_gg_gsea = "results/enrichment/sig_main_female_max_abs_estimate_qnorm.gg_gsea.rds",
         coex_vs_seq = rules.coex_vs_seq_similarity.output.rds,
     output:
-        pdf="results/figures2/figure2.pdf"
+        pdf="results/figures2/figure2.tf-overrepresentation.pdf"
     script:
-        "../scripts/figures2/figure2.R"
+        "../scripts/figures2/figure2.tf-overrepresentation.R"
 
 # # ---------------------------------------------------------------------------------------------------
 # # figures related to results section 3
@@ -43,21 +43,44 @@ rule figure2:
 
 rule figure3:
     input:
-        crlg = rules.filter_phylo_and_plot_correlograms.output.rds,
-        control_crlg = rules.plot_control_correlograms.output.rds,
-        tre = "results/te_sequence_similarity/te_sketch_tidytree.rds",
+        "results/deg/ourKD.de.grs.rds",
+        "results/signatures/ourKD_gsea.rds",
     output:
-        pdf="results/figures2/figure3.pdf"
+        pdf = "results/figures2/figure3.knockdowns.pdf"
     script:
-        "../scripts/figures2/figure3.R"
+        "../scripts/figures2/figure3.knockdowns.R"
+
+
 
 rule figure3_supp_01:
     input:
-        "results/te_sequence_similarity/te_sketch_tidytree.rds",
+        "results/deg/s2rplus.res.tsv.gz",
+        rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
+        rules.remap_peaks_dist_to_pirna.output.rds,
     output:
-        pdf="results/figures2/figure3_supp_01.pdf"
+        pdf="results/figures2/figure3_supp_01.s2rplus.pdf"
     script:
-        "../scripts/figures2/dashing2-te-phylo-supplement-01.R"
+        "../scripts/figures2/figure3_supp_01.s2rplus.R"
+
+
+rule figure3_supp_02:
+    input:
+        
+    output:
+        pdf="results/figures2/figure3_supp_02.te-regulators-in-kd-and-remap.pdf"
+    script:
+        "../scripts/figures2/figure3_supp_02.te-regulators-in-kd-and-remap.R"
+
+rule figure3_supp_03:
+    input:
+        "results/deg/ourKD.de.grs.rds",
+        "results/resources/pirna_pathway.tsv"
+    output:
+        pdf="results/figures2/figure3_supp_03.pirna-volcano.pdf"
+    script:
+        "../scripts/figures2/figure3_supp_03.pirna-volcano.R"
+
+
 
 # # ---------------------------------------------------------------------------------------------------
 # # figures related to results section 4
@@ -65,31 +88,21 @@ rule figure3_supp_01:
 
 rule figure4:
     input:
-        "results/deg/ourKD.de.grs.rds",
-        "results/signatures/ourKD_gsea.rds",
+        crlg = rules.filter_phylo_and_plot_correlograms.output.rds,
+        control_crlg = rules.plot_control_correlograms.output.rds,
+        tre = "results/te_sequence_similarity/te_sketch_tidytree.rds",
     output:
-        pdf = "results/figures2/figure4.pdf"
+        pdf="results/figures2/figure4.phylosignal.pdf"
     script:
-        "../scripts/figures2/figure4.R"
+        "../scripts/figures2/figure4.phylosignal.R"
 
 rule figure4_supp_01:
     input:
-        "results/deg/s2rplus.res.tsv.gz",
-        rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
-        rules.remap_peaks_dist_to_pirna.output.rds,
+        "results/te_sequence_similarity/te_sketch_tidytree.rds",
     output:
-        pdf="results/figures2/figure4_supp_01.pdf"
+        pdf="results/figures2/figure4_supp_01.dashing2-tree.pdf"
     script:
-        "../scripts/figures2/figure4_supp_01.R"
-
-rule figure4_supp_02:
-    input:
-        rules.calderon22_reanalysis.output,
-    output:
-        pdf="results/figures2/figure4_supp_02.calderon22.pdf",
-    script:
-        "../scripts/figures2/figure4_supp_02.calderon22.R"
-
+        "../scripts/figures2/dashing2-te-phylo-supplement-01.R"
 
 # # ---------------------------------------------------------------------------------------------------
 # # figures related to results section 5
@@ -100,16 +113,16 @@ rule figure5:
         motif_comparison = "results/motifs/comparison/pan_denovo_comparison.meme.rds",
         motif_similarity = "results/motifs/comparison/pan_denovo_similarity.meme.rds",
     output:
-       pdf="results/figures2/figure5.pdf"
+       pdf="results/figures2/figure5.pan-motifs.pdf"
     script:
-      "../scripts/figures2/figure5_v2.R"
+      "../scripts/figures2/figure5.pan-motifs.R"
 
 rule figure5_supp_01:
     input:
         n_denovo_vs_sig_coef = "results/integrative/n_denovo_vs_sig_coef.pan.rds",
         pan_tree = "results/integrative/motif_and_coex_on_tree.pan.plot.rds",
     output:
-        pdf="results/figures2/figure5_supp_01.pdf"
+        pdf="results/figures2/figure5_supp_01.pan-meme-denovo.pdf"
     script:
         "../scripts/figures2/figure5_supp_01.pan-meme-denovo.R"
 
@@ -174,7 +187,13 @@ rule figure5_supp_07:
     script:
         "../scripts/figures2/figure5_supp_07.exemplary-bound-locus-1.R"
 
-
+rule figure5_supp_08:
+    input:
+        rules.calderon22_reanalysis.output,
+    output:
+        pdf="results/figures2/figure5_supp_08.calderon22.pdf",
+    script:
+        "../scripts/figures2/figure5_supp_08.calderon22.R"
 
 # ---------------------------------------------------------------------------------------------------
 # bring it together
@@ -189,10 +208,11 @@ rule figures:
         
         rules.figure3.output,
         rules.figure3_supp_01.output,
+        rules.figure3_supp_02.output,
+        rules.figure3_supp_03.output,
         
         rules.figure4.output,
         rules.figure4_supp_01.output,
-        rules.figure4_supp_02.output,
 
         rules.figure5.output,
         rules.figure5_supp_01.output,
@@ -202,4 +222,4 @@ rule figures:
         rules.figure5_supp_05.output,
         rules.figure5_supp_06.output,
         rules.figure5_supp_07.output,
-        
+        rules.figure5_supp_08.output,

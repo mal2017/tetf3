@@ -68,7 +68,7 @@ res <- res %>%
   filter(kd == signature_name | signature_name == "all_tes" | signature_name == "TE.regulators")
 
 # run gsea
-possibly_gsea <- possibly(function(.x,.y){GSEA(deframe(.x), TERM2GENE = .y,seed=2022,pvalueCutoff = 1,minGSSize = 5, eps=0)},otherwise = NULL)
+possibly_gsea <- possibly(function(.x,.y){GSEA(deframe(.x), TERM2GENE = .y,seed=2022,pvalueCutoff = 1,minGSSize = 3, eps=0)},otherwise = NULL)
 
 set.seed(2)
 

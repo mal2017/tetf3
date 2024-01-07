@@ -78,6 +78,8 @@ pan_pks <- get_replicated_pks("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics
 
 gro_pks <- get_replicated_pks("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/gro*rep*/gro*rep*.mosaics.bed")
 
+h3k9me3_pks <- get_replicated_pks("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/*_H3K9Me3_ChIPSeq_*/*H3K9Me3_ChIPSeq_*.mosaics.bed")
+
 # ----------------------------------------------------------------------------------------------------------
 # generate segmentations used for controlling randomization further on
 # ---------------------------------------------------------------------------------------------------------
@@ -92,6 +94,10 @@ g_segments <- plotSegment(te_density_seg[seqnames(te_density_seg) %in% c("2L","2
 # ------------------------------------------------------------------------------------------------------------
 # run regioner and plot
 # ----------------------------------------------------------------------------------------------------------
+
+# question variant 0 -  does H3K9me3 overlap tes more than expected by chance
+h3k9me3_all_te_overlap.pt <- permTest(A=h3k9me3_pks, B=fixed_ref_ins, randomize.function=randomizeRegions,
+                                  evaluate.function=numOverlaps,alternative = "greater", mask=NA, genome = g_r, ntimes = 1000)
 
 # question variant 1 -  does pan overlap tes more than expected by chance
 pan_all_te_overlap.pt <- permTest(A=pan_pks, B=fixed_ref_ins, randomize.function=randomizeRegions,
@@ -120,11 +126,12 @@ pan_euch_pan_te_overlap.pt <- permTest(A=subsetByOverlaps(pan_pks, te_density_se
                                        evaluate.function=numOverlaps,alternative = "greater", genome = g_r, ntimes = 1000, mask=te_density_seg[te_density_seg$state==2])
 
 
-res <- list(pan_all_te = pan_all_te_overlap.pt,
-     gro_all_te = gro_all_te_overlap.pt,
-     pan_pan_te = pan_pan_te_overlap.pt,
-     pan_euch_te = pan_euch_te_overlap.pt,
-     pan_euch_pan_te = pan_euch_pan_te_overlap.pt,
-     segmentation = list(gg = g_segments, gr = te_density_seg))
+res <- list(h3k9me3_all_te=h3k9me3_all_te_overlap.pt,
+            pan_all_te = pan_all_te_overlap.pt,
+            gro_all_te = gro_all_te_overlap.pt,
+            pan_pan_te = pan_pan_te_overlap.pt,
+            pan_euch_te = pan_euch_te_overlap.pt,
+            pan_euch_pan_te = pan_euch_pan_te_overlap.pt,
+            segmentation = list(gg = g_segments, gr = te_density_seg))
 
 write_rds(res,snakemake@output$rds)

@@ -48,51 +48,10 @@ g_e_repetitiveness <- repet |>
   geom_boxplot() +
   geom_jitter(width = 0.1) +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  ggsignif::geom_signif(comparisons = map(repet_test$cmp,as.character),annotations = format(repet_test$padj,scientific = T,digits = 2),step_increase = 0.5) +
+  ggsignif::geom_signif(comparisons = map(repet_test$cmp,as.character),annotations = paste0("BH padj=",format(repet_test$padj,scientific = T,digits = 2)),step_increase = 0.5) +
   #ggpubr::stat_compare_means(size=rel(2),label.x.npc = "center",label.y.npc = 0.9,ref.group = "pan") +
   ylab("mapped read ratio:\n(IP TE/IP genomic) / (WCE TE/WCE genomic)")
 
-
-# ------------------------------------------------------------------------------
-# quality vs repetitiveness
-# ------------------------------------------------------------------------------
-
-qc_df0 <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_basic_chip/results/basic_chip/qc/masked/pan*_rep*.fingerprint.metrics.txt") |>
-  map_df(read_tsv)
-
-qc_df <- filter(qc_df0, !str_detect(Sample,"input")) |> 
-  mutate(experiment = str_extract(Sample,"ENCSR.+(?=_rep)")) |>
-  mutate(library = str_extract(Sample,"pan_.+_rep\\d")) |>
-  dplyr::select(library,c("JS Distance","diff. enrichment","CHANCE divergence"))
-
-supporting <- c('pan_ENCSR058DSI_rep1',
-                'pan_ENCSR058DSI_rep2',
-                'pan_ENCSR636FRF_rep1',
-                'pan_ENCSR636FRF_rep2',
-                'pan_ENCSR636FRF_rep3',
-                'pan_ENCSR033IIP_rep1',
-                'pan_ENCSR074LKQ_rep2',
-                'pan_ENCSR455AWG_rep2',
-                'pan_ENCSR455AWG_rep3')
-
-toplot <- inner_join(dplyr::select(repet,library=sample,repetitiveness_index=estimate),
-                     qc_df, by="library") |>
-  mutate(supporting = library %in% supporting) |>
-  pivot_longer(-c(library,supporting),names_to = "metric", values_to = "score")
-
-# all normal
-repet_normality <- toplot |>
-  group_by(supporting,metric) |>
-  summarise(data=list(score)) |>
-  mutate(normality = map(data, ~broom::tidy(shapiro.test(.x)))) |>
-  unnest(normality,names_sep = "_")
-  
-toplot |> 
-ggplot(aes(supporting, score)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(width=0.3) +
-  facet_wrap(~metric, scales="free") +
-  ggpubr::stat_compare_means(method='t.test')
 
 # ------------------------------------------------------------------------------
 # whole genome tracks
@@ -143,7 +102,7 @@ pageCreate(height = 11, showGuides=interactive())
 
 plotGG(gs$h3k9me3@ggplot, x = 0.5, y=0.5, width = 7.5,height = 3)
 
-plotGG(g_e_repetitiveness + theme(axis.text.y = element_text(size=5)), x = 0.25, y=3.75, width = 7.5,height = 2)
+plotGG(g_e_repetitiveness + theme(axis.text.y = element_text(size=5)), x = 0.5, y=3.75, width = 4.1,height = 3.5)
 
 plotText("A", x = 0.5, y=0.5)
 plotText("B", x = 0.5, y=3.75)

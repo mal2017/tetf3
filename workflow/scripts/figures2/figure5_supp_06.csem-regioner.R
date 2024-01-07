@@ -20,6 +20,7 @@ plot_regioner <- function(x) {
 
 dat <- read_rds("results/csem_mosaics/regioner.rds")
 
+h3k9me3_all_te <- plot_regioner(dat$h3k9me3_all_te)
 pan_all_te <- plot_regioner(dat$pan_all_te)
 pan_pan_te <- plot_regioner(dat$pan_pan_te)
 gro_all_te <- plot_regioner(dat$gro_all_te)
@@ -38,13 +39,16 @@ pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
 
-plotGG(pan_all_te, x = 0.5, y=0.5, width = 3.5,height = 2.5)
+plotGG(h3k9me3_all_te, x = 0.5, y=0.5, width = 3.5,height = 2.5)
 plotText("A", x = 0.5, y=0.5)
 
-plotGG(pan_pan_te, x = 4.5, y=0.5, width = 3.5,height = 2.5)
+plotGG(gro_all_te, x = 4.5, y=0.5, width = 3.5,height = 2.5)
 plotText("B", x = 4.5, y=.5)
 
-plotGG(gro_all_te, x = 0.5, y=3.25, width = 3.5,height = 2.5)
+plotGG(pan_pan_te, x = 0.5, y=3.25, width = 3.5,height = 2.5)
 plotText("C", x = 0.5, y=3.25)
+
+plotGG(pan_all_te, x = 4.5, y=3.25, width = 3.5,height = 2.5)
+plotText("D", x = 4.5, y=3.25)
 
 dev.off()

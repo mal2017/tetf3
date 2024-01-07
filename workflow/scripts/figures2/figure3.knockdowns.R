@@ -65,7 +65,7 @@ pageCreate(height = 11, showGuides=interactive())
 plotGG(g_a, x = 0.5, y=0.5, width = 3.75,height = 2.5)
 plotText("A", x = 0.5, y=0.5)
 
-plotGG(g_bcd$knockdown2_Unr_female_head_Mef2.R_control_female_head_Mef2.R, 
+plotGG(g_bcd$knockdown2_NFI_female_head_Mef2.R_control_female_head_Mef2.R, 
        x = 4.5, y=0.5, width = 3.25,height = 2.5)
 plotText("B", x = 4.5, y=0.5)
 

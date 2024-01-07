@@ -18,7 +18,7 @@ res <- res0 %>% left_join(lkup, by=c(feature = "gene_ID")) |>
   mutate(rnk = dense_rank(logFC)) |>
   mutate(knockdown = if_else(comparison %in% c("pan","NfI","CG1679","vvl","Unr"),comparison,"other"))
 
-g_a <- res %>%
+g_b <- res %>%
   group_by(comparison, knockdown) |>
   summarize(logFC = mean(logFC), .groups = "drop") |> 
   mutate(rnk = dense_rank(logFC)) |>
@@ -47,7 +47,7 @@ ks_res <- ks.test(logFC ~ knockdown, data=resampled_res) |>
 
 ks_res$label |> str_wrap(width = 30)
 
-g_b <- resampled_res |>
+g_c <- resampled_res |>
   ggplot(aes(logFC,color=knockdown)) +
   stat_ecdf() +
   annotate(geom="text",label=str_wrap(ks_res$label,width = 30),x = max(resampled_res$logFC), y=0,hjust=1,vjust=0, size=rel(2)) +
@@ -71,27 +71,9 @@ plot_barchart <- function(dat, cmp) {
     ylab("RNAi / sex / sample / driver")
 }
 
-g_c <- plot_barchart(x, "all_tes")
-g_d <- plot_barchart(x, "TE.regulators")
+g_a <- plot_barchart(x, "all_tes")
 
-# ------------------------------------------------------------------------------
-# prev reported distance from remap peaks to TE regulators
-# ------------------------------------------------------------------------------
 
-# plot distance from each gene (incl piRNA pathway genes) to
-# NfI, CG16779, and pan peaks from REMAP22
-gr <- read_rds("results/pirna/remap_peaks_dist_to_pirna.gr.rds")
-
-g_e<- gr |>
-  as_tibble() |>
-  mutate(type = if_else(is.piRNA.pathway,"TE regulators","other genes")) |>
-  mutate(ChIP = paste(ChIP, "peaks")) |>
-  ggplot(aes(type,log10(distance+1))) +
-  geom_violin() +
-  facet_wrap(~ChIP) +
-  ylab("log10(dist. to nearest peak + 1)") +
-  xlab("genes") +
-  ggpubr::stat_compare_means(size=unit(2,"pt"))
 
 # ------------------------------------------------------------------------------
 # create page
@@ -107,19 +89,16 @@ pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
 
-plotGG(g_a, x = 0.5, y=0.5, width = 3.85,height = 2)
+plotGG(g_a, x=0.5, y=0.5, width=3.75, height=2.5)
 plotText("A", x = 0.5, y=0.5)
 
 
-plotGG(g_b, x = 4.5, y=0.5, width = 3.7,height = 2)
+plotGG(g_b, x = 4.25, y=0.7, width = 3.85,height = 2)
 plotText("B", x = 4.5, y=0.5)
 
-plotGG(g_c, x=0.5, y=2.75, width=3.75, height=2)
-plotText("C", x = .5, y=2.75)
 
-
-plotGG(g_d, x=4.25, y=2.75, width=3.75, height=2)
-plotText("D", x = 4.5, y=2.75)
+plotGG(g_c, x = .5, y=3.5, width = 3.7,height = 2)
+plotText("C", x = .5, y=3.5)
 
 dev.off()
 
