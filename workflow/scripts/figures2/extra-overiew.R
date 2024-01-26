@@ -33,6 +33,7 @@ teregs <- read_tsv("results/resources/pirna_pathway.tsv") |> pull(gene_ID)
 nofilt_max_score <- read_tsv('results/rankings/nofilt_main_male_max_abs_estimate_qnorm.tsv.gz')
 nofilt_mean_score <- read_tsv('results/rankings/nofilt_main_male_mean_abs_estimate_qnorm.tsv.gz')
 
+# male only
 prev_reported_scores <- bind_rows(`max abs. score`=nofilt_max_score, `mean abs. score`=nofilt_mean_score,.id = "score.type") |>
   mutate(prev.reported = gene_id %in% teregs)
 
@@ -126,10 +127,11 @@ pageCreate(width =8.5, height = 11, default.units = "inches", showGuides = inter
 pa <- plotGG(plot = g_var_exp, x = 0.5, y=0.5, width = 7.5, height=2.75)
 plotText(label = "A", x = 0.5, y = 0.5)
 
-pb <- plotGG(plot = g_repcor$male + scale_fill_distiller(palette = 6) + guides(fill="none"), x = 0.4,  y=3.75, width = 1.75, height=1.75)
-pc <- plotGG(plot = g_repcor$female+ scale_fill_distiller(palette = 6) + guides(fill="none"), x = 2.3,  y=3.75, width = 1.75, height=1.75)
-pd <- plotGG(plot = g_mf$unfiltered+ scale_fill_distiller(palette = 6) + guides(fill="none"), x = 4.3,  y=3.75, width = 1.75, height=1.75)
-pe <- plotGG(plot = g_mf$replicated+ scale_fill_distiller(palette = 6) + guides(fill="none"), x = 6.3,  y=3.75, width = 1.75, height=1.75)
+pb <- plotGG(plot = g_mf$unfiltered+ scale_fill_distiller(palette = 6) + guides(fill="none"), x = 0.4,  y=3.75, width = 1.75, height=1.75)
+pc <- plotGG(plot = g_mf$replicated+ scale_fill_distiller(palette = 6) + guides(fill="none"), x = 2.3,  y=3.75, width = 1.75, height=1.75)
+pd <- plotGG(plot = g_repcor$male + scale_fill_distiller(palette = 6) + guides(fill="none"), x = 4.3,  y=3.75, width = 1.75, height=1.75)
+pe <- plotGG(plot = g_repcor$female+ scale_fill_distiller(palette = 6) + guides(fill="none"), x = 6.3,  y=3.75, width = 1.75, height=1.75)
+
 
 plotText(label = "B", x = 0.5, y = 3.75)
 plotText(label = "C", x = 2.3, y = 3.75)

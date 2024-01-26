@@ -279,6 +279,47 @@ rule sea_known_motifs_on_tes:
         sea -p '{input.dir}/coex.fasta' -n '{input.dir}/other.fasta' -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
         """
 
+csem_libraries,zz = glob_wildcards('/home/mlawlor/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_{lib}/{lib2}.bed')
+
+rule get_csem_pan_peaks:
+    input:
+        bed = "/home/mlawlor/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_{library}/pan_{library}.mosaics.bed",
+        fa = config.get("GENOME_FA")
+    output:
+        fa = "results/motifs/csem_peaks/pan/{library}.fasta",
+        g = temp("results/motifs/csem_peaks/genome.tmp.{library}.fa"),
+    conda:
+        "../envs/bedtools.yaml"
+    shell:
+        """
+        gunzip -c {input.fa} > {output.g} &&
+        bedtools getfasta -fi {output.g} -bed {input.bed} -fo {output.fa}
+        """
+
+rule sea_csem_peaks:
+    input:
+        fa = "results/motifs/csem_peaks/pan/{library}.fasta",
+        meme = rules.get_known_motifs.output.jaspar,
+        meme2 = rules.get_known_motifs.output.jaspar2,
+    output:
+        odir = directory("results/motifs/sea_csem_peaks/pan/{library}")
+    singularity:
+        "docker://memesuite/memesuite:5.5.3"
+    shell:
+        """
+        sea -p {input.fa} -m '{input.meme}' -m '{input.meme2}' --order 0 -oc '{output.odir}'
+        """
+
+
+rule collect_csem_peak_sea:
+    input:
+        seas = expand("results/motifs/sea_csem_peaks/pan/{library}/", library=csem_libraries)
+    output:
+        tsv = "results/motifs/csem_peak_sea.pan.tsv.gz"
+    script:
+        "../scripts/motifs/collect_csem_peak_sea.R"
+
+
 checkpoint get_remap_peak_seqs:
     input:
         bed = rules.annotate_fixed_insertions.output.remap,
@@ -289,17 +330,20 @@ checkpoint get_remap_peak_seqs:
     script:
         "../scripts/motifs/get_remap_peak_seqs.R"
 
+
+
 rule sea_remap_peaks:
     input:
         dir = rules.get_remap_peak_seqs.output.odir,
-        meme = rules.meme_per_tf.output.odir,
+        meme = rules.get_known_motifs.output.jaspar,
+        meme2 = rules.get_known_motifs.output.jaspar2,
     output:
-        odir = directory("results/motifs/sea_denovo_on_remap_peaks/{tf}")
+        odir = directory("results/motifs/sea_remap_peaks/pan")
     singularity:
         "docker://memesuite/memesuite:5.5.3"
     shell:
         """
-        sea -p '{input.dir}/{wildcards.tf}.fasta' -m '{input.meme}/meme.txt' -oc '{output.odir}'
+        sea -p '{input.dir}/pan.fasta' -m '{input.meme}' -m '{input.meme2}' --order 0 -oc '{output.odir}'
         """
 
 # def aggregate_sea(wildcards):
@@ -359,6 +403,8 @@ rule motifs:
         expand("results/motifs/meme_per_tf/{tf}/", tf=[x for x in TFSOI if x != "NfI"]),
         expand("results/motifs/homer_per_tf/{tf}/", tf=TFSOI),
         expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=TFSOI,p=["meme","streme","homer"]),
+        "results/motifs/csem_peak_sea.pan.tsv.gz",
+        "results/motifs/sea_remap_peaks/pan"
         #"results/motifs/sea_denovo_motifs_on_tes/pan/",
         #"results/motifs/sea_denovo_on_remap_peaks/pan",
         #expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,

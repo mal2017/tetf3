@@ -48,20 +48,11 @@ df <- sample_sheet |>
 # get ratio of ratios
 df2 <- df |>
   pivot_wider(names_from = c(mapping), values_from = c(n_mapped.IP, n_mapped.input)) |>
-  mutate(ratio=(n_mapped.IP_TE/n_mapped.IP_genome)/(n_mapped.input_TE/n_mapped.input_genome)) |>
-  dplyr::select(sample,ratio) |>
-  left_join(sample_sheet, by=c(sample="sample_name")) |>
-  dplyr::select(sample, target, ratio.te = ratio) |>
-  left_join(df, by="sample")
+  mutate(ratio.te=(n_mapped.IP_TE/n_mapped.IP_genome)/(n_mapped.input_TE/n_mapped.input_genome))
 
-fish_df <- df2 |>
-  filter(str_detect(target,regex("H3K|pan|egg|setdb|var|gro|arm|nej",ignore_case=T))) |>
-  nest(data=c(mapping,n_mapped.IP, n_mapped.input)) |>
-  mutate(data=map(data,column_to_rownames,"mapping")) |>
-  mutate(fish = map(data, fisher.test, alternative = "greater")) |>
-  mutate(fish.tidy = map(fish,broom::tidy)) |>
-  unnest(fish.tidy)
+df3 <- sample_sheet |>
+  filter(!is.na(input)) |>
+  dplyr::select(sample=sample_name,target) |>
+  left_join(df2, by= c("sample"))
 
-write_rds(fish_df, snakemake@output$rds)
-
-
+write_rds(df3, snakemake@output$rds)

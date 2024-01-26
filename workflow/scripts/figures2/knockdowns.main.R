@@ -15,7 +15,7 @@ x <- x |> mutate(lab = str_replace_all(str_extract(comparison,"(?<=knockdown2_).
   
 
 gg <- x |> 
-  filter(padj < 0.1 & kd == signature_name) |>
+  filter(padj < 0.1 & signature_name == "all_tes") |>
   group_by(signature_name, kd) |>
   slice_min(pvalue) |>
   ungroup() |>
@@ -31,7 +31,7 @@ gg <- x |>
 # ------------------------------------------------------------------------------
 
 g_a <- x |>
-  filter(signature_name == kd) |>
+  filter(signature_name == "all_tes") |>
   mutate(lab = fct_reorder(lab, pvalue)) |>
   ggplot(aes(-log10(padj), lab)) +
   geom_col() +
@@ -40,7 +40,7 @@ g_a <- x |>
 
 
 # ------------------------------------------------------------------------------
-# exemplary target-specific random walk
+# exemplary all-te random walk
 # ------------------------------------------------------------------------------
 
 g_bcd <- gg |>

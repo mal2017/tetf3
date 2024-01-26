@@ -35,12 +35,33 @@ res <- res |>
   #filter(feature.type %in% c("Czech 2013/Handler 2013","TE")) |>
   mutate(feature.type = fct_relevel(feature.type, c("gene","TE silencer","TE")))
 
-
 labs <- res |>
   filter(padj < 0.1) |>
   count(comparison,feature.type) |>
   pivot_wider(names_from = feature.type, values_from = n,values_fill = 0) |>
-  mutate(label = sprintf("genes: %s\nTE silencers: %s\nTEs: %s",gene,`TE silencer`,TE))
+  mutate(label = sprintf("DE features\ngenes: %s\nTE silencers: %s\nTEs: %s",gene,`TE silencer`,TE))
+
+
+run_phyper <- function(universe,te_regs, hits) {
+  te_regs <- intersect(universe,te_regs)
+  M <- length(unique(universe))
+  N <- length(unique(te_regs))
+  n <- length(unique(hits))
+  k <- length(intersect(unique(hits),unique(te_regs)))
+  
+  phyper(k,N,M-N,n, lower.tail = F)
+}
+
+
+res |>
+  filter(feature.type!="TE") |>
+  nest(-comparison) |>
+  mutate(ph = map(data, ~{run_phyper(.x$feature,pirna_genes$gene_ID,filter(.x,padj < 0.1)$feature)})) |>
+  mutate(pht = map(ph, broom::tidy)) |>
+  unnest(pht) |>
+  mutate(padj = p.adjust(x,method="BH"))
+
+
 
 # ------------------------------------------------------------------------------
 # exemplary all-te, piRNA volc

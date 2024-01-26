@@ -19,29 +19,33 @@ source("workflow/scripts/utils/plotting.R")
 # ------------------------------------------------------------------------------
 repet <- "results/repetitiveness/chip_repetitiveness.rds"
 repet <- read_rds(repet) |>
-  filter(str_detect(target,"H3K|pan")) |>
-  mutate(target = fct_reorder(target,estimate))
+  filter(str_detect(target,"H3K|pan|CG16779|vvl|NfI")) |>
+  mutate(target = fct_reorder(target,estimate, .fun=mean))
 
 pw <- \(x) {crossing(x,set_names(x,paste0(colnames(x),".2")),.name_repair = "universal")}
 
-# performed t tests for pairs of normally distributed
-# values
+cmps <- crossing(x=unique(repet$target),y=unique(repet$target)) |>
+  filter(x == "pan" & y!= "pan") |>
+  mutate(l = map2(x,y,~as.character(c(.x,.y)))) |>
+  pull(l)
+
+# check normality for t test
 repet_test <- repet |>
   dplyr::select(target,ratio.te) |>
   group_by(target) |>
   summarise(data=list(ratio.te)) |>
-  filter(map_dbl(data,length) > 2) |>
-  mutate(normality = map(data, ~broom::tidy(shapiro.test(.x)))) |>
-  unnest(normality,names_sep = "_") |>
-  filter(normality_p.value>0.05) |>
+  #filter(map_dbl(data,length) > 2) |>
+  #mutate(normality = map(data, ~broom::tidy(shapiro.test(.x)))) |>
+  #unnest(normality,names_sep = "_") |>
+  #filter(normality_p.value>0.05) |>
   pw() |>
   filter(target == "pan" &target.2!="pan") |>
   mutate(ct = map2(data,data.2,~broom::tidy(t.test(.x,.y)))) |>
   unnest(ct) |>
   arrange(p.value) |>
+  ungroup() |>
   mutate(padj = p.adjust(p.value,method="BH")) |>
-  mutate(cmp=map2(target,target.2,.f=~(c(.x,.y)))) |>
-  filter(padj < 0.1)
+  mutate(cmp=map2(target,target.2,.f=~(c(.x,.y))))
 
 g_e_repetitiveness <- repet |>
   ggplot(aes(target,estimate)) +

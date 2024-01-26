@@ -224,10 +224,11 @@ dplyr::select(lineage_enrichments, -cont_mat) |>
 g_pan_highly_corr_with_tes <- df %>%
   dplyr::select(lineage,res=res.spqn) |>
   unnest(res) |>
-  filter(sex == "female") |>
+  filter(sex %in% c("female","male")) |> # only look at TEs/feature pairs that were modelable in male or female DGRP data
   mutate(feature2 = if_else(feature=="pan","pan","other")) |>
   ggplot(aes(coef, fill=feature2)) +
-  geom_density()
+  geom_density() +
+  facet_wrap(~sex)
 
 # ------------------------------------------------------------------------------
 # pan coexpression scatters
