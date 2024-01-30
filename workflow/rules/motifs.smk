@@ -1,4 +1,4 @@
-TFSOI=["pan","NfI","CG16779","vvl","Unr"]
+TFSOI=["pan","NfI","CG16779","vvl"]
 
 
 # -----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ rule meme_per_tf:
     params:
         dir = rules.split_cons_tes_per_tf.output.odir.replace("(","\\(").replace(")","\\)"),
     threads:
-        8
+        6
     #singularity:
         #"docker://memesuite/memesuite:5.5.4"
     shell:

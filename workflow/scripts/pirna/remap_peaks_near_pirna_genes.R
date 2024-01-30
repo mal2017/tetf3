@@ -27,7 +27,7 @@ remap <- ifelse(exists("snakemake"),
     readRDS()
 
 # get the remap peaks we're interested in
-remap <- remap[names(remap) %in% c("pan","CG16779","NfI","vvl","Unr")]
+remap <- remap[names(remap) %in% c("pan","CG16779","NfI","vvl")]
 
 remap <- remap %>%
   unlist() %>%
@@ -55,7 +55,7 @@ gr <- remap %>%
   map(~join_nearest(all_genes, .x, suffix = c(".piRNA",".ChIP"), distance = T)) %>%
   GRangesList() %>%
   unlist() |>
-  mutate(ChIP2  = ifelse(ChIP %in% c("NfI","CG16779","pan"),ChIP,"other"))
+  mutate(ChIP2  = ifelse(ChIP %in% c("NfI","CG16779","pan","vvl"),ChIP,"other"))
 
 
 write_rds(gr, snakemake@output$rds)
