@@ -319,53 +319,6 @@ rule collect_csem_peak_sea:
     script:
         "../scripts/motifs/collect_csem_peak_sea.R"
 
-
-checkpoint get_remap_peak_seqs:
-    input:
-        bed = rules.annotate_fixed_insertions.output.remap,
-        rpm = config.get("REF_INS"),
-        fa = config.get("GENOME_FA")
-    output:
-        odir = directory("results/motifs/remap_peaks/")
-    script:
-        "../scripts/motifs/get_remap_peak_seqs.R"
-
-
-
-rule sea_remap_peaks:
-    input:
-        dir = rules.get_remap_peak_seqs.output.odir,
-        meme = rules.get_known_motifs.output.jaspar,
-        meme2 = rules.get_known_motifs.output.jaspar2,
-    output:
-        odir = directory("results/motifs/sea_remap_peaks/pan")
-    singularity:
-        "docker://memesuite/memesuite:5.5.3"
-    shell:
-        """
-        sea -p '{input.dir}/pan.fasta' -m '{input.meme}' -m '{input.meme2}' --order 0 -oc '{output.odir}'
-        """
-
-# def aggregate_sea(wildcards):
-#     lms_checkpoint_output = checkpoints.split_cons_tes_per_tf.get(**wildcards).output.odir
-#     remap_checkpoint_output = checkpoints.get_remap_peak_seqs.get(**wildcards).output.odir
-#     #print(checkpoint_output)
-#     wc_path = os.path.join(lms_checkpoint_output, "{tf}/coex.fasta")
-#     tfs = glob_wildcards(wc_path).tf
-#     filter_wc_path = os.path.join(remap_checkpoint_output, "{tf}.fasta")
-#     filters = glob_wildcards(filter_wc_path).tf
-#     filters = ["pan"]
-#     return expand("results/motifs/sea_remap_peaks/{tf}", tf=[x for x in tfs if x in filters])
-
-
-# rule collect_remap_peak_sea:
-#     input:
-#         seas = expand("results/motifs/sea_remap_peaks/{tf}", tf=["pan"])
-#     output:
-#         tsv = "results/motifs/remap_peak_sea.tsv.gz"
-#     script:
-#         "../scripts/motifs/collect_remap_peak_sea.R"
-
 rule fimo_denovo_motifs_tes:
     input:
         tes = config.get("TE_FA"),
@@ -404,8 +357,6 @@ rule motifs:
         expand("results/motifs/homer_per_tf/{tf}/", tf=TFSOI),
         expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=TFSOI,p=["meme","streme","homer"]),
         "results/motifs/csem_peak_sea.pan.tsv.gz",
-        "results/motifs/sea_remap_peaks/pan"
         #"results/motifs/sea_denovo_motifs_on_tes/pan/",
-        #"results/motifs/sea_denovo_on_remap_peaks/pan",
         #expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,
         

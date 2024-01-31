@@ -22,13 +22,12 @@ coex_te_names <- coex_te_names |>
   dplyr::select(-feature_type) |>
   relocate(feature, .before="te")
 
-
-nested_list <- coex_te_names |> filter(feature == "pan") |>
+nested_list <- coex_te_names |> 
   group_by(feature,model) |>
-  mutate(te=list(te)) |>
+  summarize(te=list(te)) |>
   ungroup() |>
   nest(data=-model) |>
   deframe() |>
   map(deframe)
 
-jsonlite::write_json(nested_list,snakemake@output$json)
+jsonlite::write_json(nested_list,snakemake@output$json,pretty=T,simplifyVector=F)

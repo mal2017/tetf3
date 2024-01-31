@@ -20,7 +20,7 @@ source("workflow/scripts/utils/plotting.R")
 repet <- "results/repetitiveness/chip_repetitiveness.rds"
 repet <- read_rds(repet) |>
   filter(str_detect(target,"H3K|pan|CG16779|vvl|NfI")) |>
-  mutate(target = fct_reorder(target,estimate, .fun=mean))
+  mutate(target = fct_reorder(target,ratio.te, .fun=mean))
 
 pw <- \(x) {crossing(x,set_names(x,paste0(colnames(x),".2")),.name_repair = "universal")}
 
@@ -48,7 +48,7 @@ repet_test <- repet |>
   mutate(cmp=map2(target,target.2,.f=~(c(.x,.y))))
 
 g_e_repetitiveness <- repet |>
-  ggplot(aes(target,estimate)) +
+  ggplot(aes(target,ratio.te)) +
   geom_boxplot() +
   geom_jitter(width = 0.1) +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +

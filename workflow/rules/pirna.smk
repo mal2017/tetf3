@@ -8,18 +8,17 @@ rule pirna_enrichment_in_kd:
     script:
         "../scripts/pirna/pirna_in_kds.R"
 
-rule remap_peaks_dist_to_pirna:
+rule encode_peaks_dist_to_pirna:
     input:
         txdb = rules.make_txdb.output.txdb,
         pirna = rules.make_pirna_gene_list.output.tsv,
-        remap = rules.annotate_fixed_insertions.output.remap,
     output:
-        rds = "results/pirna/remap_peaks_dist_to_pirna.gr.rds",
+        rds = "results/pirna/encode_peaks_dist_to_pirna.gr.rds",
     script:
-        "../scripts/pirna/remap_peaks_near_pirna_genes.R"
+        "../scripts/pirna/encode_peaks_dist_to_piRNA_genes.R"
 
 
 rule collect_pirna_pathway_analysis:
     input:
         rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
-        rules.remap_peaks_dist_to_pirna.output.rds,
+        rules.encode_peaks_dist_to_pirna.output.rds,

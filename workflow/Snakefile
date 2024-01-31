@@ -33,6 +33,7 @@ rule all:
         rules.enrichment.output,
         rules.signatures.output,
         rules.motifs.output,
+        rules.figures.output
 
 
 

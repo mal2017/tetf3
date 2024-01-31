@@ -58,18 +58,4 @@ gr <- pks %>%
   unlist() |>
   mutate(ChIP2  = ifelse(ChIP %in% c("NfI","CG16779","pan","vvl"),ChIP,"other"))
 
-
-#write_rds(gr, snakemake@output$rds)
-# Test
-library(ggplot)
-library(ggpubr)
-ge<- gr |>
-  as_tibble() |>
-  mutate(type = if_else(is.piRNA.pathway,"TE regulators","other genes")) |>
-  mutate(ChIP = paste(ChIP, "peaks")) |>
-  ggplot(aes(type,log10(distance+1))) +
-  geom_boxplot() +
-  facet_wrap(~ChIP) +
-  ylab("log10(dist. to nearest peak + 1)") +
-  xlab("genes") +
-  stat_compare_means(size=unit(2,"pt"))
+write_rds(gr, snakemake@output$rds)

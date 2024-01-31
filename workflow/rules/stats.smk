@@ -37,11 +37,8 @@ rule collect_stats:
     """
     input:
         rules.stats_descriptive_lms.output.json,
-        #rules.plot_pirna_genes_in_lms.output.json,
-        #rules.s2rplus_stats.output.json,
         rules.our_kd_stats.output.json,
         rules.our_kd_signatures_stats.output.json,
-        #rules.remap_peaks_near_pirna_genes_contingency.output.json,
         rules.stats_pan_nfi_cg16779_vs_all.output.json,
     output:
         json = touch("results/stats/collected_stats.json")

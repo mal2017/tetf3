@@ -1,13 +1,13 @@
 rule csem_peaks_regioner:
     """
-    currently pulls directly from amarel, uses DSI library for pan
-    but can use aggregated peaks from all libraries too.
-    gro negcon is currently derived from all gro libraries
-
-    also pulls "~/amarel-matt/tetf/subworkflows/tetf_tidal/results/beds/dgrp_tidal_insertions.unique.bb"
-    from amarel
+    currently pulls directly from amarel, but will fix this later
     """
+    input:
+        ref_ins = config["REF_INS"],
+        fixed_ref_ins = rules.putative_fixed_insertions.output.rds,
+        coex_json = rules.coexpressed_tes_json.output.json,
     output:
-        rds = "results/csem_mosaics/regioner.rds"
+        rds = "results/csem_mosaics/regioner.rds",
+        segmentation = "results/csem_mosaics/regioner.segmentation.rds",
     script:
-        "../scripts/csem_mosaics/regioner.R"
+        "../scripts/csem_mosaics/regioner_v2.R"

@@ -54,7 +54,6 @@ rule figure3_supp_01:
     input:
         "results/deg/s2rplus.res.tsv.gz",
         rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
-        rules.remap_peaks_dist_to_pirna.output.rds,
     output:
         pdf="results/figures2/figure3_supp_01.s2rplus.pdf"
     script:
@@ -208,11 +207,11 @@ rule figure5_supp_01:
 
 rule figure5_supp_02:
     input:
-        
+        rules.encode_peaks_dist_to_pirna.output.rds,
     output:
-        pdf="results/figures2/figure5_supp_02.te-regulators-in-kd-and-remap.pdf"
+        pdf="results/figures2/figure5_supp_02.te-regulators-in-kd-and-encode.pdf"
     script:
-        "../scripts/figures2/te-regulators-in-kd-and-remap-peak-prox.R"
+        "../scripts/figures2/te-regulators-in-kd-and-encode-peak-prox.R"
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -223,14 +222,11 @@ rule figures:
     input:
         rules.figure1.output,
         rules.figure1_supp_01.output,
-        
         rules.figure2.output,
-        
         rules.figure3.output,
         rules.figure3_supp_01.output,
         rules.figure3_supp_02.output,
         rules.figure3_supp_03.output,
-
         rules.figure4.output,
         rules.figure4_supp_01.output,
         rules.figure4_supp_02.output,
@@ -241,7 +237,6 @@ rule figures:
         rules.figure4_supp_07.output,
         rules.figure4_supp_08.output,
         rules.figure4_supp_09.output,
-
         rules.figure5.output,
         rules.figure5_supp_01.output,
         rules.figure5_supp_02.output,

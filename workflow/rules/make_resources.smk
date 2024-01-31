@@ -42,22 +42,6 @@ rule get_zad_genes:
     script:
         "../scripts/make_resources/get_zad_genes.R"
 
-rule annotate_fixed_insertions:
-    """
-    Insertions present in the ref (per my repeatmasker run) that are also fixed across all TIDAL strains.
-    Annotated with feature overlap, gc, etc.
-    """
-    input:
-        lms = config.get("MERGED_MODELS"),
-        remap = config.get("REMAP_PEAKS"),
-        insertions = config.get("PENETRANCE"),
-        all_ins = config.get("ALL_INS"),
-        txdb = rules.make_txdb.output.txdb,
-    output:
-        rds = "results/resources/annotated_fixed_insertions.gr.rds",
-        remap = "results/resources/remap.gr.rds",
-    script:
-        "../scripts/make_resources/annotate_fixed_insertions.R"
 
 rule te_sequences_split:
     """
@@ -86,6 +70,18 @@ rule coexpressed_tes_json:
         json = "results/resources/coexpressed_tes.json"
     script:
         "../scripts/make_resources/coexpressed_te_json.R"
+
+rule putative_fixed_insertions:
+    """
+    find insertions fixed in all assayed DGRP lines and the reference
+    """
+    input:
+        ref_ins = config.get("REF_INS"),
+        uniq_tidal = config.get("PENETRANCE"),
+    output:
+        rds = "results/resources/putative_fixed_insertions.rds",
+    script:
+        "../scripts/make_resources/putative_fixed_insertions.R"
 
 rule make_resources:
     """

@@ -69,7 +69,7 @@ plotGG(g_bcd$knockdown2_NFI_female_head_Mef2.R_control_female_head_Mef2.R,
        x = 4.5, y=0.5, width = 3.25,height = 2.5)
 plotText("B", x = 4.5, y=0.5)
 
-plotGG(g_bcd$knockdown2_pan_female_gonad_tj_control_female_gonad_tj, x = 0.75, y=3.5, width = 3.25,height = 2.5)
+plotGG(g_bcd$knockdown2_pan_female_head_Mef2.R_control_female_head_Mef2.R, x = 0.75, y=3.5, width = 3.25,height = 2.5)
 plotText("C",  x = 0.5, y=3.5)
 
 plotGG(g_bcd$knockdown2_CG16779_male_gonad_aTub_control_male_gonad_aTub, x = 4.5, y=3.5, width = 3.25,height = 2.5)
