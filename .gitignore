@@ -3,6 +3,7 @@ results/
 .Rproj.user/
 resources/
 upstream/
+upstream*/
 results/
 *pdf
 .vscode

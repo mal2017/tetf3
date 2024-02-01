@@ -62,14 +62,14 @@ get_replicated_pks <- function(glb, extraction_pattern = "(?<=mosaics/mosaics\\/
   pks
 }
 
-replicated_pks <- list(pan="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_*_rep*/pan_*rep*.mosaics.bed",
-     gro="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/gro*rep*/gro*rep*.mosaics.bed",
-     H3K9Me3="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/*_H3K9Me3_ChIPSeq_*/*H3K9Me3_ChIPSeq_*.mosaics.bed",
-     Nnk="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/CG17802*/*mosaics.bed",
-     vvl="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/vvl*/*mosaics.bed",
-     Odj="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/CG7357_*_rep*/*rep*.mosaics.bed",
-     NfI="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/NfI*rep*/*rep*.mosaics.bed",
-     CG16779="~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/CG16779*rep*/*rep*.mosaics.bed") |>
+replicated_pks <- list(pan="upstream/csem_mosaics/mosaics/pan_*_rep*/pan_*rep*.mosaics.bed",
+     gro="upstream/csem_mosaics/mosaics/gro*rep*/gro*rep*.mosaics.bed",
+     H3K9Me3="upstream/csem_mosaics/mosaics/*_H3K9Me3_ChIPSeq_*/*H3K9Me3_ChIPSeq_*.mosaics.bed",
+     Nnk="upstream/csem_mosaics/mosaics/CG17802*/*mosaics.bed",
+     vvl="upstream/csem_mosaics/mosaics/vvl*/*mosaics.bed",
+     Odj="upstream/csem_mosaics/mosaics/CG7357_*_rep*/*rep*.mosaics.bed",
+     NfI="upstream/csem_mosaics/mosaics/NfI*rep*/*rep*.mosaics.bed",
+     CG16779="upstream/csem_mosaics/mosaics/CG16779*rep*/*rep*.mosaics.bed") |>
   map(get_replicated_pks)
 
 
@@ -108,7 +108,7 @@ high_density_state <- split(te_density_seg,te_density_seg$state) |>
 df <- expand_grid(ChIP = names(replicated_pks),
             masking = c("none","mask_heterochromatin"),
             te_set = c("factor_specific","all")) |>
-  filter(!((ChIP=="H3K9Me3") & te_set == "factor-specific")) |>
+  filter(!((ChIP=="H3K9Me3") & te_set == "factor_specific")) |>
   mutate(mask_gr = map(masking,~{
     if (.x == 'none') {
       return(NA)

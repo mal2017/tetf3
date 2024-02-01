@@ -26,7 +26,7 @@ plot_regioner <- function(x,g,m,ts) {
   g2 <- ggplot(permuted_overlaps, aes(overlaps)) +
     geom_histogram() +
     geom_vline(data = observed_overlaps, aes(xintercept = overlaps), color="darkgreen") +
-    annotate("text", x=-Inf, y=Inf, label=sprintf("z=%s, p=%s, alternative=%s", format(z, digits=3), format.pval(pval,digits = 2), alt), hjust=0, vjust=1) +
+    annotate("text", x=-Inf, y=Inf, label=sprintf("z=%s, p<%s, alternative=%s", format(z, digits=3), format.pval(pval,digits = 2), alt), hjust=0, vjust=1) +
     labs(title=lb) +
     ylab("n")
   

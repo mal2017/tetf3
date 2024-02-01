@@ -21,7 +21,7 @@ REMAP_PEAKS: resources/remap2022_nr_macs2_dm6_v1_0.bed.gz
 # Expression data
 #############################################################################
 THIS_STUDY_RNAI: upstream/kd.se.gene.0.rds
-THIS_STUDY_DGRP_RNA: upstream/se.gene.0.rds
+THIS_STUDY_DGRP_RNA: upstream/dgrp.se.gene.0.rds
 
 
 #############################################################################
@@ -60,38 +60,8 @@ DASHING_PATH: "/home/mlawlor/repos/dashing2/dashing2" # currently 2.1.19
 # ChIP-seq data/repetitive element enrichment
 #############################################################################
 ENCODE_SAMPLE_SHEET: upstream/sample_table_encode.csv
-ENCODE_FINGERPRINT_DEEPTOOLS: upstream/all_fingerprint.metrics.txt
+ENCODE_FINGERPRINT_DEEPTOOLS: upstream/masked_all_fingerprint.metrics.txt
 ENCODE_MASKED_IDXSTATS: upstream/masked_idxstats.txt
-
-
-#############################################################################
-# Gene group phylogeny analysis params (ZADs)
-#############################################################################
-# should be MFP to run model finder, unless best model
-# already determined for the same alignment
-IQTREE_MODEL: 
-  PF07776: LG+I+I+R4
-
-CLIPKIT_MODEL:
-  PF07776: smart-gap
-
-# for genes with > 1 pfam domain hit take the first N
-# this is mostly there to filter ZADs, for which the hit
-# near the n terminus is characteristic. this seems to
-# only matter for ouib.
-ALIGN_N_HITS:
-  PF07776: 1
-
-
-##################################################################################
-# Peak/te overlap analysis
-###################################################################################
-BOOTRANGES_REPS: 100
-BOOTRANGES_SEGLENGTH: 1e5
-BOOTRANGES_BLOCKLENGTH: 5e5
-BOOTRANGES_NSEG: 3
-
-
 
 ##################################################################################
 # MOTIF analysis
@@ -100,18 +70,4 @@ BBMASK_ENTROPY: 0.7
 BBMASK_W: 12
 
 STREME_ARGS: "--order 0"
-
-
-############################################################################
-# Rewiring analysis params
-###############################################################################
-REWIRING_ANALYSIS:
-  TSS_DIST: 5000
-  MAX_TES_PER_GENE: 100 # effectively inf
-  COEF_QUANTILE_CUTOFF: 0.5 # effectively inf
-  MIN_PCT_FIXATION: 0.25
-  MAX_PCT_FIXATION: 0.75
-
-
-
 
