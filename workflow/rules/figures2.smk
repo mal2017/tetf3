@@ -54,6 +54,8 @@ rule figure3_supp_01:
     input:
         "results/deg/s2rplus.res.tsv.gz",
         rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
+        rules.make_gene_symbol_lookup.output,
+        rules.s2rplus_coex_te_gsea_by_de.output,
     output:
         pdf="results/figures2/figure3_supp_01.s2rplus.pdf"
     script:
@@ -92,6 +94,25 @@ rule figure4:
        pdf="results/figures2/figure4_main.pan-motifs.pdf"
     script:
       "../scripts/figures2/pan-motifs.main.R"
+
+rule figure4_supp_00:
+    input:
+        dds = "results/ripseq/unr_ripseq.dds.rds",
+        tsv = "results/ripseq/unr_ripseq.tsv.gz",
+        au = "results/ripseq/unr_ripseq_features_au_content.tsv.gz",
+        au_in_region = "results/ripseq/unr_ripseq_features_au_content_in_region.tsv.gz",
+        attta_in_region = "results/ripseq/unr_ripseq_features_attta_sites_in_region.tsv.gz",
+        gsea = "results/ripseq/unr_bound_tx_in_kd.gsea.rds",
+        p4d = "results/ripseq/unr_ripseq_phylosignal.p4d.rds",
+    params:
+        relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION")
+    output:
+        pdf="results/figures2/figure4_supp_00.ripseq-ares.pdf",
+        pdf2="results/figures2/figure4_supp_00.ripseq-phylosignal.pdf"
+    script:
+        "../scripts/figures2/unr_ripseq.R"
+
+
 
 rule figure4_supp_01:
     input:
@@ -228,6 +249,7 @@ rule figures:
         rules.figure3_supp_02.output,
         rules.figure3_supp_03.output,
         rules.figure4.output,
+        rules.figure4_supp_00.output,
         rules.figure4_supp_01.output,
         rules.figure4_supp_02.output,
         rules.figure4_supp_03.output,
@@ -235,7 +257,7 @@ rule figures:
         rules.figure4_supp_05.output,
         rules.figure4_supp_06.output,
         rules.figure4_supp_07.output,
-        rules.figure4_supp_08.output,
+        #rules.figure4_supp_08.output,
         rules.figure4_supp_09.output,
         rules.figure5.output,
         rules.figure5_supp_01.output,
