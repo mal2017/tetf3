@@ -33,7 +33,7 @@ wh <-  sl |>
 # get tiles and average within each tile - plotting takes forever with default 50bp windows
 tiles <- tileGenome(deframe(sl[,c("SequenceName","SequenceLength")])[chroi],tilewidth = 50000, cut.last.tile.in.chrom=TRUE)
 
-pan_bws <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/viz/pan*.log2ratio.bw")
+pan_bws <- Sys.glob("upstream/csem_mosaics/bigwigs/pan*.log2ratio.bw")
 names(pan_bws) <- str_extract(pan_bws,"(?<=viz\\/).+(?=\\.log2)")
 
 # specify the set of colors I'll use later, as well as a manual ordering of pan samples
@@ -69,10 +69,9 @@ g_pan_profile <- gs$pan@ggplot + aes(color=grl_name, fill=grl_name) +
 repet <- "results/repetitiveness/chip_repetitiveness.rds"
 repet <- read_rds(repet) |>
   filter(str_detect(target,"H3K|pan")) |>
-  mutate(target = fct_reorder(target,estimate))
+  mutate(target = fct_reorder(target,ratio.te))
 
-qc_df0 <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_basic_chip/results/basic_chip/qc/masked/pan*_rep*.fingerprint.metrics.txt") |>
-  map_df(read_tsv)
+qc_df0 <- read_tsv("upstream/masked_all_fingerprint.metrics.txt")
 
 qc_df <- filter(qc_df0, !str_detect(Sample,"input")) |> 
   mutate(experiment = str_extract(Sample,"ENCSR.+(?=_rep)")) |>
@@ -89,7 +88,7 @@ supporting <- c('pan_ENCSR058DSI_rep1',
                 'pan_ENCSR455AWG_rep2',
                 'pan_ENCSR455AWG_rep3')
 
-toplot <- inner_join(dplyr::select(repet,library=sample,repetitiveness_index=estimate),
+toplot <- inner_join(dplyr::select(repet,library=sample,repetitiveness_index=ratio.te),
                      qc_df, by="library") |>
   mutate(supporting = library %in% supporting) |>
   pivot_longer(-c(library,supporting),names_to = "metric", values_to = "score")

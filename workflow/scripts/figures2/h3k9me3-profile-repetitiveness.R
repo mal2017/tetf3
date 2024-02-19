@@ -77,7 +77,7 @@ wh <-  sl |>
 # get tiles and average within each tile - plotting takes forever with default 50bp windows
 tiles <- tileGenome(deframe(sl[,c("SequenceName","SequenceLength")])[chroi],tilewidth = 50000, cut.last.tile.in.chrom=TRUE)
 
-h3k9me3_bws <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/viz/*H3K9Me3*.log2ratio.bw")
+h3k9me3_bws <- Sys.glob("upstream/csem_mosaics/bigwigs/*H3K9Me3*.log2ratio.bw")
 names(h3k9me3_bws) <- str_extract(h3k9me3_bws,"(?<=viz\\/).+(?=\\.log2)")
 
 # reorder by developmental timepoint
