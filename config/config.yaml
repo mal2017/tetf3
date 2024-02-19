@@ -4,7 +4,9 @@
 # references
 #############################################################################
 GENOME_FA: resources/dmel-all-chromosome-r6.41.fasta.gz
+TX_FA: resources/dmel-all-transcript-r6.41.fasta.gz
 GTF: resources/dmel-all-r6.41.gtf.gz
+LKUP: resources/fbgn_fbtr_fbpp_expanded_fb_2021_04.tsv.gz
 
 
 #############################################################################
@@ -48,6 +50,13 @@ S2RPLUS_RNAI_SE: upstream/tfrnai.se.gene.0.rds
 S2RPLUS_RNAI_RUNSELECTOR: resources/full_tfrnai_srarunselector.txt
 S2RPLUS_RNAI_BATCH: resources/batch_data.tsv.gz
 
+#############################################################################
+# Unr RIPseq
+#############################################################################
+UNR_RIPSEQ_COUNTS: upstream/unr_ripseq_counts.tsv.gz
+COMBINED_GTF: upstream/transcripts-plus-tes.gtf
+UNR_RIPSEQ_ALPHA: 0.1
+UNR_RIPSEQ_TX_RELATIVE_POSITION: 50 # consider last x% of transcript
 
 #############################################################################
 # Relationship between sequence similarity and coexpression
@@ -59,7 +68,7 @@ DASHING_PATH: "/home/mlawlor/repos/dashing2/dashing2" # currently 2.1.19
 #############################################################################
 # ChIP-seq data/repetitive element enrichment
 #############################################################################
-ENCODE_SAMPLE_SHEET: upstream/sample_table_encode.csv
+ENCODE_SAMPLE_SHEET: resources/sample_table_encode.csv
 ENCODE_FINGERPRINT_DEEPTOOLS: upstream/masked_all_fingerprint.metrics.txt
 ENCODE_MASKED_IDXSTATS: upstream/masked_idxstats.txt
 

@@ -1,4 +1,6 @@
 rule make_gene_symbol_lookup:
+    input:
+        lkup = config.get("LKUP"),
     output:
         tsv = "results/resources/gene_symbol_lookup.tsv.gz"
     script:
@@ -39,6 +41,8 @@ rule make_txdb:
 rule get_zad_genes:
     output:
         tsv = "results/resources/zad_genes.tsv"
+    conda:
+        "../envs/biomart.yaml"
     script:
         "../scripts/make_resources/get_zad_genes.R"
 
