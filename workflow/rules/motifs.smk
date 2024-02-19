@@ -279,41 +279,41 @@ rule sea_known_motifs_on_tes:
         sea -p '{input.dir}/coex.fasta' -n '{input.dir}/other.fasta' -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
         """
 
-csem_libraries,zz = glob_wildcards('/home/mlawlor/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_{lib}/{lib2}.bed')
+csem_libraries, = glob_wildcards('upstream/csem_mosaics/sea/sea/pan_{lib}/sea.tsv')
 
-rule get_csem_pan_peaks:
-    input:
-        bed = "/home/mlawlor/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_{library}/pan_{library}.mosaics.bed",
-        fa = config.get("GENOME_FA")
-    output:
-        fa = "results/motifs/csem_peaks/pan/{library}.fasta",
-        g = temp("results/motifs/csem_peaks/genome.tmp.{library}.fa"),
-    conda:
-        "../envs/bedtools.yaml"
-    shell:
-        """
-        gunzip -c {input.fa} > {output.g} &&
-        bedtools getfasta -fi {output.g} -bed {input.bed} -fo {output.fa}
-        """
+# rule get_csem_pan_peaks:
+#     input:
+#         bed = "/home/mlawlor/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_{library}/pan_{library}.mosaics.bed",
+#         fa = config.get("GENOME_FA")
+#     output:
+#         fa = "results/motifs/csem_peaks/pan/{library}.fasta",
+#         g = temp("results/motifs/csem_peaks/genome.tmp.{library}.fa"),
+#     conda:
+#         "../envs/bedtools.yaml"
+#     shell:
+#         """
+#         gunzip -c {input.fa} > {output.g} &&
+#         bedtools getfasta -fi {output.g} -bed {input.bed} -fo {output.fa}
+#         """
 
-rule sea_csem_peaks:
-    input:
-        fa = "results/motifs/csem_peaks/pan/{library}.fasta",
-        meme = rules.get_known_motifs.output.jaspar,
-        meme2 = rules.get_known_motifs.output.jaspar2,
-    output:
-        odir = directory("results/motifs/sea_csem_peaks/pan/{library}")
-    singularity:
-        "docker://memesuite/memesuite:5.5.3"
-    shell:
-        """
-        sea -p {input.fa} -m '{input.meme}' -m '{input.meme2}' --order 0 -oc '{output.odir}'
-        """
+# rule sea_csem_peaks:
+#     input:
+#         fa = "results/motifs/csem_peaks/pan/{library}.fasta",
+#         meme = rules.get_known_motifs.output.jaspar,
+#         meme2 = rules.get_known_motifs.output.jaspar2,
+#     output:
+#         odir = directory("results/motifs/sea_csem_peaks/pan/{library}")
+#     singularity:
+#         "docker://memesuite/memesuite:5.5.3"
+#     shell:
+#         """
+#         sea -p {input.fa} -m '{input.meme}' -m '{input.meme2}' --order 0 -oc '{output.odir}'
+#         """
 
 
 rule collect_csem_peak_sea:
     input:
-        seas = expand("results/motifs/sea_csem_peaks/pan/{library}/", library=csem_libraries)
+        seas = expand("upstream/csem_mosaics/sea/sea/pan_{library}/", library=csem_libraries)
     output:
         tsv = "results/motifs/csem_peak_sea.pan.tsv.gz"
     script:
