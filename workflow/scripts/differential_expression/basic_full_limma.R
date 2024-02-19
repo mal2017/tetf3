@@ -18,7 +18,7 @@ runselector_path <- snakemake@input[["runselect"]]
 batch_path <- snakemake@input[["batch"]]
 tsv_results_path <- snakemake@output[["tsv"]]
 
-gene_universe <- read_tsv("http://ftp.flybase.net/releases/FB2022_04/precomputed_files/genes/fbgn_fbtr_fbpp_expanded_fb_2022_04.tsv.gz", skip = 4)
+gene_universe <- read_tsv("resources/fbgn_fbtr_fbpp_expanded_fb_2021_04.tsv.gz", skip = 4)
 
 allowed_genes <- gene_universe %>% filter(gene_type %in% c("protein_coding_gene"))
 

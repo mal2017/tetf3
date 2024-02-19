@@ -15,9 +15,10 @@ rule this_study_kd_deseq2:
     se = config.get("THIS_STUDY_RNAI"),
   output:
     grs = "results/deg/ourKD.de.grs.rds",
-    dds = "results/deg/ourKD.dds.list.rds"
+    dds = "results/deg/ourKD.dds.list.rds",
+    df = "results/deg/ourKD.de.df.rds",
   script:
-    "../scripts/differential_expression/ourKD_deseq2.R"
+    "../scripts/differential_expression/ourKD_deseq2.v3.R"
 
 
 rule differential_expression:
