@@ -14,7 +14,6 @@ de <- de |>
   left_join(te_regulators,by=c(feature="gene_ID")) |>
   separate(comparison,into=c("z","target","sex","tissue","driver"), remove = F,extra = "drop",sep="_") |>
   dplyr::select(-z) |>
-  filter(driver %in% c("Mef2.R","tj","aTub")) |>
   dplyr::select(target,sex,tissue,driver,feature,gene_symbol,padj,log2FoldChange) |>
   mutate(target=if_else(target=="NFI","NfI",target))
 
@@ -29,7 +28,7 @@ d |>
   distinct() |>
   left_join(de,y=_,by=c(feature="feature",gene_symbol="gene_symbol",target="ChIP")) |>
   filter(target!="Unr") |>
-  filter(distance < 350) 
+  filter(distance < 1000) 
 
 
 d2 <- d |>
