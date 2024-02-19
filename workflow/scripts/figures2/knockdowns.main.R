@@ -16,9 +16,6 @@ x <- x |> mutate(lab = str_replace_all(str_extract(comparison,"(?<=knockdown2_).
 
 gg <- x |> 
   filter(padj < 0.1 & signature_name == "all_tes") |>
-  group_by(signature_name, kd) |>
-  slice_min(pvalue) |>
-  ungroup() |>
   mutate(gg = pmap(list(lab, ID, gsea),
                    .f = function(lab,gs, obj) {
                      enrichplot::gseaplot2(obj, geneSetID=gs, title = lab)
@@ -65,7 +62,7 @@ pageCreate(height = 11, showGuides=interactive())
 plotGG(g_a, x = 0.5, y=0.5, width = 3.75,height = 2.5)
 plotText("A", x = 0.5, y=0.5)
 
-plotGG(g_bcd$knockdown2_NFI_female_head_Mef2.R_control_female_head_Mef2.R, 
+plotGG(g_bcd$knockdown2_NfI_female_head_Mef2.R_control_female_head_Mef2.R, 
        x = 4.5, y=0.5, width = 3.25,height = 2.5)
 plotText("B", x = 4.5, y=0.5)
 

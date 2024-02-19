@@ -43,10 +43,10 @@ x <- x |> mutate(lab = str_replace_all(str_extract(comparison,"(?<=knockdown2_).
 plot_barchart <- function(dat) {
   dat |>
     filter(signature_name == kd) |>
-    mutate(lab = fct_reorder(lab, pvalue)) |>
-    ggplot(aes(-log10(pvalue), lab)) +
+    mutate(lab = fct_reorder(lab, padj)) |>
+    ggplot(aes(-log10(padj), lab)) +
     geom_col() +
-    geom_vline(xintercept = -log10(0.05),color="red",linetype="dashed") +
+    geom_vline(xintercept = -log10(0.1),color="red",linetype="dashed") +
     ylab("RNAi / sex / sample / driver")
 }
 
