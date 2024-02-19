@@ -117,7 +117,7 @@ df <- split(SC$lineage,SC$lineage) |>
   enframe(name = "lineage", value = "SC_idx") |>
   mutate(n=map_dbl(SC_idx, length)) |>
   mutate(SC_sizes = map(SC_idx, ~{SC$supercell_size[.x]})) |>
-  mutate(GE_mat = map(SC_idx, ~{GE[,.x]})) 
+  mutate(GE_mat = map(SC_idx, ~{GE[,.x]}))
 
 # get weighted correlation
 df <- mutate(df, cor.raw = map2(GE_mat, SC_sizes, get_weighted_cor))
