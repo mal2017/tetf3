@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-tidyverse
+  - bioconductor-biomaRt
+  - bioconductor-org.dm.eg.db
