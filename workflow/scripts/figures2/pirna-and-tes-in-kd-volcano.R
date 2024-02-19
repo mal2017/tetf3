@@ -4,13 +4,12 @@ library(patchwork)
 library(ggtext)
 library(patchwork)
 library(plotgardener)
-library(tidyverse)
 
 # ------------------------------------------------------------------------------
 # get de results
 # ------------------------------------------------------------------------------
 
-gene_universe <- read_tsv("http://ftp.flybase.net/releases/FB2022_04/precomputed_files/genes/fbgn_fbtr_fbpp_expanded_fb_2022_04.tsv.gz", skip = 4)
+gene_universe <- read_tsv("resources/fbgn_fbtr_fbpp_expanded_fb_2021_04.tsv.gz", skip = 4)
 
 lkup <- gene_universe %>% dplyr::select(gene_ID, gene_symbol) %>% distinct()
 
@@ -81,7 +80,7 @@ g_a <- res |>
         legend.margin=margin(0,0,0,0),
         legend.box.margin=margin(0,0,0,0),
         legend.key.height = unit(0.2,"in"), legend.key.width = unit(0.05,"in")) +
-  facet_wrap(~comparison, ncol=3)
+  facet_wrap(~comparison, ncol=3,scales = "free")
 
 
 # ------------------------------------------------------------------------------

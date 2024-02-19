@@ -89,9 +89,9 @@ wh <-  sl |>
 
 # get names/paths of bigwigs
 
-bws <- Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/viz/pan_ENCSR058DSI_rep*.log2ratio.bw") |>
-  c(Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/viz/gro_ENCSR981DLO_rep1.log2ratio.bw")) |>
-  c(Sys.glob("~/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/viz/E0.4_H3K9Me3_ChIPSeq_1.log2ratio.bw"))
+bws <- Sys.glob("upstream/csem_mosaics/bigwigs/pan_ENCSR058DSI_rep*.log2ratio.bw") |>
+  c(Sys.glob("upstream/csem_mosaics/bigwigs/gro_ENCSR981DLO_rep1.log2ratio.bw")) |>
+  c(Sys.glob("upstream/csem_mosaics/bigwigs/E0.4_H3K9Me3_ChIPSeq_1.log2ratio.bw"))
 
 names(bws) <- str_extract(bws,"(?<=viz\\/).+(?=\\.log2)")
 
