@@ -5,5 +5,9 @@ resources/
 upstream/
 upstream*/
 results/
+results*/
 *pdf
 .vscode
+renv/*
+!renv/settings.json
+!renv/activate.R
