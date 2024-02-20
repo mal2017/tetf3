@@ -74,6 +74,41 @@ rule unr_ripseq_phylosignal:
     script:
         "../scripts/phylosignal/unr_ripseq_phylosignal.R"
 
+rule get_ripseq_te_sequences:
+    input:
+        te_fa = config.get("TE_FA"),
+        rip_fl = "results/ripseq/unr_ripseq.tsv.gz"
+    output:
+        fa = "results/ripseq/unr_ripseq_te_sequences.fa",
+        non_bound_fa = "results/ripseq/unr_ripseq_non_bound_te_sequences.fa",
+    script:
+        "../scripts/ripseq/get_ripseq_te_sequences.R"
+
+
+
+rule meme_unr_ripseq:
+    """
+    - -neg "{input.dir}/Unr/other.fasta" 
+    """
+    input:
+        fa = "results/ripseq/unr_ripseq_te_sequences.fa",
+        non_bound_fa = "results/ripseq/unr_ripseq_non_bound_te_sequences.fa",
+    output:
+        odir = directory("results/ripseq/unr_meme/")
+    threads:
+        6
+    singularity:
+        "docker://memesuite/memesuite:5.5.4"
+    shell:
+        """
+        meme {input.fa} \
+            -neg {input.non_bound_fa} \
+            -oc '{output.odir}' \
+            -nmotifs 10 -minw 5 -maxw 8 -dna -mod anr -p {threads} \
+            -objfun se
+        """
+
+
 
 rule unr_ripseq_analysis:
     input:
