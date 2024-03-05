@@ -5,6 +5,7 @@ library(regioneR)
 library(excluderanges)
 library(AnnotationHub)
 library(patchwork)
+library(RcppHMM)
 
 # latest version of this script uses the fixed reference insertions file made upstream,
 # so we only have to do it once
@@ -62,14 +63,14 @@ get_replicated_pks <- function(glb, extraction_pattern = "(?<=mosaics/mosaics\\/
   pks
 }
 
-replicated_pks <- list(pan="upstream/csem_mosaics/mosaics/pan_*_rep*/pan_*rep*.mosaics.bed",
-     gro="upstream/csem_mosaics/mosaics/gro*rep*/gro*rep*.mosaics.bed",
-     H3K9Me3="upstream/csem_mosaics/mosaics/*_H3K9Me3_ChIPSeq_*/*H3K9Me3_ChIPSeq_*.mosaics.bed",
-     Nnk="upstream/csem_mosaics/mosaics/CG17802*/*mosaics.bed",
-     vvl="upstream/csem_mosaics/mosaics/vvl*/*mosaics.bed",
-     Odj="upstream/csem_mosaics/mosaics/CG7357_*_rep*/*rep*.mosaics.bed",
-     NfI="upstream/csem_mosaics/mosaics/NfI*rep*/*rep*.mosaics.bed",
-     CG16779="upstream/csem_mosaics/mosaics/CG16779*rep*/*rep*.mosaics.bed") |>
+replicated_pks <- list(pan="upstream/csem_mosaics/mosaics/mosaics/pan_*rep*/pan*.mosaics.bed",
+     gro="upstream/csem_mosaics/mosaics/mosaics/gro*rep*/gro*rep*.mosaics.bed",
+     H3K9Me3="upstream/csem_mosaics/mosaics/mosaics/*_H3K9Me3_ChIPSeq_*/*H3K9Me3_ChIPSeq_*.mosaics.bed",
+     Nnk="upstream/csem_mosaics/mosaics/mosaics/CG17802*/*mosaics.bed",
+     vvl="upstream/csem_mosaics/mosaics/mosaics/vvl*/*mosaics.bed",
+     Odj="upstream/csem_mosaics/mosaics/mosaics/CG7357_*_rep*/*rep*.mosaics.bed",
+     NfI="upstream/csem_mosaics/mosaics/mosaics/NfI*rep*/*rep*.mosaics.bed",
+     CG16779="upstream/csem_mosaics/mosaics/mosaics/CG16779*rep*/*rep*.mosaics.bed") |>
   map(get_replicated_pks)
 
 
