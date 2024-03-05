@@ -18,7 +18,7 @@ pirna_gene_ids <- ifelse(exists("snakemake"),
     "results/resources/pirna_pathway.tsv") %>%
     read_tsv()
 
-# embryo only
+# embryo only for consistency
 # these are narrowPeak format with multiple summits per peak, so need to reduce
 pks0 <- list(pan = c("https://www.encodeproject.org/files/ENCFF118OVG/@@download/ENCFF118OVG.bed.gz",
                      "https://www.encodeproject.org/files/ENCFF878WBZ/@@download/ENCFF878WBZ.bed.gz",
