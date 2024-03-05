@@ -51,16 +51,15 @@ rule figure3:
         "../scripts/figures2/knockdowns.main.R"
 
 rule figure3_supp_01:
+    """
+    factor specific kd enrichment
+    """
     input:
-        "results/deg/s2rplus.res.tsv.gz",
-        rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
-        rules.make_gene_symbol_lookup.output,
-        rules.s2rplus_coex_te_gsea_by_de.output,
+        "results/signatures/ourKD_gsea.rds",
     output:
-        pdf="results/figures2/figure3_supp_01.s2rplus.pdf"
+        pdf="results/figures2/figure3_supp_01.factor_specific_gsea.pdf"
     script:
-        "../scripts/figures2/s2rplus-all-te-and-our-kd-factor-specific-kd-enrichment.R"
-
+        "../scripts/figures2/our-kd-factor-specific-gsea.R"
 
 rule figure3_supp_02:
     input:
@@ -70,16 +69,6 @@ rule figure3_supp_02:
         pdf="results/figures2/figure3_supp_02.pirna-volcano.pdf"
     script:
         "../scripts/figures2/pirna-and-tes-in-kd-volcano.R"
-
-rule figure3_supp_03:
-    input:
-        "results/signatures/ourKD_gsea.rds",
-        "upstream/final-models.collected-info.tsv.gz"
-    output:
-        pdf="results/figures2/figure3_supp_03.kd-vs-coex-direction-table.pdf"
-    script:
-        "../scripts/figures2/kd-vs-coex-direction-table.R"
-
 
 
 # # ---------------------------------------------------------------------------------------------------
@@ -153,16 +142,7 @@ rule figure4_supp_04:
     script:
         "../scripts/figures2/csem-tracks-and-qc-pan-profile.R"
 
-rule figure4_supp_05:
-    """
-    validate csem peaks
-    """
-    input:
-        "results/motifs/csem_peak_sea.pan.tsv.gz"
-    output:
-        pdf="results/figures2/figure4_supp_05.known-pan-motifs-in-csem-peaks.pdf",
-    script:
-        "../scripts/figures2/known-pan-motifs-in-csem-peaks.R"
+
 
 
 rule figure4_supp_06:
@@ -187,18 +167,17 @@ rule figure4_supp_07:
 
 rule figure4_supp_08:
     input:
-        "resources/putatively_bound_insertions.rds",
-        "workflow/scripts/utils/plotting.R"
+        rules.fca_heads_reanalysis.output,
     output:
-        pdf="results/figures2/figure4_supp_08.exemplary-bound-locus-1.pdf",
+        pdf="results/figures2/figure4_supp_08.fca.pdf",
     script:
-        "../scripts/figures2/exemplary-bound-locus-1.R"
+        "../scripts/figures2/flycellatlas.R"
 
 rule figure4_supp_09:
     input:
         rules.calderon22_reanalysis.output,
     output:
-        pdf="results/figures2/figure5_supp_09.calderon22.pdf",
+        pdf="results/figures2/figure4_supp_09.calderon22.pdf",
     script:
         "../scripts/figures2/calderon22.R"
 
@@ -226,14 +205,6 @@ rule figure5_supp_01:
         "../scripts/figures2/dashing2-te-phylo-supplement-01.R"
 
 
-rule figure5_supp_02:
-    input:
-        rules.encode_peaks_dist_to_pirna.output.rds,
-    output:
-        pdf="results/figures2/figure5_supp_02.te-regulators-in-kd-and-encode.pdf"
-    script:
-        "../scripts/figures2/te-regulators-in-kd-and-encode-peak-prox.R"
-
 
 # ---------------------------------------------------------------------------------------------------
 # bring it together
@@ -247,19 +218,15 @@ rule figures:
         rules.figure3.output,
         rules.figure3_supp_01.output,
         rules.figure3_supp_02.output,
-        rules.figure3_supp_03.output,
         rules.figure4.output,
         rules.figure4_supp_00.output,
         rules.figure4_supp_01.output,
         rules.figure4_supp_02.output,
         rules.figure4_supp_03.output,
         rules.figure4_supp_04.output,
-        rules.figure4_supp_05.output,
         rules.figure4_supp_06.output,
         rules.figure4_supp_07.output,
-        #rules.figure4_supp_08.output,
         rules.figure4_supp_09.output,
         rules.figure5.output,
         rules.figure5_supp_01.output,
-        rules.figure5_supp_02.output,
 
