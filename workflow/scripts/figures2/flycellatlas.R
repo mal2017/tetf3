@@ -1,18 +1,20 @@
-library(patchwork)
+# read in results of supercell analysis
+supercell <- readRDS("results/calderon22/fca_reanalysis_supercell.rds")
+
+GE<-supercell$GE
+SC<-supercell$SC
+
+rm(supercell);gc()
+
 library(plotgardener)
 library(tidyverse)
-library(clusterProfiler)
-library(ggpubr)
-library(ggdensity)
-library(patchwork)
 library(DiagrammeRsvg)
 library(rsvg)
-library(vtree)
 library(DiagrammeR)
+library(SuperCell)
 
 # read in results of DGRP coexpression analysis
-lms <- read_tsv("upstream/final-models.collected-info.tsv.gz") |>
-  mutate(feature.y.scrna  = str_remove(feature.y,"-element"))
+lms <- read_tsv("upstream/final-models.collected-info.tsv.gz")
 
 # categorize the types of relationships we uncovered from that analysis
 relationship_df <- lms |>
@@ -23,27 +25,30 @@ relationship_df <- lms |>
                            !valid ~ "not.valid",
                            (!adj_p.value_ftest_r2 < 0.1) | (!significant_x)~ "ns",
                            T ~ "untested"),.groups = "drop") |>
-  dplyr::select(sex=model,gene_symbol, feature.y.scrna,class, estimate.qnorm) |>
+  dplyr::select(sex=model,gene_symbol, feature.y,class, estimate.qnorm) |>
   distinct()  
 
-# read in results of supercell analysis
-supercell <- read_rds("results/calderon22/calderon22_reanalysis_supercell.rds")
-
 # read in TE TF correlations we identifed from the supercell results
-tf_te_correlations <- read_rds("results/calderon22/calderon22_reanalysis_correlations.rds") |>
+tf_te_correlations <- read_rds("results/calderon22/fca_reanalysis_correlations.rds") |>
   dplyr::select(lineage,res=res.spqn) |>
   unnest(res)
 
+
+te_pan_head_kd <- read_rds("results/deg/ourKD.de.df.rds") |> 
+  mutate(kd = str_extract(comparison,"NfI|vvl|CG16779|pan|Unr")) |>
+  filter(group == "head" & str_detect(comparison,"head") & !str_detect(feature,"FBgn")) |>
+  dplyr::select(kd,y=feature,log2FoldChange,stat,pvalue)
 
 # ------------------------------------------------------------------------------
 # plot supercell sizes to help explain that analysis
 # ------------------------------------------------------------------------------
 
-g_supercell_size <- supercell$SC$supercell_size |>
+g_supercell_size <- SC$supercell_size |>
   enframe(value = "n_cells") |>
   ggplot(aes(n_cells)) +
   geom_histogram() +
-  xlab("barcodes per supercell") + ylab("N")
+  xlab("barcodes per supercell") + ylab("N") +
+  scale_x_log10()
 
 # ------------------------------------------------------------------------------
 # plot results of supercell correlation analysis
@@ -54,7 +59,7 @@ g_pan_highly_corr_with_tes <-
 tf_te_correlations %>%
   dplyr::select(feature,y,coef,p,padj) |>
     distinct() |>
-  mutate(feature2 = if_else(feature%in%c("pan","Unr"),feature,"other")) |>
+  mutate(feature2 = if_else(feature%in%c("pan","Unr","vvl","NfI","CG16779"),feature,"other")) |>
   mutate(feature2 = fct_reorder(feature2,coef)) |>
   mutate(feature2 = fct_relevel(feature2,"other")) |>
   ggplot(aes(feature2,coef)) +    
@@ -65,7 +70,7 @@ tf_te_correlations %>%
 # examine pan's coexpressed or not coexpressed TEs specifically
 pan_te_tf_correlations <- tf_te_correlations |>
   filter(feature=="pan") |>
-  inner_join(relationship_df, by=c(feature="gene_symbol",y="feature.y.scrna")) |>
+  inner_join(relationship_df, by=c(feature="gene_symbol",y="feature.y")) |>
   mutate(feature2 = if_else(feature%in%c("pan","Unr"),feature,"other")) |>
   mutate(feature2 = fct_reorder(feature2,coef)) |>
   mutate(class=fct_reorder(class,coef)) |>
@@ -102,10 +107,10 @@ g_pan_coex_tes_f <- pan_te_tf_correlations |>
 
 plot_indiv_relationship <- function(x, y, caption="") {
   require(SuperCell)
-  supercell_GeneGenePlot(supercell$GE,
+  supercell_GeneGenePlot(GE,
                          gene_x = x, 
                          gene_y = y,
-                         supercell_size = supercell$SC$supercell_size,
+                         supercell_size = SC$supercell_size,
                          color.use = "black") -> res
   
   g <- res$p$data |> 
@@ -126,13 +131,15 @@ plot_indiv_relationship <- function(x, y, caption="") {
 # which is also deposited in embryonic soma
 # see franz et al 2017 (probing canonicity of wnt pathway) for selection
 # of control genes
-g_negcorr_poscon_pirna <- plot_indiv_relationship("piwi","1360")
-g_pan_te_exemplary <- plot_indiv_relationship("pan","1360")
-g_pan_poscon <- plot_indiv_relationship("pan","nkd")
+g_pan_te_expemplary1 <- plot_indiv_relationship("pan","invader2")
+g_pan_te_exemplary <- plot_indiv_relationship("pan","gypsy10")
+g_pan_poscon <- plot_indiv_relationship("pan","Toll-7")
 g_pan_negcon <- plot_indiv_relationship("pan","CG4115")
 
-g_controls <- g_pan_poscon + g_pan_negcon +
-  g_negcorr_poscon_pirna + g_pan_te_exemplary + 
+library(patchwork)
+#filter(relationship_df,gene_symbol == "pan" & class == "coex")
+library(patchwork)
+g_controls <- g_pan_poscon + g_pan_negcon + g_pan_te_expemplary1  + g_pan_te_exemplary + 
   plot_layout(nrow=1,guides = "collect") & 
   theme(legend.position = "bottom")
 
@@ -151,8 +158,8 @@ digraph boxes_and_circles {
   # several 'node' statements
   node [shape = box,
         fontname = Arial]
-  data [label='processed embryo scRNA-seq data\n(Calderon et al. 2022)'];
-  merge [label='collapse per-insertion UMI counts to TE family'];
+  data [label='adult head scRNA-seq data\n(FlyCellAtlas)'];
+  merge [label='quantify TE/gene expression with alevin-fry'];
   metacell [label='create metacells with SuperCell'];
   corr [label='calculate weighted TE/gene correlations'];
 
