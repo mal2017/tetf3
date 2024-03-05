@@ -252,6 +252,19 @@ rule compare_motifs:
     script:
         "../scripts/motifs/compare_motifs.R"
 
+rule compare_denovo_pan_motifs:
+    input:
+        meme = "results/motifs/homer_per_tf/pan/",
+        streme = "results/motifs/streme_per_tf/pan/",
+        homer = "results/motifs/meme_per_tf/pan/",
+        known_meme = rules.get_known_motifs.output.all_known,
+    output:
+        motif_comparison = "results/motifs/comparison/pan_within_denovo_comparison.rds",
+        motifs_um = "results/motifs/comparison/pan_within_denovo.universal_motif.rds",
+        gg = "results/motifs/comparison/pan_within_denovo.ggplot.rds",
+    script:
+        "../scripts/motifs/compare_denovo_pan_motifs.R"
+
 rule sea_denovo_motifs_on_tes:
     input:
         dir = rules.split_cons_tes_per_tf.output.odir,
@@ -281,34 +294,33 @@ rule sea_known_motifs_on_tes:
 
 csem_libraries, = glob_wildcards('upstream/csem_mosaics/sea/sea/pan_{lib}/sea.tsv')
 
-# rule get_csem_pan_peaks:
-#     input:
-#         bed = "/home/mlawlor/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_{library}/pan_{library}.mosaics.bed",
-#         fa = config.get("GENOME_FA")
-#     output:
-#         fa = "results/motifs/csem_peaks/pan/{library}.fasta",
-#         g = temp("results/motifs/csem_peaks/genome.tmp.{library}.fa"),
-#     conda:
-#         "../envs/bedtools.yaml"
-#     shell:
-#         """
-#         gunzip -c {input.fa} > {output.g} &&
-#         bedtools getfasta -fi {output.g} -bed {input.bed} -fo {output.fa}
-#         """
+rule get_csem_pan_peaks:
+    input:
+        bed = "/home/mlawlor/amarel-matt/tetf/subworkflows/tetf_csem_mosaics/results/csem_mosaics/mosaics/pan_{library}/pan_{library}.mosaics.bed",
+        fa = config.get("GENOME_FA")
+    output:
+        fa = "results/motifs/csem_peaks/pan/{library}.fasta",
+        g = temp("results/motifs/csem_peaks/genome.tmp.{library}.fa"),
+    conda:
+        "../envs/bedtools.yaml"
+    shell:
+        """
+        gunzip -c {input.fa} > {output.g} &&
+        bedtools getfasta -fi {output.g} -bed {input.bed} -fo {output.fa}
+        """
 
-# rule sea_csem_peaks:
-#     input:
-#         fa = "results/motifs/csem_peaks/pan/{library}.fasta",
-#         meme = rules.get_known_motifs.output.jaspar,
-#         meme2 = rules.get_known_motifs.output.jaspar2,
-#     output:
-#         odir = directory("results/motifs/sea_csem_peaks/pan/{library}")
-#     singularity:
-#         "docker://memesuite/memesuite:5.5.3"
-#     shell:
-#         """
-#         sea -p {input.fa} -m '{input.meme}' -m '{input.meme2}' --order 0 -oc '{output.odir}'
-#         """
+rule denovo_sea_csem_peaks:
+    input:
+        fa = "results/motifs/encode_peaks/pan/{library}.fasta",
+        meme = rules.meme_per_tf.output.odir,
+    output:
+        odir = directory("results/motifs/sea_csem_peaks/pan/{library}")
+    singularity:
+        "docker://memesuite/memesuite:5.5.4"
+    shell:
+        """
+        sea -p {input.fa} -m {input.meme}/meme.txt' --order 0 -oc '{output.odir}'
+        """
 
 
 rule collect_csem_peak_sea:
