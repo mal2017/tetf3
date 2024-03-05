@@ -1,50 +1,39 @@
-library(tidyverse)
-library(SuperCell)
-library(scater)
-library(scran)
-library(corrr)
-library(vegan)
-library(HiClimR)
-library(ggtree)
-library(modelr)
-library(DescTools)
-library(psych) # for weighted correlation
-library(spqn)
-library(patchwork)
-
-# this is a big script, because I think it would make it too complicated to split up into a million chunks to make a smk workflow.
-# it takes a saved SuperCell object from the upstream workflow, plus assorted other files.
-
-
-
-tfs <- read_tsv("resources/Drosophila_melanogaster_TF.txt")
-tfs <- unique(tfs$Symbol)
-
-tes <- jsonlite::read_json("upstream/te_element_lookup.json") %>%
-  names()
-
-lms <- read_tsv("upstream/final-models.collected-info.tsv.gz") |>
-  mutate(feature.y.scrna  = str_remove(feature.y,"-element"))
-
 # ------------------------------------------------------------------------------
 # import supercell object from upstream
 # ------------------------------------------------------------------------------
 
-SC_rds <- read_rds("upstream/calderon22_supercells.rds")
+SC_rds <- readRDS("upstream/fca_supercells.rds")
 
 # extract the useful bits to their own objects
 GE <- SC_rds$SC.GE
 SC <- SC_rds$SC
+rm(SC_rds);gc()
 
-# make informative cell names
-colnames(GE) <- sprintf("hr%s.mc%s.%s",SC$window,1:SC$N.SC,SC$lineage)
+library(tidyverse)
+library(SuperCell)
+library(psych) # for weighted correlation
+library(spqn)
+
+lkup <- read_tsv("results/resources/gene_symbol_lookup.tsv.gz") |>
+  dplyr::select(gene_ID,gene_symbol) |>
+  deframe()
+
+tfs <- read_tsv("resources/Drosophila_melanogaster_TF.txt")
+
+tes <- jsonlite::read_json("upstream/te_element_lookup.json") %>%
+  names()
+
+lms <- read_tsv("upstream/final-models.collected-info.tsv.gz")
+
+rownames(GE) <- map_chr(rownames(GE),~{if_else(.x %in% names(lkup),lkup[.x],.x)})
 
 GE_all <- GE
 
-GE_tf_te_ix <- (rownames(GE) %in% c(tfs,tes))
+GE_tf_te_ix <- (rownames(GE) %in% c(tfs$Symbol,tes))
 GE_rowsds0_ix <- rowSds(GE) == 0
 
 GE <- GE[GE_tf_te_ix & !GE_rowsds0_ix,]
+
 
 # ------------------------------------------------------------------------------
 # correlations
@@ -87,7 +76,7 @@ cormat2tbl <- function(x,n) {
   x |> 
     as_tibble(rownames = "feature") |>
     pivot_longer(-feature,names_to = "y", values_to = "coef") |>
-    filter(feature %in% tfs & y %in% tes & feature!=y) |>
+    filter(feature %in% tfs$Symbol & y %in% tes & feature!=y) |>
     mutate(p=map_dbl(coef,get_p_from_r,n=n)) |>
     mutate(padj = p.adjust(p,method="BH"))
 } 
