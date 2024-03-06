@@ -34,7 +34,6 @@ rule figure2:
     input:
         male_gg_gsea = "results/enrichment/sig_main_male_max_abs_estimate_qnorm.gg_gsea.rds",
         female_gg_gsea = "results/enrichment/sig_main_female_max_abs_estimate_qnorm.gg_gsea.rds",
-        coex_vs_seq = rules.coex_vs_seq_similarity.output.rds,
     output:
         pdf="results/figures2/figure2_main.tf-overrepresentation.pdf"
     script:
@@ -46,8 +45,8 @@ rule figure2:
 
 rule figure3:
     input:
-        "results/deg/ourKD.de.grs.rds",
-        "results/signatures/ourKD_gsea.rds",
+        rules.plot_ourKD_gsea_randomwalks.output,
+        rules.plot_ourKD_gsea_barplots.output,
     output:
         pdf = "results/figures2/figure3_main.knockdowns.pdf"
     script:

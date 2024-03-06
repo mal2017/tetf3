@@ -7,40 +7,17 @@ library(plotgardener)
 library(tidyverse)
 
 # ------------------------------------------------------------------------------
-# get signature enrichment results from our kd
-# ------------------------------------------------------------------------------
-x <- read_rds("results/signatures/ourKD_gsea.rds")
-
-x <- x |> mutate(lab = str_replace_all(str_extract(comparison,"(?<=knockdown2_).+(?=_control)"), "_", " / "))
-  
-
-gg <- x |> 
-  filter(padj < 0.1 & signature_name == "all_tes") |>
-  mutate(gg = pmap(list(lab, ID, gsea),
-                   .f = function(lab,gs, obj) {
-                     enrichplot::gseaplot2(obj, geneSetID=gs, title = lab)
-                   }
-  )) |>
-  dplyr::select(comparison, signature_name, gg)
-
-# ------------------------------------------------------------------------------
 # target-specific all-te hit barchart
 # ------------------------------------------------------------------------------
 
-g_a <- x |>
-  filter(signature_name == "all_tes") |>
-  mutate(lab = fct_reorder(lab, pvalue)) |>
-  ggplot(aes(-log10(padj), lab)) +
-  geom_col() +
-  geom_vline(xintercept = -log10(0.1),color="red",linetype="dashed") +
-  ylab("RNAi / sex / sample / driver")
-
+g_a <- read_rds("results/signatures/ourKD_gsea_barplots.gg_list.rds")$all_tes
 
 # ------------------------------------------------------------------------------
 # exemplary all-te random walk
 # ------------------------------------------------------------------------------
-
+gg <- read_rds("results/signatures/ourKD_gsea_randomwalks.gg_df.rds")
 g_bcd <- gg |>
+  filter(signature_name == "all_tes") |>
   dplyr::select(comparison, gg) |>
   deframe() |>
   map( ~{ .x & theme(axis.title = element_text(size=5), axis.text = element_text(size=5), plot.title = element_text(size=7, hjust=0.5))})
@@ -69,7 +46,7 @@ plotText("B", x = 4.5, y=0.5)
 plotGG(g_bcd$knockdown2_pan_female_head_Mef2.R_control_female_head_Mef2.R, x = 0.75, y=3.5, width = 3.25,height = 2.5)
 plotText("C",  x = 0.5, y=3.5)
 
-plotGG(g_bcd$knockdown2_CG16779_male_gonad_aTub_control_male_gonad_aTub, x = 4.5, y=3.5, width = 3.25,height = 2.5)
+plotGG(g_bcd$knockdown2_Unr_female_head_Mef2.R_control_female_head_Mef2.R, x = 4.5, y=3.5, width = 3.25,height = 2.5)
 plotText("D",  x = 4.5, y=3.5)
 
 dev.off()

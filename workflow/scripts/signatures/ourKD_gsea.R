@@ -49,7 +49,7 @@ signatures <- bind_rows(t2g,y=at2g) |>
   mutate(signature_name = gs_name) |> 
   nest(data=-signature_name) |>
   dplyr::rename(signature = data) |>
-  filter(signature_name == "all_tes" | signature_name == "TE.regulators") |>
+  #filter(signature_name == "all_tes" | signature_name == "TE.regulators") |>
   bind_rows(pirna)
 
 # ------------------------------------------------------------------------------

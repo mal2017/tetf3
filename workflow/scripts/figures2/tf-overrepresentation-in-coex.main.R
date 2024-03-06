@@ -33,38 +33,6 @@ g_a <- make_dotplot(male_gsea)
 
 g_b <- make_dotplot(female_gsea)
 
-# # ------------------------------------------------------------------------------
-# # scatterplots showing relationship btw sequence simlarity anc coexpression sim
-# # ------------------------------------------------------------------------------
-# will probably split this out to the figure 3 and the supplement
-# sim_df <- read_rds("results/te_sequence_similarity/coex_vs_seq_similarity.rds") |>
-#   mutate(uid = map2_chr(te1,te2,.f=function(x,y){paste(sort(c(x,y)),collapse="__")})) |>
-#   group_by(uid, model) |>
-#   slice_head(n=1) |>
-#   ungroup() |>
-#   dplyr::select(-uid)
-# 
-# make_new_grp <- function(x,y) {
-#   if_else(x =="LTR", y, x)
-# }
-# 
-# # only looking within classes for DNA+RC and Jockey, but want to split LTRs further becase of
-# # grp size, diversity
-# g_c <- sim_df |>
-#   mutate(across(starts_with("repClass"),.f=~str_replace(.x,"RC","DNA"))) |>
-#   mutate(grp.1 = map2_chr(repClass.1,repFamily.1, make_new_grp)) |>
-#   mutate(grp.2 = map2_chr(repClass.2,repFamily.2, make_new_grp)) |>
-#   filter(repClass.1==repClass.2) |>
-#   ggplot(aes(seq_distance,coex_dist)) +
-#   ggdensity::geom_hdr_points() +
-#   facet_wrap(repClass.1~model, ncol=2) +
-#   geom_smooth(method="lm", se=F, color="red") +
-#   ggpubr::stat_cor(method="pearson", size=unit(2,"pt")) +
-#   xlab("dashing2 distance") +
-#   ylab("TF coexpression dissimilarity")
-
-
-
 # ------------------------------------------------------------------------------
 # make page
 # ------------------------------------------------------------------------------

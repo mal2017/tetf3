@@ -10,17 +10,18 @@ rule ourKD_gsea:
     script:
         "../scripts/signatures/ourKD_gsea.R"
 
-
-rule s2rplus_coex_te_gsea_by_de:
+rule plot_ourKD_gsea_randomwalks:
     input:
-        deg = rules.s2rplus_limma.output.tsv,
-        coex = config.get("MERGED_MODELS")
+        rds = rules.ourKD_gsea.output.rds,
     output:
-        rds = "results/signatures/s2rplus_te_gsea.rds",
+        gg_df = "results/signatures/ourKD_gsea_randomwalks.gg_df.rds",
     script:
-        "../scripts/signatures/tfrnai_gsea_de.R"
+        "../scripts/signatures/plot_ourKD_gsea_randomwalks.R"
 
-rule signatures:
+rule plot_ourKD_gsea_barplots:
     input:
-        rules.ourKD_gsea.output,
-        rules.s2rplus_coex_te_gsea_by_de.output
+        rds = rules.ourKD_gsea.output.rds,
+    output:
+        gg_list = "results/signatures/ourKD_gsea_barplots.gg_list.rds",
+    script:
+        "../scripts/signatures/plot_ourKD_gsea_barplots.R"

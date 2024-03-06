@@ -28,7 +28,6 @@ rule all:
         rules.coexpression_replication.output,
         rules.te_sequence_similarity.output,
         rules.enrichment.output,
-        rules.signatures.output,
         rules.motifs.output,
         rules.figures.output
 
