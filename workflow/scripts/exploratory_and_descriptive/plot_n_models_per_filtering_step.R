@@ -18,9 +18,22 @@ res <- map_df(funs, .f =  function(x) {x(mods)}, .id="subset")
 
 res$subset <- fct_relevel(res$subset, names(funs))
 
-#res |>
-#  ggplot(aes(subset, n, fill=model)) +
-#  geom_col(position="dodge") +
-#  theme(axis.text.x = element_text(angle=45, hjust=1)) 
+g_filt <- res |>
+  dplyr::rename(sex=model) |>
+  mutate(subset = str_wrap(subset,width=20)) |>
+  mutate(subset = fct_reorder(subset, n)) |> #pull(subset) %>% .[12]
+  ggplot(aes(n, subset,fill=sex)) +
+  geom_col(position = "dodge") +
+  geom_text(data = \(x) filter(x, subset == subset[which.min(n)]), 
+            aes(label=paste0("n=", n), x=300000),
+            size=rel(2),
+            position = position_dodge(width = 0.75)) +
+  theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) +
+  ylab("filtering step") +
+  xlab("N TE/gene pairs") +
+  scale_fill_grey() +
+  theme(legend.position = c(1,0), legend.justification = c("right","bottom"))
 
-write_rds(res,snakemake@output[["rds"]])
+
+
+write_rds(g_filt,snakemake@output[["gg"]])

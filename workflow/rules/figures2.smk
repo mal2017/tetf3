@@ -3,8 +3,11 @@
 # ---------------------------------------------------------------------------------------------------
 rule figure1:
     input:
-        ncoex_scatter_and_hist = rules.ncoex_scatter_and_hist.output.rds,
-        pirna_coex_w_te_prop = rules.pirna_coex_w_te_prop.output.rds,
+        rules.plot_n_features_scatter.output,
+        rules.plot_te_silencer_overrepresentation.output,
+        rules.plot_te_silencer_scores_boxplot.output,
+        rules.plot_te_silencer_n_hits_boxplot.output,
+        rules.plot_n_models_per_filtering_step.output.gg,
     output:
         pdf="results/figures2/figure1_main.overview.pdf"
     script:
@@ -17,7 +20,7 @@ rule figure1_supp_01:
         "results/exploratory_and_descriptive/g_variance_explained.rds",
         config.get("MERGED_MODELS"),
         coex_dist = rules.coex_metric_distributions.output.rds,
-        n_models = rules.n_models_per_filtering_step.output.rds,
+        n_models = rules.plot_n_models_per_filtering_step.output.gg,
     output:
         pdf="results/figures2/figure1_supp_01.extra-overview.pdf"
     script:

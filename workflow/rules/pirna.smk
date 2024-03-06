@@ -1,12 +1,31 @@
-rule pirna_enrichment_in_kd:
+rule plot_te_silencer_overrepresentation:
     input:
-        pirna = rules.make_pirna_gene_list.output.tsv,
-        res = rules.this_study_kd_deseq2.output.grs,
+        mods = config.get("MERGED_MODELS"),
+        pirna = rules.make_pirna_gene_list.output.tsv
     output:
-        de_pirna_tbl = "results/pirna/pirna_genes_de_in_kd_tbl.rds",
-        de_pirna_fisher = "results/pirna/pirna_genes_de_in_kd_fisher.rds",
+        rds = "results/pirna/te_silencers_in_lms.rds",
+        gg = "results/pirna/te_silencer_overrepresentation.gg.rds"
     script:
-        "../scripts/pirna/pirna_in_kds.R"
+        "../scripts/pirna/plot_te_silencer_overrepresentation.R"        
+
+rule plot_te_silencer_n_hits_boxplot:
+    input:
+        mods = rules.plot_te_silencer_overrepresentation.output.rds,
+    output:
+        female = "results/pirna/te_silencer_n_hits_boxplot.females.gg.rds",
+        male = "results/pirna/te_silencer_n_hits_boxplot.males.gg.rds"
+    script:
+        "../scripts/pirna/plot_te_silencer_nhits_boxplot.R"
+
+rule plot_te_silencer_scores_boxplot:
+    input:
+        rules.rankings.output,
+        teregs = rules.make_pirna_gene_list.output.tsv,
+    output:
+        female = "results/pirna/te_silencer_scores_boxplot.females.gg.rds",
+        male = "results/pirna/te_silencer_scores_boxplot.males.gg.rds"
+    script:
+        "../scripts/pirna/plot_te_silencer_scores_boxplot.R"
 
 rule encode_peaks_dist_to_pirna:
     input:
@@ -18,7 +37,3 @@ rule encode_peaks_dist_to_pirna:
         "../scripts/pirna/encode_peaks_dist_to_piRNA_genes.R"
 
 
-rule collect_pirna_pathway_analysis:
-    input:
-        rules.pirna_enrichment_in_kd.output.de_pirna_fisher,
-        rules.encode_peaks_dist_to_pirna.output.rds,

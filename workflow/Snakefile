@@ -25,7 +25,6 @@ include: "rules/figures2.smk"
 
 rule all:
     input:
-        rules.exploratory_and_descriptive.output,
         rules.coexpression_replication.output,
         rules.te_sequence_similarity.output,
         rules.enrichment.output,
