@@ -66,8 +66,7 @@ rule figure3_supp_01:
 
 rule figure3_supp_02:
     input:
-        "results/deg/ourKD.de.grs.rds",
-        "results/resources/pirna_pathway.tsv"
+        rules.plot_de_volcanos.output,
     output:
         pdf="results/figures2/figure3_supp_02.pirna-volcano.pdf"
     script:

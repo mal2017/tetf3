@@ -20,8 +20,11 @@ rule this_study_kd_deseq2:
   script:
     "../scripts/differential_expression/ourKD_deseq2.v3.R"
 
-
-rule differential_expression:
-    input:
-        rules.s2rplus_limma.output.tsv,
-        rules.this_study_kd_deseq2.output.grs,
+rule plot_de_volcanos:
+  input:
+    grs = rules.this_study_kd_deseq2.output.grs,
+    pirna = rules.make_pirna_gene_list.output.tsv,
+  output:
+    gg = "results/deg/de_volcanos.gg.rds",
+  script:
+    "../scripts/differential_expression/plot_de_volcanos.R"
