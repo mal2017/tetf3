@@ -57,7 +57,8 @@ rule figure3_supp_01:
     factor specific kd enrichment
     """
     input:
-        "results/signatures/ourKD_gsea.rds",
+        rules.plot_ourKD_gsea_randomwalks.output,
+        rules.plot_ourKD_gsea_barplots.output,
     output:
         pdf="results/figures2/figure3_supp_01.factor_specific_gsea.pdf"
     script:

@@ -7,7 +7,7 @@ x <- read_rds(gsea_fl)
 x <- x |> mutate(lab = str_replace_all(str_extract(comparison,"(?<=knockdown2_).+(?=_control)"), "_", " / "))
 
 plot_bar <- function(obj) {
-  mutate(obj, lab = fct_reorder(lab, pvalue)) |>
+  mutate(obj, lab = fct_reorder(lab, padj)) |>
   ggplot(aes(-log10(padj), lab)) +
   geom_col() +
   geom_vline(xintercept = -log10(0.1),color="red",linetype="dashed") +
