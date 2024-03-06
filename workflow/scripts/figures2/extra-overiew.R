@@ -1,65 +1,19 @@
 library(patchwork)
 library(plotgardener)
 library(tidyverse)
-library(clusterProfiler)
 library(ggpubr)
-library(phylosignal)
-library(phylobase)
-library(ggplotify)
-library(ggtree)
-library(tidytree)
-library(ggtreeExtra)
-library(ggnewscale)
-library(paletteer)
-library(ggdensity)
-library(ggridges)
 
 # ------------------------------------------------------------------------------
-# read in data
+# read in plots/data used for multiple figs or requireing some ggplot aesthetic tweaks
 # ------------------------------------------------------------------------------
 
-mods <- read_tsv("upstream/final-models.collected-info.tsv.gz")
-coex_dist = read_rds("results/exploratory_and_descriptive/coex_metric_distributions.rds")
-n_models = read_rds("results/exploratory_and_descriptive/n_models_per_filtering_step.rds")
 repcor <- read_rds("results/coexpression_replication/replicate_dataset_correlation.rds")
 mf <- read_rds("results/coexpression_replication/mf_dataset_correlation.rds")
-var_exp <- read_rds("results/exploratory_and_descriptive/g_variance_explained.rds") 
-
-# previously reported TE regulators
-teregs <- read_tsv("results/resources/pirna_pathway.tsv") |> pull(gene_ID)
-
-
-# nofilt max and mean absolute coexpression of piRNA genes
-nofilt_max_score <- read_tsv('results/rankings/nofilt_main_male_max_abs_estimate_qnorm.tsv.gz')
-nofilt_mean_score <- read_tsv('results/rankings/nofilt_main_male_mean_abs_estimate_qnorm.tsv.gz')
-
-# male only
-prev_reported_scores <- bind_rows(`max abs. score`=nofilt_max_score, `mean abs. score`=nofilt_mean_score,.id = "score.type") |>
-  mutate(prev.reported = gene_id %in% teregs)
-
+var_exp <- read_rds("results/exploratory_and_descriptive/variance_explained.gg.rds") 
 
 # ------------------------------------------------------------------------------
 # plotting
 # ------------------------------------------------------------------------------
-
-# filtering
-g_filt <- n_models |>
-  dplyr::rename(sex=model) |>
-  mutate(subset = str_wrap(subset,width=20)) |>
-  mutate(subset = fct_reorder(subset, n)) |> #pull(subset) %>% .[12]
-  ggplot(aes(n, subset,fill=sex)) +
-  geom_col(position = "dodge") +
-  geom_text(data = \(x) filter(x, subset == subset[which.min(n)]), 
-            aes(label=paste0("n=", n), x=300000),
-            size=rel(2),
-            position = position_dodge(width = 0.75)) +
-  theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) +
-  ylab("filtering step") +
-  xlab("N TE/gene pairs") +
-  scale_fill_grey() +
-  theme(legend.position = c(1,0), legend.justification = c("right","bottom"))
-
-
 
 # replicate correlation
 g_repcor <- filter(repcor, result_set=="main_data") |>
@@ -80,42 +34,12 @@ g_var_exp <- var_exp +
   theme(axis.text.x = element_text(angle=25, hjust=1)) +
   scale_fill_grey(start = 0.4, end=0.8)
 
-g_nhits_prev_rep_teregs <- mods |>
-  filter(model == "male") |>
-  group_by(feature.x,model) |>
-  summarise(n_hits = sum(significant_x),.groups = "drop") |>
-  mutate(prev.reported = feature.x %in% teregs) |>
-  ggplot(aes(prev.reported,n_hits)) +
-  geom_boxplot(outlier.shape = NA) +
-  ggpubr::stat_compare_means(label.y = 9, size=2) +
-  xlab("known TE regulator") +
-  ylab("coexpressed TEs") +
-  coord_cartesian(ylim=c(0,10))
+g_nhits_prev_rep_teregs <- read_rds("results/pirna/te_silencer_n_hits_boxplot.males.gg.rds")
 
-g_score_prev_rep_teregs <- ggplot(prev_reported_scores, aes(prev.reported,value)) +
-  geom_boxplot(outlier.shape = NA) +
-  ggpubr::stat_compare_means(label.y = 0.45,size=2) +
-  facet_wrap(~score.type, scales = "free_y") +
-  ylab("coexpression score") +
-  xlab("known TE regulator") +
-  coord_cartesian(ylim=c(0,0.5))
+g_score_prev_rep_teregs <- read_rds("results/pirna/te_silencer_scores_boxplot.males.gg.rds")
 
-
-g_sharedness <- mods |> 
-  dplyr::select(feature.x,feature.y,model,significant_x) |>
-  pivot_wider(names_from = model, values_from = significant_x) |>
-  filter(male | female) |>
-  mutate(status = map2_chr(male,female, ~case_when(
-    .x & .y ~ "shared",
-    .x & !.y ~ "male-private",
-    .y & !.x ~ "female-private",
-    !(.y | .x) ~ "n.s.",
-    T ~ "wtf"
-  ))) |>
-  ggplot(aes(status)) +
-  geom_bar()
-
-
+g_sharedness <- read_rds("results/exploratory_and_descriptive/mf_shared_coex_hits.gg.rds") + 
+  theme(axis.text.x=element_text(angle=45, hjust=1))
 
 # plotting --------------------------------------------------------------------
 theme_set(theme_classic() + theme(text=element_text(size=unit(7,"pt"))))
@@ -138,13 +62,13 @@ plotText(label = "C", x = 2.3, y = 3.75)
 plotText(label = "D", x = 4.3, y = 3.75)
 plotText(label = "E", x = 6.3, y = 3.75)
 
-plotGG(g_sharedness, x = 0.5, y=5.75, width = 2.5,height = 2)
+plotGG(g_sharedness, x = 0.5, y=5.75, width = 2,height = 2)
 plotText("F",  x = 0.5, y=5.75)
 
-plotGG(g_score_prev_rep_teregs, x = 2.65, y=5.75, width = 2.75,height = 2)
-plotText("G",  x = 2.65, y=5.75)
+plotGG(g_score_prev_rep_teregs, x = 2.15, y=5.75, width = 3.5,height = 2)
+plotText("G",  x = 2.15, y=5.75)
 
-plotGG(g_nhits_prev_rep_teregs, x = 5.5, y=5.75, width = 2.5,height = 2)
-plotText("H",  x = 5.5, y=5.75)
+plotGG(g_nhits_prev_rep_teregs, x = 5.75, y=5.75, width = 2.25,height = 2)
+plotText("H",  x = 5.75, y=5.75)
 
 dev.off()

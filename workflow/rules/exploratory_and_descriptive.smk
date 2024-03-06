@@ -36,6 +36,14 @@ rule plot_variance_explained:
     input:
         mods = config.get("MERGED_MODELS")
     output:
-        rds="results/exploratory_and_descriptive/g_variance_explained.rds",
+        rds="results/exploratory_and_descriptive/variance_explained.gg.rds",
     script:
         "../scripts/exploratory_and_descriptive/plot_variance_explained.R"
+
+rule plot_mf_shared_coex_hits:
+    input:
+        mods = config.get("MERGED_MODELS"),
+    output:
+        gg = "results/exploratory_and_descriptive/mf_shared_coex_hits.gg.rds",
+    script:
+        "../scripts/exploratory_and_descriptive/plot_mf_shared_coex_hits.R"

@@ -15,12 +15,12 @@ rule figure1:
 
 rule figure1_supp_01:
     input:
+        rules.plot_mf_shared_coex_hits.output,
         rules.independent_dataset_correlation.output.rds,
         rules.mf_dataset_correlation.output.rds,
-        "results/exploratory_and_descriptive/g_variance_explained.rds",
-        config.get("MERGED_MODELS"),
-        coex_dist = rules.coex_metric_distributions.output.rds,
-        n_models = rules.plot_n_models_per_filtering_step.output.gg,
+        rules.plot_variance_explained.output.rds,
+        rules.plot_te_silencer_scores_boxplot.output,
+        rules.plot_te_silencer_n_hits_boxplot.output,
     output:
         pdf="results/figures2/figure1_supp_01.extra-overview.pdf"
     script:
