@@ -25,7 +25,7 @@ dat <- dat |>
 dat <- dat %>% 
   dplyr::select(dataset,model,feature.x,gene_symbol,feature.y, estimate.qnorm, var_exp_x, significant_x) %>%
   mutate(across(estimate.qnorm,abs, .names="abs_{.col}")) |>
-  mutate(signed_var_exp_x = sign(estimate.qnorm * var_exp_x))
+  mutate(signed_var_exp_x = sign(estimate.qnorm) * var_exp_x)
 
 
 # i want examinine filtered vs overall results
