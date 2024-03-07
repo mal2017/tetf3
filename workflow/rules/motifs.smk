@@ -90,20 +90,15 @@ rule meme_per_tf:
         dir = rules.split_cons_tes_per_tf.output.odir.replace("(","\\(").replace(")","\\)"),
     threads:
         6
-    #singularity:
-        #"docker://memesuite/memesuite:5.5.4"
+    singularity:
+        "docker://memesuite/memesuite:5.5.4"
     shell:
         """
         meme "{params.dir}/{wildcards.tf}/coex.fasta" \
             -neg "{params.dir}/{wildcards.tf}/other.fasta" \
             -oc '{output.odir}' \
             -nmotifs 15 -dna -mod anr -minw 6 -maxw 18 -p {threads} \
-            -objfun se -revcomp || \
-        meme "{params.dir}/{wildcards.tf}/coex.fasta" \
-            -neg "{params.dir}/{wildcards.tf}/other.fasta" \
-            -oc '{output.odir}' \
-            -nmotifs 15 -dna -mod anr -minw 6 -maxw 18 -p {threads} \
-            -objfun de -revcomp
+            -objfun se -revcomp || true
         """
 
 
@@ -197,6 +192,10 @@ rule homer_per_tf:
 # -----------------------------------------------------------------------------
 
 rule archbold2motifs:
+    """
+    get representative motifs from archbold 
+    (highly similar sequences clustered and made into meme files)
+    """
     output:
         meme = "results/motifs/known_motifs/archbold_degenerate.meme",
         sils = "results/motifs/known_motifs/archbold_degenerate_clustering.rds",
@@ -252,6 +251,18 @@ rule compare_motifs:
     script:
         "../scripts/motifs/compare_motifs.R"
 
+rule plot_motif_comparison:
+    """
+    in practice only used for pan, but adaptable to others
+    by adding a wildcard
+    """
+    input:
+        comparison = "results/motifs/comparison/pan_denovo_comparison.{motif_program}.rds",
+    output:
+        gg = "results/motifs/comparison/pan_denovo_comparison.{motif_program}.gg_df.rds",
+    script:
+        "../scripts/motifs/plot_motif_comparison.R"
+
 rule compare_denovo_pan_motifs:
     input:
         meme = "results/motifs/homer_per_tf/pan/",
@@ -272,7 +283,7 @@ rule sea_denovo_motifs_on_tes:
     output:
         odir = directory("results/motifs/sea_denovo_motifs_on_tes/{tf}")
     singularity:
-        "docker://memesuite/memesuite:5.5.3"
+        "docker://memesuite/memesuite:5.5.4"
     shell:
         """
         sea -p '{input.dir}/{wildcards.tf}/coex.fasta' -n '{input.dir}/{wildcards.tf}/other.fasta' -m '{input.meme}/meme.txt' -oc '{output.odir}'
@@ -286,7 +297,7 @@ rule sea_known_motifs_on_tes:
     output:
         odir = directory("results/motifs/sea_known_motifs_on_tes/pan")
     singularity:
-        "docker://memesuite/memesuite:5.5.3"
+        "docker://memesuite/memesuite:5.5.4"
     shell:
         """
         sea -p '{input.dir}/coex.fasta' -n '{input.dir}/other.fasta' -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
@@ -311,7 +322,7 @@ rule get_csem_pan_peaks:
 
 rule denovo_sea_csem_peaks:
     input:
-        fa = "results/motifs/encode_peaks/pan/{library}.fasta",
+        fa = "results/motifs/csem_peaks/pan/{library}.fasta",
         meme = rules.meme_per_tf.output.odir,
     output:
         odir = directory("results/motifs/sea_csem_peaks/pan/{library}")
@@ -321,7 +332,6 @@ rule denovo_sea_csem_peaks:
         """
         sea -p {input.fa} -m {input.meme}/meme.txt' --order 0 -oc '{output.odir}'
         """
-
 
 rule collect_csem_peak_sea:
     input:
@@ -339,7 +349,7 @@ rule fimo_denovo_motifs_tes:
         odir = directory("results/motifs/fimo_on_tes/denovo/{tf}"),
         tmp = temp("results/motifs/fimo_on_tes/denovo/tmp/all_tes_for_{tf}_fimo.fa")
     singularity:
-        "docker://memesuite/memesuite:5.5.3"
+        "docker://memesuite/memesuite:5.5.4"
     params:
         meme = rules.meme_per_tf.output.odir.replace("(","\(").replace(")","\)"),
         tmp = "results/motifs/fimo_on_tes/denovo/tmp/all_tes_for_{tf}_fimo.fa".replace("(","\(").replace(")","\)"),
@@ -362,13 +372,10 @@ def aggregate_fimo_on_tes(wildcards):
 
 rule motifs:
     input:
-        "results/motifs/sea_known_motifs_on_tes/pan",
-        expand("results/motifs/streme_per_tf/{tf}/", tf=TFSOI),
         expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=["pan"]),
-        expand("results/motifs/meme_per_tf/{tf}/", tf=[x for x in TFSOI if x != "NfI"]),
-        expand("results/motifs/homer_per_tf/{tf}/", tf=TFSOI),
-        expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=TFSOI,p=["meme","streme","homer"]),
-        "results/motifs/csem_peak_sea.pan.tsv.gz",
+        expand("results/motifs/meme_per_tf/{tf}/", tf=TFSOI),
+        expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.gg_df.rds", tf=["pan"],p=["meme","streme","homer"]),
+        #"results/motifs/csem_peak_sea.pan.tsv.gz",
         #"results/motifs/sea_denovo_motifs_on_tes/pan/",
         #expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,
         

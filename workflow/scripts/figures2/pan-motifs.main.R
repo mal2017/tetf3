@@ -1,116 +1,52 @@
 library(tidyverse)
-library(tidytree)
-library(ggtree)
-library(ggtreeExtra)
-library(ggnewscale)
 library(plotgardener)
 library(patchwork)
 library(GenomeInfoDb)
 library(AnnotationDbi)
-library(ggbio)
-library(org.Dm.eg.db)
-library(GenomicFeatures)
 library(rtracklayer)
-library(plyranges)
-library(GenomicFeatures)
-library(memes)
-source("workflow/scripts/utils/plotting.R")
 
 # ------------------------------------------------------------------------------
 ## motif alignments
 # ------------------------------------------------------------------------------
 
-motif_comp <- read_rds("results/motifs/comparison/pan_denovo_comparison.meme.rds")
-
-motif_comp <- motif_comp |>
-  group_by(denovo) |>
-  arrange(Pval) |>
-  mutate(rank = row_number()) |>
-  ungroup()
-
-# highest p at bh adjusted p of 0.1
-max_p <- filter(motif_comp, padj < 0.1) |> pull(Pval) |> max()
-  
-motif_comp2plot <- motif_comp |>
-  dplyr::select(rank, denovo, known, name, Pval, padj) |>
-  mutate(class = case_when(str_detect(known,"degenerate")~"Archbold 2014 degenerate",
-                           str_detect(known,"::MA0") & name=="pan" ~"pan (jaspar)",
-                           str_detect(known,"known::MA")~"jaspar (other)",
-                           str_detect(known,"known::")~"Archbold 2014 HMG/helper",
-                           T~"wut")) |>
-  mutate(label = if_else(is.na(name),class,name))
-  #filter(class == "pan (jaspar)")
-
-which.motifs <- motif_comp2plot |>
-  filter(str_length(denovo) > str_length("denovo::")+6) |>
-  group_by(denovo) |>
-  slice_min(padj, n=1) |>
-  filter(padj < 0.1) |>
-  pull(denovo)
-
-g_a <- motif_comp2plot |>
-  filter(denovo %in% which.motifs) |>
-  ggplot(aes(rank,-log10(Pval), color=class)) +
-  geom_point(data=\(x){filter(x, padj >= 0.1)}, size=rel(0.75),color="gray") +
-  geom_point(data=\(x){filter(x, padj < 0.1)}, size=rel(1)) +
-  ggrepel::geom_text_repel(data= \(x) filter(x,rank==1), aes(label=label),color="black") +
-  scale_color_brewer(type = "qual", palette = 2,name="") +
-  geom_hline(yintercept = -log10(max_p), linetype="dashed", color="darkgray") +
-  facet_wrap(~denovo, scales = "free", nrow=1) +
-  theme(legend.position = "bottom")
-
-motif_alns_to_plot <- motif_comp2plot |> filter(class!="jaspar (other)" & rank < 5)
-
-g_b <- filter(motif_comp, padj <0.1) |>
-  filter(denovo %in% which.motifs) |>
-  group_by(denovo) |>
-  slice_min(Pval,with_ties = F, n=1) |> 
-  filter(denovo %in% motif_alns_to_plot$denovo) |>
-  pull(gg) |>
-  Reduce(`+`,x=_ ) & theme_bw() & 
-  guides(color="none", fill="none") & plot_layout(nrow=1) & 
-  theme(text = element_text(size=5), axis.text.x = element_blank(), axis.ticks.x = element_blank(), strip.background = element_blank())
+motif_fig_df <- read_rds("results/motifs/comparison/pan_denovo_comparison.meme.gg_df.rds") |>
+  mutate(g_rnk = map2(denovo,g_rnk,~{.y + labs(title=.x)}))
 
 # ------------------------------------------------------------------------------
-#
+# get info for plotting tracks
 # ------------------------------------------------------------------------------
-
-sl <- getChromInfoFromNCBI("GCF_000001215.4")
-
-chroi <-  c("2L","2R","3L","3R","X","4")
-
-# get full range of main chroms
-wh <-  sl |>
-  as_tibble() |>
-  dplyr::filter(SequenceName %in%chroi) |>
-  dplyr::select(chr=SequenceName,end=SequenceLength) |>
-  mutate(start=1) |>
-  GRanges()
-
-# get names/paths of bigwigs
-
 bws <- Sys.glob("upstream/csem_mosaics/bigwigs/pan_ENCSR058DSI_rep*.log2ratio.bw") |>
   c(Sys.glob("upstream/csem_mosaics/bigwigs/gro_ENCSR981DLO_rep1.log2ratio.bw")) |>
   c(Sys.glob("upstream/csem_mosaics/bigwigs/E0.4_H3K9Me3_ChIPSeq_1.log2ratio.bw"))
 
-names(bws) <- str_extract(bws,"(?<=viz\\/).+(?=\\.log2)")
+bws <- as.list(bws)
 
-# get tiles and average within each tile - plotting takes forever with default 50bp windows
-tiles <- tileGenome(deframe(sl[,c("SequenceName","SequenceLength")])[chroi],tilewidth = 50000, cut.last.tile.in.chrom=TRUE)
+names(bws) <- str_extract(bws,"(?<=bigwigs\\/).+(?=\\.log2ratio)")
 
-grs <- map(bws, import_and_summarize, tiles, wh) # this func from workflow/scripts/utils/plotting.R
+bws <- bws |> map(import)
 
-gs <- grs |> GRangesList() |> plot_genome_signal()
+bws <- map(bws, ~{seqlevelsStyle(.x) <- "UCSC";return(.x)})
 
-g_tracks <- gs@ggplot 
+yrng <- calcSignalRange(bws,negData = T) |> round(1)
+chroi <- c("chr2L","chr2R","chr3L","chr3R","chrX")
+sl <- getChromInfoFromNCBI("GCF_000001215.4") |>
+  filter(UCSCStyleName%in% chroi)
 
+chrend <- sl |> dplyr::select(UCSCStyleName,SequenceLength) |>
+  deframe()
+
+sl <- sl |>
+  mutate(maxw = 1.2*SequenceLength/median(SequenceLength)) |>
+  dplyr::select(UCSCStyleName,maxw) |>
+  deframe()
+
+tracklabs <- sprintf("%s",str_extract(names(bws),"pan|gro|H3K9Me3"))
 # ------------------------------------------------------------------------------
 # create page
 # ------------------------------------------------------------------------------
 
-theme_set(theme_classic() + 
-            theme(text = element_text(size=5))
-)
+theme_set(theme_classic() + theme(text=element_text(size=unit(7,"pt"))))
+
 
 dir.create("results/figures2/")
 
@@ -118,14 +54,92 @@ pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
 
-plotGG(g_a, x = 0.5, y=0.5, width = 3.5,height = 2.5)
+# ------------------------------------------------------------------------------
+# plot motif figs
+# ------------------------------------------------------------------------------
+
+
+g_a <- plotGG(motif_fig_df$g_aln[[1]], x = 0.5, y=0.5, width = 2,height = 1.5)
 plotText("A", x = 0.5, y=0.5)
 
-plotGG(g_b, x = 4.5, y=0.25, width = 3.5,height = 2)
-plotText("B", x = 4.5, y=.5)
+g_b <- plotGG(motif_fig_df$g_aln[[2]], x = 3, y=0.5, width = 2*(23/9),height = 1.5)
+plotText("B", x = 3, y=.5)
 
-plotGG(g_tracks, x=0.5, y=3, width = 7.5, height = 2)
-plotText("C", x = 0.5, y=3.1)
+
+g_c <- plotGG(Reduce(`+`,motif_fig_df$g_rnk) + plot_layout(nrow=1,guides = "collect") & theme(legend.position = "right") & aes(color=class),
+       x=0.75,y=2.25,width = 7,height=2)
+plotText("C", x = 0.75, y=2.25)
+
+# ------------------------------------------------------------------------------
+# plot tracks
+# ------------------------------------------------------------------------------
+plotText("D", x = 0.75, y=4.5)
+
+
+params_c <- pgParams(assembly = "dm6", default.units = "inches",range=yrng)
+
+# loop to plot multitracks for each chr
+xi <- 1
+for (chr in chroi) {
+  
+  params_n <- pgParams(title=chr,assembly = "dm6",chrom=chr,chromstart=0,chromend=chrend[[chr]])
+  
+  h <- 2.5
+  yn <- 4.5
+  w <- sl[[chr]]
+  
+  # only put tracklab on left side of overall figure
+  if (chr == "chr2L") {
+    lab <- tracklabs
+  } else {
+    lab <- NULL
+  }
+  
+  # add stacked signal tracks for 1 chrom, all bigwigs
+  sig_track <- plotMultiSignal(data = bws, 
+                          just = c("left","top"),
+             params = c(params_c,params_n),
+             range=yrng,
+             label = lab,
+             x=xi, 
+             y=yn,
+             width = w,
+             height = h,
+             start=0,end=chrend[[chr]],
+             gapdistance = 0.01,
+             fill = "#253494", linecolor = "#253494",negData = T,fontsize=5,cex=0.5)
+  
+  # add genomic distance scale and chr label on bottom
+  annoGenomeLabel(plot = sig_track$pan_ENCSR058DSI_rep1, 
+                  params = c(params_c,params_n),
+                  scale = "Mb", fontsize = 5, digits = 0,
+                  start=0,
+                  end=chrend[[chr]],
+                  x=xi,
+                  y = yn+h,
+                  just = c("left","top"))
+  
+  # add signal min/max scale
+  if (chr=="chrX") {
+    plotText(sprintf("[ %s - %s ]",yrng[1],yrng[2]),
+             fontsize = 9,
+             x = xi+w,
+             y=yn,
+             just="right")
+  }
+  
+  # highlight rough pericentromeres
+  annoHighlight(
+      plot = sig_track$pan_ENCSR058DSI_rep1,
+      chrom = chr,
+      chromstart = if_else(str_detect(chr,"R$"),0,0.8*chrend[[chr]]),
+      chromend = if_else(str_detect(chr,"R$"),0.2*chrend[[chr]],chrend[[chr]]),
+      y=yn,height = h, just = c("left", "top"),
+      default.units = "inches")
+
+  xi <- xi + w + 0.05
+}
+
 
 
 dev.off()

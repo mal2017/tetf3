@@ -21,13 +21,20 @@ known_pan <- imap(known_pan, ~{.x@name <- .y; .x})
 # de novo motifs
 # ------------------------------------------------------------------------------
 motifs_dir <- ifelse(exists("snakemake"), snakemake@input[["denovo"]],
-                 "results/motifs/streme_per_tf/pan/")
+                 "results/motifs/meme_per_tf/NfI/")
 
 # get the motifs worth comparing to known (eval/pval < 0.05 (lower for homer, bc it reports more seemngly significant motifs))
 if (snakemake@params$motif_program == "streme") {
   motifs <- paste0(motifs_dir, "/streme.xml") |> memes::importStremeXML() |> pull(motif)
   names(motifs) <- motifs %>% map_chr( `@`, name)
 } else if (snakemake@params$motif_program == "meme") {
+  
+  # allow graceful exit if there's an empty meme file (NfI does this)
+  if (file.info(paste0(motifs_dir,"/meme.txt"))$size == 0) {
+    saveRDS(tibble(), snakemake@output[["motif_comparison"]])
+    saveRDS(matrix(), snakemake@output[["motif_similarity"]])
+    quit()
+  }
   motifs <- paste0(motifs_dir, "/meme.txt") |> memes::importMeme() |> filter(eval<0.05) |> pull(motif)
   names(motifs) <- motifs %>% map_chr( `@`, name)
 } else if (snakemake@params$motif_program == "homer") {
