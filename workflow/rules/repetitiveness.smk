@@ -18,9 +18,22 @@ rule chip_repetitiveness:
     script:
         "../scripts/repetitiveness/chip_repetitiveness.R"
 
-rule repetitiveness:
+rule plot_repetitiveness_by_visual_pericent_inspection_status:
     input:
-        rules.chip_repetitiveness.output.rds,
+        rds = rules.chip_repetitiveness.output.rds,
+        json = "resources/pericent_enriched_pan_chips_by_inspection.json"
+    output:
+        gg = "results/repetitiveness/repetitiveness_by_visual_pericent_inspection_status.gg.rds"
+    script:
+        "../scripts/repetitiveness/plot_repetitiveness_by_visual_pericent_inspection_status.R"
 
 
-
+rule plot_quality_by_visual_pericent_inspection_status:
+    input:
+        json = "resources/pericent_enriched_pan_chips_by_inspection.json",
+        rep = rules.chip_repetitiveness.output.rds,
+        qc = rules.chip_qual_assessment.output.rds
+    output:
+        gg = "results/repetitiveness/quality_by_visual_pericent_inspection_status.gg.rds"
+    script:
+        "../scripts/repetitiveness/plot_quality_by_visual_pericent_inspection_status.R"

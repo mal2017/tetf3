@@ -79,66 +79,22 @@ rule figure3_supp_02:
 
 rule figure4:
     input:
-        motif_comparison = "results/motifs/comparison/pan_denovo_comparison.meme.rds",
-        motif_similarity = "results/motifs/comparison/pan_denovo_similarity.meme.rds",
+        "results/motifs/comparison/pan_denovo_comparison.meme.gg_df.rds",
+        "upstream/csem_mosaics/bigwigs/"
     output:
        pdf="results/figures2/figure4_main.pan-motifs.pdf"
     script:
       "../scripts/figures2/pan-motifs.main.R"
 
-rule figure4_supp_00:
-    input:
-        dds = "results/ripseq/unr_ripseq.dds.rds",
-        tsv = "results/ripseq/unr_ripseq.tsv.gz",
-        au = "results/ripseq/unr_ripseq_features_au_content.tsv.gz",
-        au_in_region = "results/ripseq/unr_ripseq_features_au_content_in_region.tsv.gz",
-        attta_in_region = "results/ripseq/unr_ripseq_features_attta_sites_in_region.tsv.gz",
-        gsea = "results/ripseq/unr_bound_tx_in_kd.gsea.rds",
-        p4d = "results/ripseq/unr_ripseq_phylosignal.p4d.rds",
-    params:
-        relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION")
-    output:
-        pdf="results/figures2/figure4_supp_00.ripseq-ares.pdf",
-        pdf2="results/figures2/figure4_supp_00.ripseq-phylosignal.pdf"
-    script:
-        "../scripts/figures2/unr_ripseq.R"
-
-
 
 rule figure4_supp_01:
-    input:
-        n_denovo_vs_sig_coef = "results/integrative/n_denovo_vs_sig_coef.pan.rds",
-        pan_tree = "results/integrative/motif_and_coex_on_tree.pan.plot.rds",
-    output:
-        pdf="results/figures2/figure4_supp_01.pan-meme-denovo.pdf"
-    script:
-        "../scripts/figures2/pan-meme-denovo.R"
-
-rule figure4_supp_02:
-    input:
-        motif_comparison = "results/motifs/comparison/pan_denovo_comparison.homer.rds",
-        motif_similarity = "results/motifs/comparison/pan_denovo_similarity.homer.rds",
-    output:
-        pdf="results/figures2/figure4_supp_02.pan-homer-denovo.pdf"
-    script:
-        "../scripts/figures2/pan-homer-denovo.R"
-
-
-rule figure4_supp_03:
-    input:
-        denovo_empirical_fdr = "results/motifs/streme_per_tf_empirical_fdr/pan_empirical_fdr.tsv",
-        motif_comparison = "results/motifs/comparison/pan_denovo_comparison.streme.rds",
-        motif_similarity = "results/motifs/comparison/pan_denovo_similarity.streme.rds",
-    output:
-        pdf="results/figures2/figure4_supp_03.pan-streme-denovo.pdf"
-    script:
-        "../scripts/figures2/pan-streme-denovo.R"
-
-
-rule figure4_supp_04:
     """
     pan tracks and qc
     """
+    input:
+        "upstream/csem_mosaics/bigwigs/",
+        rules.plot_quality_by_visual_pericent_inspection_status.output,
+        rules.plot_quality_by_visual_pericent_inspection_status.output,
     output:
         pdf="results/figures2/figure4_supp_04.csem-tracks-and-qc-pan-profile.pdf",
     script:
@@ -147,64 +103,103 @@ rule figure4_supp_04:
 
 
 
-rule figure4_supp_06:
-    """
-    h3k9 profiles and repetitiveness
-    """
-    input:
-        repetitiveness = rules.chip_repetitiveness.output.rds,
-    output:
-        pdf ="results/figures2/figure4_supp_06.h3k9me3-profile-repetitiveness.pdf",
-    script:
-        "../scripts/figures2/h3k9me3-profile-repetitiveness.R"
+
+# rule figure4_supp_01:
+#     input:
+#         n_denovo_vs_sig_coef = "results/integrative/n_denovo_vs_sig_coef.pan.rds",
+#         pan_tree = "results/integrative/motif_and_coex_on_tree.pan.plot.rds",
+#     output:
+#         pdf="results/figures2/figure4_supp_01.pan-meme-denovo.pdf"
+#     script:
+#         "../scripts/figures2/pan-meme-denovo.R"
+
+# rule figure4_supp_02:
+#     input:
+#         motif_comparison = "results/motifs/comparison/pan_denovo_comparison.homer.rds",
+#         motif_similarity = "results/motifs/comparison/pan_denovo_similarity.homer.rds",
+#     output:
+#         pdf="results/figures2/figure4_supp_02.pan-homer-denovo.pdf"
+#     script:
+#         "../scripts/figures2/pan-homer-denovo.R"
 
 
-rule figure4_supp_07:
-    input:
-        rules.csem_peaks_regioner.output,
-    output:
-        pdf="results/figures2/figure4_supp_07.csem-regioner.pdf",
-    script:
-        "../scripts/figures2/csem-regioner.R"
-
-rule figure4_supp_08:
-    input:
-        rules.fca_heads_reanalysis.output,
-    output:
-        pdf="results/figures2/figure4_supp_08.fca.pdf",
-    script:
-        "../scripts/figures2/flycellatlas.R"
-
-rule figure4_supp_09:
-    input:
-        rules.calderon22_reanalysis.output,
-    output:
-        pdf="results/figures2/figure4_supp_09.calderon22.pdf",
-    script:
-        "../scripts/figures2/calderon22.R"
-
-# # ---------------------------------------------------------------------------------------------------
-# # figures related to results section 5
-# # ---------------------------------------------------------------------------------------------------
+# rule figure4_supp_03:
+#     input:
+#         denovo_empirical_fdr = "results/motifs/streme_per_tf_empirical_fdr/pan_empirical_fdr.tsv",
+#         motif_comparison = "results/motifs/comparison/pan_denovo_comparison.streme.rds",
+#         motif_similarity = "results/motifs/comparison/pan_denovo_similarity.streme.rds",
+#     output:
+#         pdf="results/figures2/figure4_supp_03.pan-streme-denovo.pdf"
+#     script:
+#         "../scripts/figures2/pan-streme-denovo.R"
 
 
-rule figure5:
-    input:
-        crlg = rules.filter_phylo_and_plot_correlograms.output.rds,
-        control_crlg = rules.plot_control_correlograms.output.rds,
-        tre = "results/te_sequence_similarity/te_sketch_tidytree.rds",
-    output:
-        pdf="results/figures2/figure5_main.phylosignal.pdf"
-    script:
-        "../scripts/figures2/phylosignal.main.R"
 
-rule figure5_supp_01:
-    input:
-        "results/te_sequence_similarity/te_sketch_tidytree.rds",
-    output:
-        pdf="results/figures2/figure5_supp_01.dashing2-tree.pdf"
-    script:
-        "../scripts/figures2/dashing2-te-phylo-supplement-01.R"
+# rule figure4_supp_07:
+#     input:
+#         rules.csem_peaks_regioner.output,
+#     output:
+#         pdf="results/figures2/figure4_supp_07.csem-regioner.pdf",
+#     script:
+#         "../scripts/figures2/csem-regioner.R"
+
+
+
+# rule figure5_and_supp:
+#     input:
+#         dds = "results/ripseq/unr_ripseq.dds.rds",
+#         tsv = "results/ripseq/unr_ripseq.tsv.gz",
+#         au = "results/ripseq/unr_ripseq_features_au_content.tsv.gz",
+#         au_in_region = "results/ripseq/unr_ripseq_features_au_content_in_region.tsv.gz",
+#         attta_in_region = "results/ripseq/unr_ripseq_features_attta_sites_in_region.tsv.gz",
+#         gsea = "results/ripseq/unr_bound_tx_in_kd.gsea.rds",
+#         p4d = "results/ripseq/unr_ripseq_phylosignal.p4d.rds",
+#     params:
+#         relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION")
+#     output:
+#         pdf="results/figures2/figure5.ripseq-ares.pdf",
+#         pdf2="results/figures2/figure5_supp_01.ripseq-phylosignal.pdf"
+#     script:
+#         "../scripts/figures2/unr_ripseq.R"
+
+# rule figure5_supp_02:
+#     input:
+#         rules.fca_heads_reanalysis.output,
+#     output:
+#         pdf="results/figures2/figure5_supp_02.fca.pdf",
+#     script:
+#         "../scripts/figures2/flycellatlas.R"
+
+# rule figure5_supp_03:
+#     input:
+#         rules.calderon22_reanalysis.output,
+#     output:
+#         pdf="results/figures2/figure5_supp_03.calderon22.pdf",
+#     script:
+#         "../scripts/figures2/calderon22.R"
+
+# # # ---------------------------------------------------------------------------------------------------
+# # # figures related to results section 5
+# # # ---------------------------------------------------------------------------------------------------
+
+
+# rule figure6:
+#     input:
+#         crlg = rules.filter_phylo_and_plot_correlograms.output.rds,
+#         control_crlg = rules.plot_control_correlograms.output.rds,
+#         tre = "results/te_sequence_similarity/te_sketch_tidytree.rds",
+#     output:
+#         pdf="results/figures2/figure6_main.phylosignal.pdf"
+#     script:
+#         "../scripts/figures2/phylosignal.main.R"
+
+# rule figure6_supp_01:
+#     input:
+#         "results/te_sequence_similarity/te_sketch_tidytree.rds",
+#     output:
+#         pdf="results/figures2/figure6_supp_01.dashing2-tree.pdf"
+#     script:
+#         "../scripts/figures2/dashing2-te-phylo-supplement-01.R"
 
 
 
@@ -221,14 +216,5 @@ rule figures:
         rules.figure3_supp_01.output,
         rules.figure3_supp_02.output,
         rules.figure4.output,
-        rules.figure4_supp_00.output,
         rules.figure4_supp_01.output,
-        rules.figure4_supp_02.output,
-        rules.figure4_supp_03.output,
-        rules.figure4_supp_04.output,
-        rules.figure4_supp_06.output,
-        rules.figure4_supp_07.output,
-        rules.figure4_supp_09.output,
-        rules.figure5.output,
-        rules.figure5_supp_01.output,
 
