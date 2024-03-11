@@ -59,3 +59,9 @@ plotGG(g_b, x = 3.5, y=0.5, width = 4.5,height = 2.75)
 plotText("B", x = 3.5, y=0.5)
 
 dev.off()
+
+writexl::write_xlsx(list(A=g_a$data,
+                         B=g_b$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))

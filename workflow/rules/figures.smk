@@ -9,7 +9,8 @@ rule figure1:
         rules.plot_te_silencer_n_hits_boxplot.output,
         rules.plot_n_models_per_filtering_step.output.gg,
     output:
-        pdf="results/figures/panels/figure1_main.overview.pdf"
+        pdf="results/figures/panels/figure1_main.overview.pdf",
+        xlsx="results/figures/data/figure1_main.overview.xlsx"
     params:
         figtitle="Figure 1"
     script:
@@ -24,7 +25,8 @@ rule figure1_supp_01:
         rules.plot_te_silencer_scores_boxplot.output,
         rules.plot_te_silencer_n_hits_boxplot.output,
     output:
-        pdf="results/figures/panels/figure1_supp_01.extra-overview.pdf"
+        pdf="results/figures/panels/figure1_supp_01.extra-overview.pdf",
+        xlsx="results/figures/data/figure1_supp_01.extra-overview.xlsx"
     params:
         figtitle="Supplement 01 to Figure 1"
     script:
@@ -39,7 +41,8 @@ rule figure2:
         male_gg_gsea = "results/enrichment/sig_main_male_max_abs_estimate_qnorm.gg_gsea.rds",
         female_gg_gsea = "results/enrichment/sig_main_female_max_abs_estimate_qnorm.gg_gsea.rds",
     output:
-        pdf="results/figures/panels/figure2_main.tf-overrepresentation.pdf"
+        pdf="results/figures/panels/figure2_main.tf-overrepresentation.pdf",
+        xlsx="results/figures/data/figure2_main.tf-overrepresentation.xlsx"
     params:
         figtitle="Figure 2"
     script:
@@ -258,3 +261,12 @@ rule figures:
         gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
         """
 
+rule figuredata:
+    input:
+        rules.figure1.output.xlsx,
+        rules.figure1_supp_01.output.xlsx,
+        rules.figure2.output.xlsx,
+    output:
+        xlsx="results/figures/figuredata.xlsx"
+    script:
+        "../scripts/figures/combine_figuredata.R"

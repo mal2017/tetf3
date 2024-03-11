@@ -61,7 +61,6 @@ g_nhits_prev_rep_teregs <- read_rds("results/pirna/te_silencer_n_hits_boxplot.fe
 
 g_score_prev_rep_teregs <- read_rds("results/pirna/te_silencer_scores_boxplot.females.gg.rds")
 
-
 # ------------------------------------------------------------------------------
 # create page
 
@@ -97,4 +96,15 @@ plotText("F",  x = 4.25, y=6)
 
 
 dev.off()
+
+writexl::write_xlsx(list(B=g_filt$data,
+                         C=g_score_prev_rep_teregs$data,
+                         D=g_nhits_prev_rep_teregs$data,
+                         E=g_n_tes_scatter$data,
+                         `F`=g_n_genes_scatter$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))
+
+
 

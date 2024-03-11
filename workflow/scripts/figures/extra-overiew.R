@@ -74,3 +74,15 @@ plotGG(g_nhits_prev_rep_teregs, x = 5.75, y=5.75, width = 2.25,height = 2)
 plotText("H",  x = 5.75, y=5.75)
 
 dev.off()
+
+writexl::write_xlsx(list(`A (summarized to median for xlsx compatibility)`=group_by(g_var_exp$data,model,coef) |> summarise(med.var.explained=median(var.explained,na.rm=T)),
+                         `B (subsampled for xlsx compatibility)`=sample_n(g_mf$unfiltered$data,replace = F,size = 999999),
+                         C=g_mf$replicated$data,
+                         D=g_repcor$male$data,
+                         E=g_repcor$female$data,
+                         `F`=g_sharedness$data,
+                         G=g_score_prev_rep_teregs$data,
+                         H=g_nhits_prev_rep_teregs$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))
