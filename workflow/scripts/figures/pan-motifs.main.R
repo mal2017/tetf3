@@ -42,9 +42,6 @@ enclabs <- sprintf("%s",replace_na(str_extract(names(bws),"ENCSR.+(?=_rep)"),"")
 
 theme_set(theme_classic() + theme(text=element_text(size=unit(7,"pt"))))
 
-
-dir.create("results/figures2/")
-
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())

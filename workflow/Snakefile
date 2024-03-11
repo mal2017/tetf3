@@ -14,14 +14,13 @@ include: "rules/signatures.smk"
 include: "rules/zad_phylo.smk"
 include: "rules/phylosignal.smk"
 include: "rules/scrna.smk"
-include: "rules/integrative.smk"
 include: "rules/repetitiveness.smk"
 include: "rules/pirna.smk"
 include: "rules/csem_mosaics.smk"
 include: "rules/other_plots.smk"
 include: "rules/stats.smk"
 include: "rules/ripseq.smk"
-include: "rules/figures2.smk"
+include: "rules/figures.smk"
 
 rule all:
     input:

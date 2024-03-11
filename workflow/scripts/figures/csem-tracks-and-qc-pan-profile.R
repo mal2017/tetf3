@@ -66,7 +66,7 @@ theme_set(theme_classic() +
             theme(text = element_text(size=7))
 )
 
-dir.create("results/figures2/")
+dir.create("results/figures/")
 
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 

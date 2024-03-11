@@ -52,3 +52,16 @@ rule figure5_supp_02:
     script:
         "../scripts/figures2/te-regulators-in-kd-and-encode-peak-prox.R"
 
+
+rule figure4_supp_02:
+    """
+    "upstream/csem_mosaics/bigwigs/",
+    """
+    input:
+        repetitiveness = rules.chip_repetitiveness.output.rds,
+    output:
+        pdf ="results/figures2/figure4_supp_06.h3k9me3-profile.pdf",
+    script:
+        "../scripts/figures2/h3k9me3-profile-repetitiveness.R"
+
+

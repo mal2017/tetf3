@@ -110,8 +110,6 @@ g_a <- ggtree(tr, layout = "rectangular",right = T, ladderize = T, size=0.25) +
 # make page
 # ------------------------------------------------------------------------------
 
-dir.create("results/figures2/")
-
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
