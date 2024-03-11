@@ -28,3 +28,12 @@ rule plot_de_volcanos:
     gg = "results/deg/de_volcanos.gg.rds",
   script:
     "../scripts/differential_expression/plot_de_volcanos.R"
+
+rule plot_check_kds_by_chip_prox:
+  input:
+    res="results/deg/ourKD.de.df.rds",
+    gr = "results/pirna/encode_peaks_dist_to_pirna.gr.rds",
+  output:
+    gg="results/deg/check_kds_by_chip_prox.gg.rds",
+  script:
+    "../scripts/differential_expression/plot_check_kds_by_chip_prox.R"
