@@ -42,6 +42,7 @@ pks <- pks |>
 seqlevelsStyle(pks) <- "NCBI"
 
 expressed_in_embryo <- read_tsv("resources/embryo_expressed.FlyBase_IDs.txt",col_names = "gene_id")
+expressed_in_head <- read_tsv("resources/female_head_expressed.FlyBase_IDs.txt",col_names = "gene_id")
 
 # get a single 'tss' for each gene
 all_genes <- genes(txdb) %>% 
@@ -52,7 +53,8 @@ all_genes <- genes(txdb) %>%
 # previously id'd TE regulators
 all_genes <- all_genes |>
   mutate(is.piRNA.pathway = gene_id %in% pirna_gene_ids$gene_ID,
-         embryo.expressed =  gene_id %in% expressed_in_embryo$gene_id)
+         embryo.expressed =  gene_id %in% expressed_in_embryo$gene_id,
+         head.expressed =  gene_id %in% expressed_in_head$gene_id)
 
 # make sure all seqlevels are shared between ranges to avoid warnings/errors
 shared_seqs <- intersect(seqlevelsInUse(pks),seqlevelsInUse(all_genes))
