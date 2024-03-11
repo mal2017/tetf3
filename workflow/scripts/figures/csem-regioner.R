@@ -64,30 +64,31 @@ dir.create("results/figures/")
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
+figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
+plotText(figtitle,x=0,y=0,just = c("left","top"))
 
-plotGG(h3k9me3_all_te, x = 0.5, y=0.5, width = 3.5,height = 2.5)
+plotGG(h3k9me3_all_te, x = 0.5, y=0.5, width = 3.5,height = 2.25)
 plotText("A", x = 0.5, y=0.5)
 
-plotGG(gro_all_te, x = 4.5, y=0.5, width = 3.5,height = 2.5)
+plotGG(gro_all_te, x = 4.5, y=0.5, width = 3.5,height = 2.25)
 plotText("B", x = 4.5, y=.5)
 
-plotGG(pan_pan_te, x = 0.5, y=3.25, width = 3.5,height = 2.5)
-plotText("C", x = 0.5, y=3.25)
+plotGG(pan_pan_te, x = 0.5, y=3, width = 3.5,height = 2.25)
+plotText("C", x = 0.5, y=3)
 
-plotGG(pan_all_te, x = 4.5, y=3.25, width = 3.5,height = 2.5)
-plotText("D", x = 4.5, y=3.25)
+plotGG(pan_all_te, x = 4.5, y=3, width = 3.5,height = 2.25)
+plotText("D", x = 4.5, y=3)
 
+plotGG(pan_euch_all_te, x = 0.5, y=5.75, width = 3.5,height = 2.25)
+plotText("E", x = 0.5, y=5.5)
 
-plotGG(pan_euch_all_te, x = 0.5, y=6, width = 3.5,height = 2.5)
-plotText("E", x = 0.5, y=6)
+plotGG(vvl_all_te, x = 4.5, y=5.75, width = 3.5,height = 2.25)
+plotText("F", x = 4.5, y=5.5)
 
-plotGG(vvl_all_te, x = 4.5, y=6, width = 3.5,height = 2.5)
-plotText("F", x = 4.5, y=6)
+plotGG(nfi_all_te, x = 0.5, y=8, width = 3.5,height = 2.25)
+plotText("G", x = 0.5, y=8)
 
-plotGG(nfi_all_te, x = 0.5, y=8.75, width = 3.5,height = 2.5)
-plotText("G", x = 0.5, y=8.75)
-
-plotGG(cg16779_all_te, x = 4.5, y=8.75, width = 3.5,height = 2.5)
-plotText("H", x = 4.5, y=8.75)
+plotGG(cg16779_all_te, x = 4.5, y=8, width = 3.5,height = 2.25)
+plotText("H", x = 4.5, y=8)
 
 dev.off()

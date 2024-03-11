@@ -10,6 +10,8 @@ rule figure1:
         rules.plot_n_models_per_filtering_step.output.gg,
     output:
         pdf="results/figures/panels/figure1_main.overview.pdf"
+    params:
+        figtitle="Figure 1"
     script:
         "../scripts/figures/overview.main.R"
 
@@ -23,6 +25,8 @@ rule figure1_supp_01:
         rules.plot_te_silencer_n_hits_boxplot.output,
     output:
         pdf="results/figures/panels/figure1_supp_01.extra-overview.pdf"
+    params:
+        figtitle="Supplement 01 to Figure 1"
     script:
         "../scripts/figures/extra-overiew.R"
 
@@ -36,6 +40,8 @@ rule figure2:
         female_gg_gsea = "results/enrichment/sig_main_female_max_abs_estimate_qnorm.gg_gsea.rds",
     output:
         pdf="results/figures/panels/figure2_main.tf-overrepresentation.pdf"
+    params:
+        figtitle="Figure 2"
     script:
         "../scripts/figures/tf-overrepresentation-in-coex.main.R"
 
@@ -49,6 +55,8 @@ rule figure3:
         rules.plot_ourKD_gsea_barplots.output,
     output:
         pdf = "results/figures/panels/figure3_main.knockdowns.pdf"
+    params:
+        figtitle="Figure 3"
     script:
         "../scripts/figures/knockdowns.main.R"
 
@@ -61,6 +69,8 @@ rule figure3_supp_01:
         rules.plot_ourKD_gsea_barplots.output,
     output:
         pdf="results/figures/panels/figure3_supp_01.factor_specific_gsea.pdf"
+    params:
+        figtitle="Supplement 01 to Figure 3"
     script:
         "../scripts/figures/our-kd-factor-specific-gsea.R"
 
@@ -69,6 +79,8 @@ rule figure3_supp_02:
         rules.plot_de_volcanos.output,
     output:
         pdf="results/figures/panels/figure3_supp_02.pirna-volcano.pdf"
+    params:
+        figtitle="Supplement 02 to Figure 3"
     script:
         "../scripts/figures/pirna-and-tes-in-kd-volcano.R"
 
@@ -83,6 +95,8 @@ rule figure4:
         "upstream/csem_mosaics/bigwigs/"
     output:
        pdf="results/figures/panels/figure4_main.pan-motifs.pdf"
+    params:
+        figtitle="Figure 4"
     script:
       "../scripts/figures/pan-motifs.main.R"
 
@@ -101,6 +115,8 @@ rule figure4_supp_01:
         denovo_comparison_gg = "results/motifs/comparison/pan_within_denovo.gg.rds",
     output:
         pdf="results/figures/panels/figure4_supp_01.denovo-motif-pan-supp.pdf"
+    params:
+        figtitle="Supplement 01 to Figure 4"
     script:
         "../scripts/figures/denovo-motif-pan-supp.R"
 
@@ -115,6 +131,8 @@ rule figure4_supp_02:
         rules.plot_quality_by_visual_pericent_inspection_status.output,
     output:
         pdf="results/figures/panels/figure4_supp_02.csem-tracks-and-qc-pan-profile.pdf",
+    params:
+        figtitle="Supplement 02 to Figure 4"
     script:
         "../scripts/figures/csem-tracks-and-qc-pan-profile.R"
 
@@ -124,6 +142,8 @@ rule figure4_supp_03:
         rules.csem_peaks_regioner.output,
     output:
         pdf="results/figures/panels/figure4_supp_03.csem-regioner.pdf",
+    params:
+        figtitle="Supplement 03 to Figure 4"
     script:
         "../scripts/figures/csem-regioner.R"
 
@@ -142,7 +162,8 @@ rule figure5_and_supp:
         gsea = "results/ripseq/unr_bound_tx_in_kd.gsea.rds",
         p4d = "results/ripseq/unr_ripseq_phylosignal.p4d.rds",
     params:
-        relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION")
+        relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION"),
+        figtitle=["Figure 5", "Supplement 01 to Figure 5"]
     output:
         pdf="results/figures/panels/figure5.ripseq-ares.pdf",
         pdf2="results/figures/panels/figure5_supp_01.ripseq-phylosignal.pdf"
@@ -154,6 +175,8 @@ rule figure5_supp_02:
         rules.fca_heads_reanalysis.output,
     output:
         pdf="results/figures/panels/figure5_supp_02.fca.pdf",
+    params:
+        figtitle="Supplement 02 to Figure 5"
     script:
         "../scripts/figures/flycellatlas.R"
 
@@ -177,6 +200,8 @@ rule figure6:
         tre = "results/te_sequence_similarity/te_sketch_tidytree.rds",
     output:
         pdf="results/figures/panels/figure6_main.phylosignal.pdf"
+    params:
+        figtitle="Figure 6"
     script:
         "../scripts/figures/phylosignal.main.R"
 
@@ -185,6 +210,8 @@ rule figure6_supp_01:
         "results/te_sequence_similarity/te_sketch_tidytree.rds",
     output:
         pdf="results/figures//panels/figure6_supp_01.dashing2-tree.pdf"
+    params:
+        figtitle="Supplement 01 to Figure 6"
     script:
         "../scripts/figures/dashing2-te-phylo-supplement-01.R"
 
@@ -197,6 +224,8 @@ rule methods_figs:
         rules.plot_check_kds_by_chip_prox.output,
     output:
         pdf="results/figures/panels/methods_supp_01.pdf"
+    params:
+        figtitle="Supplement 01 to Methods"
     script:
         "../scripts/figures/methods_supp_01.R"
 
@@ -216,7 +245,7 @@ rule figures:
         rules.figure4.output,
         rules.figure4_supp_01.output,
         rules.figure4_supp_02.output,
-        #rules.figure4_supp_03.output,
+        rules.figure4_supp_03.output,
         rules.figure5_and_supp.output,
         rules.figure5_supp_02.output,
         rules.figure6.output,

@@ -113,6 +113,8 @@ g_a <- ggtree(tr, layout = "rectangular",right = T, ladderize = T, size=0.25) +
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
+figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
+plotText(figtitle,x=0,y=0,just = c("left","top"))
 
 plotGG(g_a, x = 0.5, y=0.5, width = 4,height = 2.65)
 plotText("A", x = 0.5, y=0.5)

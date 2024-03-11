@@ -176,6 +176,9 @@ theme_set(theme_classic() + theme(text=element_text(size=unit(7,"pt"))))
 if (!interactive()) pdf(snakemake@output[["pdf"]],width = 8.5, height = 11)
 
 pageCreate(width =8.5, height = 11, default.units = "inches", showGuides = interactive())
+figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
+plotText(figtitle,x=0,y=0,just = c("left","top"))
+
 
 pa <- plotGG(plot = g_a_cartoon, x = 1, y=0.3, width = 3, height=2.25)
 plotText(label = "A", x = 1, y = 0.5)

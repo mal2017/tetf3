@@ -29,6 +29,8 @@ dir.create("results/figures/")
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
+figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
+plotText(figtitle,x=0,y=0,just = c("left","top"))
 
 plotGG(g_meme_boxplot, x=0.75, y=0.75, width = 2, height=2.25)
 plotText("A", x = 0.5, y=0.5)

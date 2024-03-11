@@ -22,6 +22,8 @@ theme_set(theme_classic() +
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
+figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
+plotText(figtitle,x=0,y=0,just = c("left","top"))
 
 plotGG(g_a, x = 0.5, y=0.5, width = 7.5,height = 10)
 

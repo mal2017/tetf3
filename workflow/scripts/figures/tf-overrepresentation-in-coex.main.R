@@ -37,6 +37,7 @@ g_b <- make_dotplot(female_gsea)
 # make page
 # ------------------------------------------------------------------------------
 
+
 theme_set(theme_classic() + 
             theme(text = element_text(size=unit(7,"pt"))) +
             theme(plot.title = element_text(hjust = 0.5))
@@ -45,6 +46,11 @@ theme_set(theme_classic() +
 pdf(snakemake@output$pdf,width = 8.5, height = 11)
 
 pageCreate(height = 11, showGuides=interactive())
+figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
+plotText(figtitle,x=0,y=0,just = c("left","top"))
+
+figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
+plotText(figtitle,x=0,y=0,just = c("left","top"))
 
 plotGG(g_a, x = 0.5, y=0.5, width = 4.5*5/9,height = 2.75)
 plotText("A", x = 0.5, y=0.5)
