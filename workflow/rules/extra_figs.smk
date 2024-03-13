@@ -65,3 +65,27 @@ rule figure4_supp_02:
         "../scripts/figures2/h3k9me3-profile-repetitiveness.R"
 
 
+
+rule figure4_supp_05:
+    """
+    pan tracks and qc
+    """
+    input:
+        "upstream/csem_mosaics/bigwigs/",
+        rules.plot_quality_by_visual_pericent_inspection_status.output,
+        rules.plot_quality_by_visual_pericent_inspection_status.output,
+    output:
+        pdf="results/figures/panels/figure4_supp_05.csem-tracks-and-qc-pan-profile.pdf",
+    params:
+        figtitle="Supplement 05 to Figure 4"
+    script:
+        "../scripts/figures/csem-tracks-and-qc-pan-profile.R"
+
+
+rule figure5_supp_03:
+    input:
+        rules.calderon22_reanalysis.output,
+    output:
+        pdf="results/figures/panels/figure5_supp_03.calderon22.pdf",
+    script:
+        "../scripts/figures/calderon22.R"

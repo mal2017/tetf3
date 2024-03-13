@@ -26,9 +26,10 @@ dx <- d |>
   inner_join(oi) |>
   dplyr::select(feature="gene_id",gene_symbol,ChIP,distance) |>
   distinct() |>
-  filter(distance < 350) |>
+  filter(distance < 5000) |>
   pivot_wider(names_from = ChIP, values_from = distance) |>
-  dplyr::rename(`gene ID`=feature, `symbol`=gene_symbol)
+  dplyr::rename(`gene ID`=feature, `symbol`=gene_symbol) |>
+  dplyr::select(-`gene ID`)
 
 gx <- gt(dx)
 
@@ -36,14 +37,12 @@ gx <- tab_style(gx,style = cell_text(style="italic"),
           locations = cells_body(columns=c("symbol")))
 
 gx <- tab_style(gx,style = cell_text(style="italic"),
-                locations = cells_column_labels(columns=-c("gene ID","symbol")))
+                locations = cells_column_labels(columns=-c("symbol")))
 
 gx <- gx |>
-  data_color(columns=-c("gene ID","symbol"),
+  data_color(columns=-c("symbol"),
              direction="row",
              method="bin", palette = "Greens",reverse=T,bins=c(0,100,500,1000,5000,1e7))
 
-gx
-
 dir.create("results/tables/")
-gtsave(gx,"results/tables/known_TE_regulators_in_chip.table.docx")
+gtsave(gx,"results/tables/table_te_regulator_chip_prox.docx")

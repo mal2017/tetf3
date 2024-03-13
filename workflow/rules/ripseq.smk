@@ -108,6 +108,49 @@ rule meme_unr_ripseq:
             -objfun se
         """
 
+rule plot_ripseq_maplot:
+    input: 
+        rip = rules.unr_ripseq_enrichment.output.tsv,
+    output:
+        gg = "results/ripseq/unr_ripseq_maplot.gg.rds"
+    script:
+        "../scripts/ripseq/plot_ripseq_maplot.R"
+
+rule plot_au_richness:
+    input:
+        rip=rules.unr_ripseq_enrichment.output.tsv,
+        au = rules.transcript_au_content.output.tsv,
+        au_in_region = rules.transcript_au_content_in_region.output.tsv,
+    output:
+        lineplot = "results/ripseq/unr_ripseq_au_richness.lineplot.gg_list.rds",
+        boxplot = "results/ripseq/unr_ripseq_au_richness.boxplot.gg_list.rds"
+    params:
+        relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION")
+    script:
+        "../scripts/ripseq/plot_au_richness.R"
+
+rule plot_attta_richness:
+    input:
+        rip=rules.unr_ripseq_enrichment.output.tsv,
+        attta = rules.transcript_attta_sites_in_region.output.tsv,
+    output:
+        boxplot = "results/ripseq/unr_ripseq_attta_richness.boxplot.gg_list.rds"
+    params:
+        relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION")
+    script:
+        "../scripts/ripseq/plot_attta_richness.R"    
+
+rule plot_unr_phylosignal:
+    input:
+        ps_test = "results/ripseq/unr_ripseq_phylosignal.tbl.rds",
+        rip = "results/ripseq/unr_ripseq.tsv.gz",
+        p4d = "results/ripseq/unr_ripseq_phylosignal.p4d.rds",
+        tree = "results/ripseq/unr_ripseq_phylosignal.tree.rds",
+    output:
+        crlg = "results/ripseq/unr_ripseq_phylosignal.crlg.gg.rds",
+        tree = "results/ripseq/unr_ripseq_phylosignal.tree.gg.rds",
+    script:
+        "../scripts/ripseq/plot_unr_phylosignal.R"
 
 
 rule unr_ripseq_analysis:

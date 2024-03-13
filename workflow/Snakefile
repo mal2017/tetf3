@@ -21,14 +21,13 @@ include: "rules/other_plots.smk"
 include: "rules/stats.smk"
 include: "rules/ripseq.smk"
 include: "rules/figures.smk"
+include: "rules/supplementary_tables.smk"
 
 rule all:
     input:
-        rules.coexpression_replication.output,
-        rules.te_sequence_similarity.output,
-        rules.enrichment.output,
-        rules.motifs.output,
-        rules.figures.output
+        rules.figures.output,
+        rules.figuredata.output,
+        rules.tables.output,
 
 
 
