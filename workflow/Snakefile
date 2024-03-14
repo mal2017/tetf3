@@ -17,11 +17,11 @@ include: "rules/scrna.smk"
 include: "rules/repetitiveness.smk"
 include: "rules/pirna.smk"
 include: "rules/csem_mosaics.smk"
-include: "rules/other_plots.smk"
 include: "rules/stats.smk"
 include: "rules/ripseq.smk"
 include: "rules/figures.smk"
 include: "rules/supplementary_tables.smk"
+include: "rules/motifs_cg16779.smk"
 
 rule all:
     input:
