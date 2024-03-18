@@ -14,10 +14,14 @@ LKUP: resources/fbgn_fbtr_fbpp_expanded_fb_2021_04.tsv.gz
 #############################################################################
 EMBRYO_EXPRESSED_GENES: resources/embryo_expressed.FlyBase_IDs.txt
 WPP_EXPRESSED_GENES: resources/wpp_expressed.FlyBase_IDs.txt
+HEAD_EXPRESSED_GENES: resources/female_head_expressed.FlyBase_IDs.txt
+OVARY_EXPRESSED_GENES: resources/ovary_expressed.FlyBase_IDs.txt
 TFS: resources/Drosophila_melanogaster_TF.txt
 COFACS: resources/Drosophila_melanogaster_TF_cofactors.txt
 REMAP_PEAKS: resources/remap2022_nr_macs2_dm6_v1_0.bed.gz
-
+REACTOME_SIRNA: resources/Participating_Molecules_R-DME-211000.tsv
+HANDLER: resources/handler2013_supp2.xlsx
+CZECH: resources/czech2013_supp2.xlsx
 
 #############################################################################
 # Expression data

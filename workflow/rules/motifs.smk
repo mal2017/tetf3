@@ -90,8 +90,8 @@ rule meme_per_tf:
         dir = rules.split_cons_tes_per_tf.output.odir.replace("(","\\(").replace(")","\\)"),
     threads:
         6
-    singularity:
-        "docker://memesuite/memesuite:5.5.4"
+    #singularity:
+        #"docker://memesuite/memesuite:5.5.4"
     shell:
         """
         meme "{params.dir}/{wildcards.tf}/coex.fasta" \
@@ -175,7 +175,7 @@ rule homer_per_tf:
     output:
         odir = directory("results/motifs/homer_per_tf/{tf}/")
     threads:
-        4
+        2
     conda:
         "../envs/homer.yaml"
     shell:
@@ -269,6 +269,7 @@ rule compare_denovo_pan_motifs:
         streme = "results/motifs/streme_per_tf/pan/",
         meme = "results/motifs/meme_per_tf/pan/",
         known_meme = rules.get_known_motifs.output.all_known,
+        comparison = "results/motifs/comparison/pan_denovo_comparison.meme.rds",
     output:
         motif_comparison = "results/motifs/comparison/pan_within_denovo_comparison.rds",
         motifs_um = "results/motifs/comparison/pan_within_denovo.universal_motif.rds",
@@ -277,33 +278,19 @@ rule compare_denovo_pan_motifs:
         "../scripts/motifs/compare_denovo_pan_motifs.R"
 
 
-
-# rule sea_denovo_motifs_on_tes:
-#     input:
-#         dir = rules.split_cons_tes_per_tf.output.odir,
-#         meme = rules.meme_per_tf.output.odir,
-#     output:
-#         odir = directory("results/motifs/sea_denovo_motifs_on_tes/{tf}")
-#     singularity:
-#         "docker://memesuite/memesuite:5.5.4"
-#     shell:
-#         """
-#         sea -p '{input.dir}/{wildcards.tf}/coex.fasta' -n '{input.dir}/{wildcards.tf}/other.fasta' -m '{input.meme}/meme.txt' -oc '{output.odir}'
-#         """
-
-# rule sea_known_motifs_on_tes:
-#     input:
-#         dir = "results/motifs/consensus_tes_per_tf/pan/",
-#         meme = rules.get_known_motifs.output.combined_pan,
-#         meme2 = rules.archbold2motifs.output.meme,
-#     output:
-#         odir = directory("results/motifs/sea_known_motifs_on_tes/pan")
-#     singularity:
-#         "docker://memesuite/memesuite:5.5.4"
-#     shell:
-#         """
-#         sea -p '{input.dir}/coex.fasta' -n '{input.dir}/other.fasta' -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
-#         """
+rule sea_known_motifs_on_tes:
+    input:
+        dir = "results/motifs/consensus_tes_per_tf_unmasked/",
+        meme = rules.get_known_motifs.output.combined_pan,
+        meme2 = rules.archbold2motifs.output.meme,
+    output:
+        odir = directory("results/motifs/sea_known_motifs_on_tes/pan")
+    singularity:
+        "docker://memesuite/memesuite:5.5.4"
+    shell:
+        """
+        sea -p '{input.dir}/pan/coex.fasta' -n '{input.dir}/pan/other.fasta' -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
+        """
 
 csem_libraries, = glob_wildcards('upstream/csem_mosaics/sea/sea/pan_{lib}/sea.tsv')
 
@@ -366,7 +353,7 @@ rule fimo_denovo_motifs_tes:
     shell:
         """
         gunzip -c {input.tes} > "{params.tmp}" &&
-        fimo --oc "{output.odir}" \
+        fimo --bfile --motif-- --oc "{output.odir}" \
             "{params.meme}/meme.txt" \
             "{params.tmp}"
         """
@@ -399,6 +386,7 @@ rule motifs:
         "results/motifs/n_denovo_vs_sig_coef.pan.rds",
         "results/motifs/csem_peak_sea.known.pan.tsv.gz",
         "results/motifs/upstream_csem_known_pan_sea.gg.rds",
+        "results/motifs/sea_known_motifs_on_tes/pan",
         #"results/motifs/csem_peak_sea.pan.tsv.gz",
         #"results/motifs/sea_denovo_motifs_on_tes/pan/",
         #expand("results/motifs/fimo_on_tes/denovo/{tf}", tf=TFSOI), #aggregate_fimo_on_tes,

@@ -3,44 +3,58 @@ library(universalmotif)
 library(memes)
 
 # ------------------------------------------------------------------------------
+# best meme motif(s) by match to known - the ones we want to highlight
+# ------------------------------------------------------------------------------
+comparison_fl <- "results/motifs/comparison/pan_denovo_comparison.meme.rds"
+comparison_fl <- snakemake@input$comparison
+comparison <- read_rds(comparison_fl)
+
+best_hits <- comparison |>
+  filter(padj < 0.1) |>
+  filter(str_detect(name,"Archbold|^pan"))
+
+denovo_to_highlight <- best_hits |> pull(denovo) |>
+  str_remove("denovo::") |>
+  unique()
+  
+known_to_highlight <- best_hits |> pull(known) |>
+  str_remove(".+::") |>
+  unique()
+# ------------------------------------------------------------------------------
 # known motifs
 # ------------------------------------------------------------------------------
 known_pan_meme <- "results/motifs/known_motifs/all_known.meme"
 known_pan_meme <- snakemake@input$known_meme
-known_pan <- read_meme(known_pan_meme)
-
-names(known_pan) <- known_pan %>% map_chr( `@`, altname)
-known_pan <- known_pan[names(known_pan)=="pan"][[2]]
-known_pan@name <- known_pan@name |> paste0("JASPAR::",y=_)
+known_pan0 <- read_meme(known_pan_meme)
+names(known_pan0) <- map_chr(known_pan0,`@`,name)
+known_pan <- known_pan0[known_to_highlight]
+known_pan <- unlist(known_pan)
 # ------------------------------------------------------------------------------
 # de novo motifs
 # ------------------------------------------------------------------------------
+# - meme motifs to highlight
+meme_motifs_dir <- ifelse(exists("snakemake"), snakemake@input[["meme"]],
+                         "results/motifs/meme_per_tf/pan")
+meme <- paste0(meme_motifs_dir, "/meme.txt") |> memes::importMeme() |> filter(eval<1) |> 
+  pull(motif) |> unlist()
+
+names(meme) <- map_chr(meme,`@`,name)
+meme <- meme[denovo_to_highlight]
+
+# - all streme motifs
 streme_motifs_dir <- ifelse(exists("snakemake"), snakemake@input[["streme"]],
                  "results/motifs/streme_per_tf/pan/")
 
-streme <- paste0(streme_motifs_dir, "/streme.xml") |> memes::importStremeXML() |> pull(motif)
+streme <- paste0(streme_motifs_dir, "/streme.xml") |> memes::importStremeXML() |> pull(motif) |> unlist()
 
-streme <- streme$m4_AAAAATGGCRCATRG
-streme@name <- streme@name |> paste0("STREME::",y=_)
 
-meme_motifs_dir <- ifelse(exists("snakemake"), snakemake@input[["meme"]],
-                            "results/motifs/meme_per_tf/pan")
-
-meme <- paste0(meme_motifs_dir, "/meme.txt") |> memes::importMeme() |> filter(eval<0.05) |> pull(motif)
-meme <- meme[[1]]
-meme@name <- meme@name |> paste0("MEME::",y=_)
-
+# - all homer motifs
 homer_motifs_dir <- ifelse(exists("snakemake"), snakemake@input[["homer"]],
                             "results/motifs/homer_per_tf/pan/")
 homer <- paste0(homer_motifs_dir, "/homerMotifs.all.motifs") |> 
-  read_homer()
+  read_homer() |> unlist()
 
-names(homer) <- map_chr(homer,`@`,consensus)
-homer <- homer[map_lgl(homer,~{.x@pval <= 0.001})]
-homer <- homer[["GCTAKTTWGMTG"]]
-homer@name <- homer@name |> paste0("HOMER::",y=_)
-
-motifs <- c(known_pan,meme,streme,homer)
+motifs <- c(meme,known_pan,streme,homer) |> unlist()
 names(motifs) <- map_chr(motifs,`@`,name)
 # ------------------------------------------------------------------------------
 # comparison
@@ -62,7 +76,7 @@ USETYPE="PPM"
 # get pval df
 
 p_df <- compare_motifs(motifs = motifs, 
-                       compare.to = 1,
+                       compare.to = 1:length(denovo_to_highlight),
                        method = METHOD,nthreads = 4,
                        relative_entropy = RELATIVE_ENTROPY,
                        max.p=1, max.e = Inf, # all comparisons returned
@@ -72,10 +86,18 @@ p_df <- compare_motifs(motifs = motifs,
 
 p_df <- p_df |>
   as_tibble() |>
-  mutate(padj = p.adjust(Pval, method="BH")) |>
-  arrange(padj)
+  filter(Pval < 0.05) |>
+  arrange(Pval)
 
-gg <- view_motifs(motifs,
+p_df2 <- p_df |>
+  mutate(motif_origin = case_when(str_detect(target,"Degenerate")~"Archbold (degenerate)",
+                                  str_detect(target,'^\\d')~"HOMER",
+                                  str_detect(target,"^m\\d+_")~"STREME",
+                                  T~"other")) |>
+  group_by(motif_origin,subject) |>
+  slice_min(Pval)
+
+gg <- view_motifs(c(motifs[c(denovo_to_highlight,unique(p_df2$target))]),
                   method = METHOD, 
                   score.strat = SCORE.STRAT, 
                   text.size = 12,  

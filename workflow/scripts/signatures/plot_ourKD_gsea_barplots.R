@@ -23,7 +23,18 @@ g_factor.specific <- x |>
   filter(signature_name == kd) |>
   plot_bar()
 
+g_teregs <- x |>
+  filter(signature_name == "TE.regulators") |>
+  plot_bar()
 
-res <- list(all_tes = g_all, factor.specific=g_factor.specific)
+g_sirna <- x |>
+  filter(signature_name == "siRNA") |>
+  plot_bar()
+
+
+res <- list(all_tes = g_all, 
+            factor.specific=g_factor.specific,
+            TE.regulators = g_teregs,
+            siRNA=g_sirna)
 
 write_rds(res,snakemake@output$gg_list)

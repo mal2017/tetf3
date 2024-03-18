@@ -16,6 +16,14 @@ rule make_pirna_gene_list:
     script:
         "../scripts/make_resources/get_piRNA_genes.R"
 
+rule make_sirna_gene_list:
+    input:
+        reactome_sirna = config.get("REACTOME_SIRNA"),
+    output:
+        tsv = "results/resources/sirna_pathway.tsv"
+    script:
+        "../scripts/make_resources/get_siRNA_genes.R"
+
 rule ref_preproc:
     """
     make a enome fasta with stripped names

@@ -21,7 +21,7 @@ known_pan <- imap(known_pan, ~{.x@name <- .y; .x})
 # de novo motifs
 # ------------------------------------------------------------------------------
 motifs_dir <- ifelse(exists("snakemake"), snakemake@input[["denovo"]],
-                 "results/motifs/meme_per_tf/NfI/")
+                 "results/motifs/meme_per_tf/pan/")
 
 # get the motifs worth comparing to known (eval/pval < 0.05 (lower for homer, bc it reports more seemngly significant motifs))
 if (snakemake@params$motif_program == "streme") {
@@ -35,7 +35,7 @@ if (snakemake@params$motif_program == "streme") {
     saveRDS(matrix(), snakemake@output[["motif_similarity"]])
     quit()
   }
-  motifs <- paste0(motifs_dir, "/meme.txt") |> memes::importMeme() |> filter(eval<0.05) |> pull(motif)
+  motifs <- paste0(motifs_dir, "/meme.txt") |> memes::importMeme() |> filter(eval<1) |> pull(motif)
   names(motifs) <- motifs %>% map_chr( `@`, name)
 } else if (snakemake@params$motif_program == "homer") {
   motifs <-paste0(motifs_dir, "/homerMotifs.all.motifs")
@@ -66,7 +66,7 @@ USETYPE="PPM"
 
 # get pval df
 
-p_df <- compare_motifs(motifs = all_motifs, 
+p_df0 <- compare_motifs(motifs = all_motifs, 
                        compare.to = 1:length(all_motifs),
                        method = METHOD,nthreads = 4,
                        relative_entropy = RELATIVE_ENTROPY,
@@ -75,14 +75,17 @@ p_df <- compare_motifs(motifs = all_motifs,
                        use.type = USETYPE,
                        score.strat = SCORE.STRAT)
 
-p_df <- p_df |>
+p_df <- p_df0 |>
   as_tibble() |>
   filter(subject!=target) |>
   filter(str_detect(target,"denovo") | str_detect(subject,"denovo")) |>
   filter(!(str_detect(target,"denovo") & str_detect(subject,"denovo"))) |>
   mutate(denovo=map2_chr(target,subject, ~if_else(str_detect(.x,"denovo"),.x,.y))) |>
   mutate(known=map2_chr(target,subject, ~if_else(str_detect(.x,"denovo"),.y,.x))) |>
+  filter(subject == denovo) |>
+  group_by(denovo) |>
   mutate(padj = p.adjust(Pval, method="BH")) |>
+  ungroup() |>
   arrange(padj) |>
   mutate(motifs = map2(known,denovo, ~{c(all_motifs[[.x]],all_motifs[[.y]])})) %>%
   mutate(gg = map(motifs, ~view_motifs(.x,method = METHOD, score.strat = SCORE.STRAT, text.size = 7,  normalise.scores = NORMALIZE_SCORES, use.type = USETYPE)))

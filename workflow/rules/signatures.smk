@@ -5,6 +5,7 @@ rule ourKD_gsea:
         mods = config.get("MERGED_MODELS"),
         res = rules.this_study_kd_deseq2.output.grs,
         pirna = rules.make_pirna_gene_list.output.tsv,
+        sirna = rules.make_sirna_gene_list.output.tsv,
     output:
         rds = "results/signatures/ourKD_gsea.rds",
     script:

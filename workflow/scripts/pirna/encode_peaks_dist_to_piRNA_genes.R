@@ -18,6 +18,11 @@ pirna_gene_ids <- ifelse(exists("snakemake"),
     "results/resources/pirna_pathway.tsv") %>%
     read_tsv()
 
+sirna_gene_ids <- ifelse(exists("snakemake"),
+                         snakemake@input$pirna,
+                         "results/resources/sirna_pathway.tsv") %>%
+  read_tsv()
+
 # embryo only for consistency
 # these are narrowPeak format with multiple summits per peak, so need to reduce
 pks0 <- list(pan = c("https://www.encodeproject.org/files/ENCFF118OVG/@@download/ENCFF118OVG.bed.gz",
@@ -53,6 +58,7 @@ all_genes <- genes(txdb) %>%
 # previously id'd TE regulators
 all_genes <- all_genes |>
   mutate(is.piRNA.pathway = gene_id %in% pirna_gene_ids$gene_ID,
+         is.siRNA.pathway = gene_id %in% sirna_gene_ids$gene_ID,
          embryo.expressed =  gene_id %in% expressed_in_embryo$gene_id,
          head.expressed =  gene_id %in% expressed_in_head$gene_id)
 

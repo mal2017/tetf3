@@ -10,7 +10,7 @@ library(patchwork)
 g_denovo_motifs <- read_rds("results/motifs/comparison/pan_within_denovo.gg.rds")
 
 g_meme_boxplot <- read_rds("results/motifs/n_denovo_vs_sig_coef.pan.rds") |>
-  filter(str_detect(motif,"MARY")) |>
+  filter(str_detect(motif,"MWGS")) |>
   pull(g_boxplot) |>
   pluck(1)
 

@@ -16,6 +16,9 @@ lms <- read_tsv(lms_path) |> filter(significant_x)
 pirna_path <- "results/resources/pirna_pathway.tsv"
 pirna_path <- snakemake@input$pirna
 
+sirna_path <- "results/resources/sirna_pathway.tsv"
+sirna_path <- snakemake@input$sirna
+
 res_path <- "results/deg/ourKD.de.grs.rds"
 res_path <- snakemake@input[["res"]]
 res0 <- read_rds(res_path) %>%
@@ -30,6 +33,15 @@ pirna <-  read_tsv(pirna_path) |>
   dplyr::select(ensembl_gene=gene_ID) |>
   distinct() |>
   mutate(gs_name="TE.regulators") |>
+  dplyr::select(gs_name, ensembl_gene) |>
+  mutate(signature_name = gs_name) |>
+  nest(data=-signature_name) |>
+  dplyr::rename(signature = data)
+
+sirna <-  read_tsv(sirna_path) |>
+  dplyr::select(ensembl_gene=gene_ID) |>
+  distinct() |>
+  mutate(gs_name="siRNA") |>
   dplyr::select(gs_name, ensembl_gene) |>
   mutate(signature_name = gs_name) |>
   nest(data=-signature_name) |>
@@ -50,7 +62,8 @@ signatures <- bind_rows(t2g,y=at2g) |>
   nest(data=-signature_name) |>
   dplyr::rename(signature = data) |>
   #filter(signature_name == "all_tes" | signature_name == "TE.regulators") |>
-  bind_rows(pirna)
+  bind_rows(pirna) |>
+  bind_rows(sirna)
 
 # ------------------------------------------------------------------------------
 # set up tibble with each results ranking and paired gene sets
@@ -71,7 +84,10 @@ res2 <- res1 %>%
   nest(data=c(feature,score)) %>%
   mutate(data=map(data,drop_na)) |>
   cross_join(signatures) |>
-  filter(kd == signature_name | signature_name == "all_tes" | signature_name == "TE.regulators")
+  filter(kd == signature_name | 
+           signature_name == "all_tes" | 
+           signature_name == "TE.regulators" |
+           signature_name == "siRNA")
 
 # ------------------------------------------------------------------------------
 # run gsea

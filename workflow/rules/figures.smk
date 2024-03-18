@@ -84,7 +84,9 @@ rule figure3_supp_01:
 rule figure4:
     input:
         "results/motifs/comparison/pan_denovo_comparison.meme.gg_df.rds",
-        "upstream/csem_mosaics/bigwigs/"
+        "results/ripseq/unr_ripseq_maplot.gg.rds",
+        "results/ripseq/unr_ripseq_au_richness.boxplot.gg_list.rds",
+        "results/ripseq/unr_ripseq_attta_richness.boxplot.gg_list.rds",
     output:
        pdf="results/figures/panels/figure4_main.pan-motifs.pdf"
     params:
@@ -117,6 +119,7 @@ rule figure4_supp_02:
         denovo_motif_comparison = "results/motifs/comparison/pan_within_denovo_comparison.rds",
         denovo_motifs_um = "results/motifs/comparison/pan_within_denovo.universal_motif.rds",
         denovo_comparison_gg = "results/motifs/comparison/pan_within_denovo.gg.rds",
+        sea_csem = 'results/motifs/upstream_csem_known_pan_sea.gg.rds',
     output:
         pdf="results/figures/panels/figure4_supp_02.denovo-motif-pan-supp.pdf"
     params:
@@ -206,6 +209,16 @@ rule figure5_supp_03:
     script:
         "../scripts/figures/pirna-and-tes-in-kd-volcano.R"
 
+rule figure5_supp_04:
+    input:
+        rds = rules.plot_ourKD_gsea_randomwalks.output.gg_df,
+    output:
+        pdf="results/figures/panels/figure5_supp_04.knockdowns_silencer_enrichment.pdf"
+    params:
+        figtitle="Supplement 04 to Figure 5"
+    script:
+        "../scripts/figures/knockdowns.silencer_enrichment.R"
+
 # ---------------------------------------------------------------------------------------------------
 # figures related to minor details in methods
 # ---------------------------------------------------------------------------------------------------
@@ -241,6 +254,7 @@ rule figures:
         rules.figure5_supp_01.output.pdf,
         rules.figure5_supp_02.output.pdf,
         rules.figure5_supp_03.output.pdf,
+        rules.figure5_supp_04.output.pdf,
         rules.methods_figs.output.pdf,
     output:
         "results/figures/figures.pdf"
