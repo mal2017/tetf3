@@ -64,7 +64,7 @@ rule unr_ripseq_phylosignal:
         dist = "results/te_sequence_similarity/te_sketch_dist.rds",
         rip = "results/ripseq/unr_ripseq.tsv.gz",
         at_content = "results/ripseq/unr_ripseq_features_au_content.tsv.gz",
-        attta = "results/ripseq/unr_ripseq_features_attta_sites.tsv.gz",
+        attta = "results/ripseq/unr_ripseq_features_attta_sites_in_region.tsv.gz",
     params:
         relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION")    
     output:

@@ -47,7 +47,7 @@ dat$zad_mean <- rowMeans(dat[,str_remove(colnames(dat),".+male_score_") %in% zad
 
 p4d <- phylo4d(tree@phylo, tip.data=dat[tree@phylo$tip.label,],rownamesAsLabels=T)
 
-res.ps <- phyloSignal(p4d)
+res.ps <- phyloSignal(p4d,reps = 10000)
 
 # take the simple list of results and make into a tbl for easy querying
 
@@ -66,7 +66,7 @@ res.ps.tbl <- res.ps$pvalue %>%
          score_type = ifelse(is.na(score_type),"control",score_type),
          TF = ifelse(is.na(TF),coef,TF)) %>%
   pivot_longer(-c(TF,sex,coef,score_type),names_to = "metric",values_to = "pval") %>%
-  group_by(sex, metric) %>%
+  group_by(sex, score_type) %>%
   mutate(padj = p.adjust(pval,method="BH")) %>%
   ungroup()
 

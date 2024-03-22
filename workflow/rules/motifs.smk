@@ -247,7 +247,6 @@ rule compare_motifs:
         motif_program = "{motif_program}",
     output:
         motif_comparison = "results/motifs/comparison/{tf}_denovo_comparison.{motif_program}.rds",
-        motif_similarity = "results/motifs/comparison/{tf}_denovo_similarity.{motif_program}.rds",
     script:
         "../scripts/motifs/compare_motifs.R"
 
@@ -269,7 +268,7 @@ rule compare_denovo_pan_motifs:
         streme = "results/motifs/streme_per_tf/pan/",
         meme = "results/motifs/meme_per_tf/pan/",
         known_meme = rules.get_known_motifs.output.all_known,
-        comparison = "results/motifs/comparison/pan_denovo_comparison.meme.rds",
+        comparison = "results/motifs/comparison/pan_denovo_comparison.meme.gg_df.rds",
     output:
         motif_comparison = "results/motifs/comparison/pan_within_denovo_comparison.rds",
         motifs_um = "results/motifs/comparison/pan_within_denovo.universal_motif.rds",
@@ -279,6 +278,9 @@ rule compare_denovo_pan_motifs:
 
 
 rule sea_known_motifs_on_tes:
+    """
+    
+    """
     input:
         dir = "results/motifs/consensus_tes_per_tf_unmasked/",
         meme = rules.get_known_motifs.output.combined_pan,
@@ -289,7 +291,7 @@ rule sea_known_motifs_on_tes:
         "docker://memesuite/memesuite:5.5.4"
     shell:
         """
-        sea -p '{input.dir}/pan/coex.fasta' -n '{input.dir}/pan/other.fasta' -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
+        sea -p '{input.dir}/pan/coex.fasta' --order 0 -m '{input.meme}' -m '{input.meme2}' -oc '{output.odir}'
         """
 
 csem_libraries, = glob_wildcards('upstream/csem_mosaics/sea/sea/pan_{lib}/sea.tsv')
@@ -381,8 +383,8 @@ def aggregate_fimo_on_tes(wildcards):
 rule motifs:
     input:
         expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=["pan"]),
-        expand("results/motifs/meme_per_tf/{tf}/", tf=TFSOI),
-        expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.gg_df.rds", tf=["pan"],p=["meme","streme","homer"]),
+        #expand("results/motifs/meme_per_tf/{tf}/", tf=TFSOI),
+        expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=["pan"],p=["meme"]),
         "results/motifs/n_denovo_vs_sig_coef.pan.rds",
         "results/motifs/csem_peak_sea.known.pan.tsv.gz",
         "results/motifs/upstream_csem_known_pan_sea.gg.rds",

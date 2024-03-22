@@ -43,8 +43,7 @@ se <- se[keep,]
 # ------------------------------------------------------------------------------
 se.head <- se[,se$driver %in% c("Mef2.R")]
 
-se.gonad <- se[, (se$knockdown %in% c("CG16779","control") & se$driver %in% c("aTub")) | 
-           (se$knockdown %in% c("control","pan") & se$driver %in% c("aTub","tj"))]
+se.gonad <- se[, (se$knockdown %in% c("CG16779","control") & se$driver %in% c("aTub"))]
 
 # ------------------------------------------------------------------------------
 # batch correction for heads

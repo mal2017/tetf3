@@ -8,9 +8,10 @@ library(patchwork)
 
 # ------------------------------------------------------------------------------
 g_denovo_motifs <- read_rds("results/motifs/comparison/pan_within_denovo.gg.rds")
+g_denovo_motifs <- g_denovo_motifs$CRCAKKSMCRARRAS
 
 g_meme_boxplot <- read_rds("results/motifs/n_denovo_vs_sig_coef.pan.rds") |>
-  filter(str_detect(motif,"MWGS")) |>
+  filter(str_detect(motif,"CRCAK")) |>
   pull(g_boxplot) |>
   pluck(1)
 

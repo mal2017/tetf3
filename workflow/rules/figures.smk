@@ -109,13 +109,9 @@ rule figure4_supp_01:
 rule figure4_supp_02:
     input:
         n_denovo_vs_sig_coef = "results/motifs/n_denovo_vs_sig_coef.pan.rds",
-        streme = "results/motifs/comparison/pan_denovo_comparison.streme.gg_df.rds",
-        homer = "results/motifs/comparison/pan_denovo_comparison.homer.gg_df.rds",
-        streme_empirical_fdr = "results/motifs/streme_per_tf_empirical_fdr/pan_empirical_fdr.tsv",
+        #streme_empirical_fdr = "results/motifs/streme_per_tf_empirical_fdr/pan_empirical_fdr.tsv",
         streme_motif_comparison = "results/motifs/comparison/pan_denovo_comparison.streme.rds",
-        streme_motif_similarity = "results/motifs/comparison/pan_denovo_similarity.streme.rds",
         homer_motif_comparison = "results/motifs/comparison/pan_denovo_comparison.homer.rds",
-        homer_motif_similarity = "results/motifs/comparison/pan_denovo_similarity.homer.rds",
         denovo_motif_comparison = "results/motifs/comparison/pan_within_denovo_comparison.rds",
         denovo_motifs_um = "results/motifs/comparison/pan_within_denovo.universal_motif.rds",
         denovo_comparison_gg = "results/motifs/comparison/pan_within_denovo.gg.rds",
@@ -191,6 +187,7 @@ rule figure5_supp_02:
         attta_in_region = "results/ripseq/unr_ripseq_features_attta_sites_in_region.tsv.gz",
         gsea = "results/ripseq/unr_bound_tx_in_kd.gsea.rds",
         p4d = "results/ripseq/unr_ripseq_phylosignal.p4d.rds",
+        tree = "results/ripseq/unr_ripseq_phylosignal.tree.gg.rds"
     params:
         relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION"),
         figtitle="Supplement 03 to Figure 5"
