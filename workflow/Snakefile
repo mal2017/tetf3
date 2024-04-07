@@ -28,20 +28,5 @@ rule all:
         rules.figures.output,
         rules.figuredata.output,
         rules.tables.output,
-
-
-
-
-# include: "rules/single-cell-rna.smk"
-# include: "rules/rankings.smk"
-# include: "rules/enrichment.smk"
-# include: "rules/differential_expression.smk"
-# include: "rules/signatures.smk"
-# # include: "rules/direct_binding.smk"
-# include: "rules/rewiring.smk"
-# include: "rules/motifs.smk"
-# include: "rules/specific_genes.smk"
-# include: "rules/ine1.smk"
-# include: "rules/stats.smk"
-# include: "rules/figures.smk"
+        rules.collect_stats.output
 
