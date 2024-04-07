@@ -2,7 +2,8 @@ library(plotgardener)
 library(tidyverse)
 
 g_kd_check <- read_rds("results/deg/check_kds_by_chip_prox.gg.rds") +
-  facet_wrap(~lab,ncol=5,scales="free")
+  facet_wrap(~lab,ncol=5,scales="free") +
+  theme(axis.text.x = element_text(angle=45,hjust=1))
 
 #------------------------------------------------------------------------------
 # create page 1
@@ -18,7 +19,7 @@ pageCreate(height = 11, showGuides=interactive())
 figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
 plotText(figtitle,x=0,y=0,just = c("left","top"))
 
-plotGG(g_kd_check, x = .5, y=0.5, width = 7.5,height = 3)
+plotGG(g_kd_check, x = .5, y=0.5, width = 7.5,height = 1.5)
 plotText("A", x = .5, y=0.5)
 
 dev.off()
