@@ -33,7 +33,7 @@ plotText("A", x = 0.5, y=0.5)
 g_b <- plotGG(motif_fig_df$g_aln[[5]], x = 4.25, y=0.5, width = 3.5,height = 1.5)
 plotText("B", x = 4.25, y=.5)
 
-g_c <- plotGG(motif_fig_df$g_rnk[[1]] + motif_fig_df$g_rnk[[5]] + plot_layout(nrow=1,guides = "collect") & theme(legend.position = "right") & aes(color=class),
+g_c <- plotGG(motif_fig_df$g_rnk[[1]] + motif_fig_df$g_rnk[[5]] + plot_layout(nrow=1,guides = "collect") & theme(legend.position = "right"),
        x=0.75,y=2.25,width = 7,height=2)
 plotText("C", x = 0.75, y=2.25)
 
