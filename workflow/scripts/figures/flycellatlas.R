@@ -59,12 +59,12 @@ g_pan_highly_corr_with_tes <-
 tf_te_correlations %>%
   dplyr::select(feature,y,coef,p,padj) |>
     distinct() |>
-  mutate(feature2 = if_else(feature%in%c("pan","Unr","vvl","NfI","CG16779"),feature,"other")) |>
+  mutate(feature2 = if_else(feature%in%c("pan","Unr"),feature,"other")) |>
   mutate(feature2 = fct_reorder(feature2,coef)) |>
   mutate(feature2 = fct_relevel(feature2,"other")) |>
   ggplot(aes(feature2,coef)) +    
   geom_boxplot() +
-  ggpubr::stat_compare_means(ref="other",size=2) +
+  ggpubr::stat_compare_means(ref="other",size=1.5) +
   xlab("") + ylab("weighted correlation")
 
 # examine pan's coexpressed or not coexpressed TEs specifically
