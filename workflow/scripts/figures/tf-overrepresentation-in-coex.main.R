@@ -22,7 +22,7 @@ make_dotplot <- function(.x) {
     geom_col() +
     scale_fill_grey(start = 0.3,end = 0.6) +
     ylab("log10(p)") + xlab("") +
-    theme(legend.position = "bottom", legend.spacing = unit(0.01,"in")) +
+    theme(legend.spacing = unit(0.01,"in")) +
     labs(size="leading edge genes") +
     theme(legend.key.size = unit(.05,"inches"), axis.text = element_text(size=unit(5,"pt"))) +
     geom_text(aes(label=sprintf("n=%s",`leading edge members`), y= 0.1*max(-log10(pvalue))), size=rel(2),color="white",hjust=0.5) +
@@ -32,6 +32,10 @@ make_dotplot <- function(.x) {
 g_a <- make_dotplot(male_gsea)
 
 g_b <- make_dotplot(female_gsea)
+
+
+
+g <- g_a + g_b + plot_layout(guides="collect",widths = c((6/4)*3,3))
 
 # ------------------------------------------------------------------------------
 # make page
@@ -52,11 +56,9 @@ plotText(figtitle,x=0,y=0,just = c("left","top"))
 figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
 plotText(figtitle,x=0,y=0,just = c("left","top"))
 
-plotGG(g_a, x = 0.5, y=0.5, width = 4.5*5/9,height = 2.75)
-plotText("A", x = 0.5, y=0.5)
-
-plotGG(g_b, x = 3.5, y=0.5, width = 4.5,height = 2.75)
-plotText("B", x = 3.5, y=0.5)
+plotGG(g, x = 1, y=0.5, width = 7,height = 2.75)
+plotText("A", x = 1.25, y=0.5)
+plotText("B", x = 4.25, y=0.5)
 
 dev.off()
 
