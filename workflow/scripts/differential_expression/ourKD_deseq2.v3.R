@@ -83,7 +83,7 @@ get_res <- function(x) {
     distinct() |>
     pull(contrast) %>%
     set_names(.,map_chr(.,~paste(.x,collapse="_")))
-  map(contrasts,~results(x,contrast = .x, format = "GRanges")) %>%
+    map(contrasts,~results(x,contrast = .x, format = "GRanges")) %>%
     map(~{mutate(.x,feature=names(.))})
 }
 

@@ -75,7 +75,7 @@ g_a <- res |>
   ggplot(aes(log2FoldChange, -log10(pvalue))) +
   geom_point(size=rel(0.5),aes(color=feature.type)) +
   scale_color_manual(values = c("TE"="red","TE silencer"="blue", gene="lightgray")) +
-  geom_text(data=labs, aes(x=-10,y=75,label=label),hjust=0, vjust=1) +
+  geom_text(data=labs, aes(x=-10,y=Inf,label=label),hjust=0, vjust=1) +
   theme(legend.position = "bottom",
         legend.justification="right",
         legend.box.spacing = unit(0,"pt"),

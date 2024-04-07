@@ -25,7 +25,7 @@ pageCreate(height = 11, showGuides=interactive())
 figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
 plotText(figtitle,x=0,y=0,just = c("left","top"))
 
-plotGG(g_a, x = 0.5, y=0.5, width = 7.5,height = 10)
+plotGG(g_a, x = 0.5, y=0.5, width = 7.5,height = 5)
 
 dev.off()
 
