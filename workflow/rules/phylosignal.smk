@@ -31,3 +31,12 @@ rule filter_phylo_and_plot_correlograms:
         tsv = "results/phylosignal/phylosignal_filtered_hits.tsv.gz",
     script:
         "../scripts/phylosignal/filter_phylo_and_plot_correlograms.R"
+
+rule plot_main_fig_correlograms:
+    input:
+        crlg = rules.filter_phylo_and_plot_correlograms.output.rds,
+        filt = rules.filter_phylo_and_plot_correlograms.output.tsv,
+    output:
+        rds = "results/phylosignal/main_fig_correlograms.gg.rds",
+    script:
+        "../scripts/phylosignal/plot_main_fig_correlograms.R"

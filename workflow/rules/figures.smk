@@ -158,9 +158,10 @@ rule figure4_supp_04:
 
 rule figure5:
     input:
-        crlg = rules.filter_phylo_and_plot_correlograms.output.rds,
+        #crlg = rules.filter_phylo_and_plot_correlograms.output.rds,
         control_crlg = rules.plot_control_correlograms.output.rds,
         tre = "results/te_sequence_similarity/te_sketch_tidytree.rds",
+        crlgs = rules.plot_main_fig_correlograms.output.rds,
     output:
         pdf="results/figures/panels/figure5_main.phylosignal.pdf"
     params:
