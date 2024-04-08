@@ -2,7 +2,8 @@ rule stats_descriptive_lms:
     input:
         mods = config.get("MERGED_MODELS"),
     output:
-        json = "results/stats/descriptive_lms.json"
+        json = "results/stats/descriptive_lms.json",
+        xlsx = "results/tables/descriptive_lms.xlsx"
     script:
         "../scripts/stats/descriptive_lms.R"
 

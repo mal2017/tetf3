@@ -106,6 +106,16 @@ basic_n <- c(n_features.y, n_features.x, n_pairs, n_removed, n_retained, n_valid
          stat_group = "basic_n") %>%
   mutate(value=unlist(value))
 
+# write as excel
+library(writexl)
+
+write_xlsx(list(basic_n = basic_n,
+    `significant terms among significant models` = significant_term_pct,
+    `other stats for significant models` = sig_mod_stats,
+     `stats for significant models where gene expression term also significant` = where_x_sig_mod_stats),
+    snakemake@output$xlsx)
+
+
 # -----------------------------
 # combine stats for json writing
 # ---------------

@@ -22,3 +22,4 @@ rule tables:
     input:
         "results/tables/table_te_regulator_chip_prox.docx",
         "results/tables/table_known_te_regulators_in_knockdown.xlsx",
+        "results/tables/descriptive_lms.xlsx",
