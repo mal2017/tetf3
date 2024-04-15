@@ -97,7 +97,7 @@ df <- filter(df, lineage %in% c("all_cells"))
 df <- mutate(df, cor.raw = map2(GE_mat, SC_sizes, get_weighted_cor))
 
 # get average expression used for spqn
-df <- mutate(df, ave_GE = map(GE_mat, ~log1p(rowMeans(expm1(.x)))))
+df <- mutate(df, ave_GE = map(GE_mat, ~log2(rowMeans(2^(.x)-1)+1))) # scater/scran/scanpy uses log2 by default
 
 # get spqn-corrected weighted correlation
 df <- mutate(df, cor.spqn = map2(cor.raw, ave_GE, get_corrected_cor))
