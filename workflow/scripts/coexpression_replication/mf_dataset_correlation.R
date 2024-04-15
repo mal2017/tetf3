@@ -1,6 +1,7 @@
 library(tidyverse)
 library(corrr)
 library(jsonlite)
+library(ggrastr)
 
 cols <- c("model","feature.x","gene_symbol","feature.y",
           "estimate.qnorm","significant_model","significant_x")
@@ -28,7 +29,8 @@ dat <- list(unfiltered = . %>% return,
 plot_scatter <- function(data, label) {
   ggplot(data,aes(estimate.qnorm.male, estimate.qnorm.female)) +
     #ggdensity::geom_hdr_points() +
-    geom_hex() +
+    #geom_hex() +
+    rasterize(geom_point(size=0.1,alpha=0.2),dpi=300) +
     geom_smooth(method="lm") +
     xlab("male results") +
     ylab("female results") +

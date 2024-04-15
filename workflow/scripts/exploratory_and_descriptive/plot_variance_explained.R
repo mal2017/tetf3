@@ -13,7 +13,14 @@ dat <- mods %>%
   pivot_longer(contains("sumsq"), names_to = "coef", values_to = "var.explained") %>%
   mutate(coef = str_remove(coef,"sumsq_anova_"))
 
-dat <- dat %>% mutate(coef = ifelse(coef == "x", "gene expression", coef))
+
+# rename for clear x axis labels
+dat <- dat |> mutate(coef = case_when(coef == "overlap.coex.gene" ~ "overlap with highly coexpressed gene",
+                               coef == "overlap" ~ "direct gene/TE overlap",
+                               coef == "x" ~ "gene coexpression term",
+                               coef == "wolbachia" ~ "wolbachia infection",
+                               coef == "scaled.copies.y" ~ "TE copy number",
+                               T ~ coef))
 
 dat <- dat %>% 
   mutate(coef = fct_reorder(coef,var.explained,.fun = function(.x) {median(.x,na.rm=T)})) %>%

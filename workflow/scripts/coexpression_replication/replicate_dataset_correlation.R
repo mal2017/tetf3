@@ -1,9 +1,7 @@
 library(tidyverse)
 library(corrr)
 library(jsonlite)
-
-indep_fl <- "upstream/final-models.collected-info.reps.tsv.gz"
-#indep_fl <- "~/amarel-matt/tetf/subworkflows/tetf_lm_coex/results/linear_models/final-models.collected-info.tsv.gz"
+library(ggrastr)
 
 cols <- c("model","feature.x","gene_symbol","feature.y",
           "estimate.qnorm","significant_model","significant_x")
@@ -16,7 +14,7 @@ main <- ifelse(exists("snakemake"),
 
 reps <- ifelse(exists("snakemake"), 
                snakemake@input$indep, 
-               indep_fl) %>%
+               "upstream/final-models.d2.collected-info.tsv.gz") %>%
   read_tsv(col_select = all_of(cols))
 
 # combine main an indep results
@@ -35,14 +33,13 @@ dat <- list(unfiltered = . %>% return,
 plot_scatter <- function(data, label) {
   ggplot(data,aes(estimate.qnorm.main, estimate.qnorm.rep)) +
     #ggdensity::geom_hdr_points() +
-    geom_hex() +
+    #geom_hex() +
+    rasterize(geom_point(size=0.1,alpha=0.2),dpi=300) +
     geom_smooth(method="lm") +
     xlab("main results") +
     ylab("independent dataset") +
     annotate("text", -Inf, Inf, label = str_wrap(label,width = 20), hjust = 0, vjust = 1, size=2)
 }
-
-
 
 
 res <- dat %>% 

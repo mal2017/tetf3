@@ -141,8 +141,14 @@
     },
     "BiocFileCache": {
       "Package": "BiocFileCache",
-      "Version": "2.4.0",
-      "Source": "Bioconductor",
+      "Version": "2.11.1",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "Bioconductor",
+      "RemoteRepo": "BiocFileCache",
+      "RemoteRef": "devel",
+      "RemoteSha": "7b7c4d379f71261d9352b5ddbbbe9992f1b6b944",
       "Requirements": [
         "DBI",
         "R",
@@ -153,11 +159,10 @@
         "filelock",
         "httr",
         "methods",
-        "rappdirs",
         "stats",
         "utils"
       ],
-      "Hash": "450e5bba6c68cbab059b39f88b740ade"
+      "Hash": "2ab38bd893004b04c6011caba547e71b"
     },
     "BiocGenerics": {
       "Package": "BiocGenerics",
@@ -1091,6 +1096,17 @@
         "utils"
       ],
       "Hash": "acb0a5bf38490f26ab8661b467f4f53a"
+    },
+    "RcppHMM": {
+      "Package": "RcppHMM",
+      "Version": "1.2.2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "Rcpp",
+        "RcppArmadillo"
+      ],
+      "Hash": "eae604f314ff2aeac86e65f909278c5d"
     },
     "RcppHNSW": {
       "Package": "RcppHNSW",
@@ -4682,16 +4698,17 @@
     },
     "plotgardener": {
       "Package": "plotgardener",
-      "Version": "1.6.4",
+      "Version": "1.8.2",
       "Source": "GitHub",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "plotgardener",
       "RemoteUsername": "PhanstielLab",
-      "RemotePkgRef": "PhanstielLab/plotgardener",
+      "RemoteRepo": "plotgardener",
       "RemoteRef": "HEAD",
-      "RemoteSha": "93403247f64228c1d437d3fa998a1bc25cc72368",
+      "RemoteSha": "7e49f2616e6caeeb2080d0bbc5e0d8cfb30f4db0",
+      "RemoteHost": "api.github.com",
       "Requirements": [
+        "GenomeInfoDb",
+        "GenomicRanges",
         "IRanges",
         "R",
         "RColorBrewer",
@@ -4712,7 +4729,7 @@
         "utils",
         "withr"
       ],
-      "Hash": "3a717283e5afbe5c6035a68b4e4b13aa"
+      "Hash": "b222b88d9ef43a610d9ef4b2c50b9e43"
     },
     "plyr": {
       "Package": "plyr",
@@ -6445,6 +6462,13 @@
         "stats"
       ],
       "Hash": "4b25e70111b7d644322e9513f403a272"
+    },
+    "writexl": {
+      "Package": "writexl",
+      "Version": "1.5.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "856a075aec895ea1bea3055fa54e356c"
     },
     "xfun": {
       "Package": "xfun",

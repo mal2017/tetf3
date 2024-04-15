@@ -2,6 +2,7 @@ library(patchwork)
 library(plotgardener)
 library(tidyverse)
 library(ggpubr)
+library(ggrastr)
 
 # ------------------------------------------------------------------------------
 # read in plots/data used for multiple figs or requireing some ggplot aesthetic tweaks
@@ -50,7 +51,7 @@ pageCreate(width =8.5, height = 11, default.units = "inches", showGuides = inter
 figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
 plotText(figtitle,x=0,y=0,just = c("left","top"))
 
-pa <- plotGG(plot = g_var_exp, x = 0.5, y=0.5, width = 7.5, height=2.75)
+pa <- plotGG(plot = g_var_exp, x = 0.5, y=0.75, width = 7.5, height=2.75)
 plotText(label = "A", x = 0.5, y = 0.5)
 
 pb <- plotGG(plot = g_mf$unfiltered+ scale_fill_distiller(palette = 6) + guides(fill="none"), x = 0.4,  y=3.75, width = 1.75, height=1.75)
@@ -67,11 +68,11 @@ plotText(label = "E", x = 6.3, y = 3.75)
 plotGG(g_sharedness, x = 0.5, y=5.75, width = 2,height = 2)
 plotText("F",  x = 0.5, y=5.75)
 
-plotGG(g_score_prev_rep_teregs, x = 2.15, y=5.75, width = 3.5,height = 2)
-plotText("G",  x = 2.15, y=5.75)
+plotGG(g_score_prev_rep_teregs, x = 2.45, y=5.75, width = 3.45,height = 2)
+plotText("G",  x = 2.5, y=5.75)
 
-plotGG(g_nhits_prev_rep_teregs, x = 5.75, y=5.75, width = 2.25,height = 2)
-plotText("H",  x = 5.75, y=5.75)
+plotGG(g_nhits_prev_rep_teregs, x = 6, y=5.75, width = 2,height = 2)
+plotText("H",  x = 6, y=5.75)
 
 dev.off()
 
