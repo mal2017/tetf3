@@ -65,7 +65,7 @@ crlg_to_plot_df <- crlg_to_plot_df |>
 plot_crlg <- function(df) {
   key <- dplyr::select(df, label, TF) |> filter(!TF %in% c("bm","random")) |> distinct()
   dfnpc <- tibble(x = 1, y = 1, tb = list(key))
-  ggplot(df,aes(x,color=color,label=TF, y=y)) +
+  g <- ggplot(df,aes(x,color=color,label=TF, y=y)) +
     geom_path(aes(group=TF, linetype=linetype)) +
     geom_path(aes(y=ci.upper), linetype="dotted") +
     geom_path(aes(y=ci.lower), linetype="dotted") +
@@ -78,8 +78,13 @@ plot_crlg <- function(df) {
     scale_color_identity() +
     #geom_table_npc(mapping=aes(npcx=x, npcy=y,label=tb), data=dfnpc, table.theme = ttheme_gtminimal(base_size = 5), table.colnames = F,size=0.1) +
     scale_linetype_identity() +
-    ylim(c(-0.1,0.125)) +
-    annotate("text",x=Inf,y=Inf,label=unique(df$label),hjust=1,vjust=1)
+    ylim(c(-0.1,0.125))
+  
+  if (!unique(df$TF) %in% c("bm","random")) {
+    g <- g + annotate("text",x=Inf,y=Inf,label=unique(df$label),hjust=1,vjust=1,size=2)
+  }
+  
+  return(g)
 }
 
 
