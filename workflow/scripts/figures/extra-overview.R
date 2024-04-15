@@ -33,7 +33,8 @@ g_mf <- mf |>
 g_var_exp <- var_exp + 
   #theme(legend.position = "top") +
   theme(axis.text.x = element_text(angle=25, hjust=1)) +
-  scale_fill_grey(start = 0.4, end=0.8)
+  scale_fill_grey(start = 0.4, end=0.8) + 
+  scale_y_sqrt()
 
 g_nhits_prev_rep_teregs <- read_rds("results/pirna/te_silencer_n_hits_boxplot.males.gg.rds")
 

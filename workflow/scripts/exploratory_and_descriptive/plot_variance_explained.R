@@ -27,7 +27,8 @@ dat <- dat %>%
   mutate(var.explained = var.explained)
 
 g <-  dat %>% ggplot(aes(coef,var.explained,fill=model)) +
-  geom_boxplot(outlier.size = 0.01) +
+  ggrastr::rasterise(geom_point(color="gray",position = position_jitterdodge(jitter.width=0.2),size=0.1,alpha=0.05),dpi=300) +
+  geom_boxplot(outlier.shape=NA) +
   ylab("% explained variance")
 
 saveRDS(g,snakemake@output[["rds"]])

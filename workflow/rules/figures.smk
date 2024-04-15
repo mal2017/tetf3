@@ -30,7 +30,7 @@ rule figure1_supp_01:
     params:
         figtitle="Supplement 01 to Figure 1"
     script:
-        "../scripts/figures/extra-overiew.R"
+        "../scripts/figures/extra-overview.R"
 
 # ---------------------------------------------------------------------------------------------------
 # figures related to results section 2
