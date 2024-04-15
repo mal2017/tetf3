@@ -36,12 +36,13 @@ plotText("B", x = 4.25, y=.5)
 g_c <- plotGG(motif_fig_df$g_rnk[[1]] + motif_fig_df$g_rnk[[5]] + plot_layout(nrow=1,guides = "collect") & theme(legend.position = "right"),
        x=0.75,y=2.25,width = 7,height=2)
 plotText("C", x = 0.75, y=2.25)
+plotText("D", x = 4.125, y=2.25)
 
 g_d <- plotGG(maplot,x=0.5,y=4.5,width=2,height=1.5)
-plotText("D", x = 0.5, y=4.5)
+plotText("E", x = 0.5, y=4.5)
 g_e <- plotGG(au,x=2.75,y=4.5,width=2.5,height=2.125)
-plotText("E", x = 2.75, y=4.5)
+plotText("F", x = 2.75, y=4.5)
 g_f <- plotGG(attta,x=5.5,y=4.5,width=2.5,height=2.125)
-plotText("F", x = 5.5, y=4.5)
+plotText("G", x = 5.5, y=4.5)
 
 dev.off()
