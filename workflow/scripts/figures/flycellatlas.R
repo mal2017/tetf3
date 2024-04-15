@@ -116,7 +116,8 @@ plot_indiv_relationship <- function(x, y, caption="") {
   g <- res$p$data |> 
     as_tibble() |>
     ggplot(aes(x, y)) +
-    ggdensity::geom_hdr_points(method="mvnorm",aes(size=size)) +
+    #ggdensity::geom_hdr_points(method="mvnorm",aes(size=size)) +
+    ggrastr::rasterise(geom_point(size=0.1,alpha=0.2),dpi=300) +
     xlab(x) +
     ylab(y) +
     labs(title=sprintf("%s vs %s",x,y),subtitle = sprintf("raw weighted corr:%s",round(res$w.cor[[1]],digits = 3)),caption = caption) +
