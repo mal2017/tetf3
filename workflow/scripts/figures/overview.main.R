@@ -19,6 +19,7 @@ digraph boxes_and_circles {
   # several 'node' statements
   node [shape = box,
         fontname = Arial]
+  tidal [label='TE insertions from TIDAL'];
   model [label='TEX ~ GEX + TE copies + gene/insertion proximity + wolbachia'];
   qnorm [label='quantile normalize coefficients\nby feature expression level'];
   filter [label='extract correlated\ngene/TE pairs'];
@@ -26,7 +27,8 @@ digraph boxes_and_circles {
   infect [label='wolbachia infection status'];
   cnv [label='WGS-based\nTE copy number estimate'];
   novel [label='novel TE regulating genes'];
-
+  
+  tidal -> model;
   quant -> model;
   infect -> model;
   cnv -> model;
