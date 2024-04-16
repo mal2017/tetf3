@@ -98,7 +98,7 @@ possibly_gsea <- possibly(function(.x,.y) {
        TERM2GENE = .y,
        seed=2022,
        pvalueCutoff = 1,
-       minGSSize = 3, 
+       minGSSize = 1,  
        eps=0)
   },
   otherwise = NULL)

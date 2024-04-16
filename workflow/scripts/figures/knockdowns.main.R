@@ -49,5 +49,13 @@ plotText("C",  x = 0.5, y=3.5)
 plotGG(g_bcd$knockdown2_Unr_female_head_Mef2.R_control_female_head_Mef2.R, x = 4.5, y=3.5, width = 3.25,height = 2.5)
 plotText("D",  x = 4.5, y=3.5)
 
+
+plotGG(g_bcd$knockdown2_vvl_female_head_Mef2.R_control_female_head_Mef2.R, x = 0.75, y=6.5, width = 3.25,height = 2.5)
+plotText("E",  x = 0.5, y=6.5)
+
+plotGG(g_bcd$knockdown2_CG16779_male_gonad_aTub_control_male_gonad_aTub, x = 4.5, y=6.5, width = 3.25,height = 2.5)
+plotText("F",  x = 4.5, y=6.5)
+
+
 dev.off()
 
