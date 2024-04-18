@@ -28,6 +28,14 @@ rule motif_results_table:
     script:
         "../scripts/tables/motif_enrichment_results.R"
 
+rule csem_mosaics_regioner_table:
+    input:
+        "results/csem_mosaics/regioner.rds",
+    output:
+       xlsx= "results/tables/csem_mosaics_regioner_table.xlsx",
+    script:
+        "../scripts/tables/csem_mosaics_regioner_table.R"
+
 
 rule tables:
     input:
@@ -35,3 +43,4 @@ rule tables:
         "results/tables/table_known_te_regulators_in_knockdown.xlsx",
         "results/tables/descriptive_lms.xlsx",
         "results/tables/motif_results.xlsx",
+        "results/tables/csem_mosaics_regioner_table.xlsx",
