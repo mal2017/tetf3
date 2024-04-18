@@ -12,7 +12,7 @@ rule calderon22_reanalysis:
 
 rule fca_heads_reanalysis:
     input:
-        "upstream/calderon22_supercells.rds",
+        "upstream/fca_supercells.rds",
         "resources/Drosophila_melanogaster_TF.txt",
         "upstream/te_element_lookup.json",
         "upstream/final-models.collected-info.tsv.gz",

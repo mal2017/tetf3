@@ -36,6 +36,23 @@ rule csem_mosaics_regioner_table:
     script:
         "../scripts/tables/csem_mosaics_regioner_table.R"
 
+rule phylosignal_table:
+    input:
+        unr_phylosignal = "results/ripseq/unr_ripseq_phylosignal.tbl.rds",
+        overall_phylosignal = "results/phylosignal/phylosignal_df.rds",
+    output:
+        xlsx= "results/tables/phylosignal_results.xlsx",
+    script:
+        "../scripts/tables/phylosignal_table.R"
+
+rule metacell_table:
+    input:
+        supercell = "upstream/fca_supercells.rds",
+    output:
+        xlsx= "results/tables/metacell_results.xlsx",
+        sce = "results/tables/metacell_sce.rds",
+    script:
+        "../scripts/tables/metacell_table.R"
 
 rule tables:
     input:
@@ -44,3 +61,5 @@ rule tables:
         "results/tables/descriptive_lms.xlsx",
         "results/tables/motif_results.xlsx",
         "results/tables/csem_mosaics_regioner_table.xlsx",
+        "results/tables/phylosignal_results.xlsx",
+        "results/tables/metacell_results.xlsx",
