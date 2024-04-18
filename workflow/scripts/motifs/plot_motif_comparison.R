@@ -39,7 +39,7 @@ g_rnks <- which.motifs |>
                          geom_point() +
                          ggrepel::geom_text_repel(data= \(x) filter(x,known==.y), aes(label=label),color="black") +
                          geom_hline(yintercept = -log10(max_p), linetype="dashed", color="darkgray") +
-                         ylab("-log10(p-value)")
+                         ylab("-log10(BH-adjusted p-value)")
                        
                        }))
 

@@ -382,7 +382,7 @@ def aggregate_fimo_on_tes(wildcards):
 
 rule motifs:
     input:
-        expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=["pan"]),
+        expand("results/motifs/streme_per_tf_empirical_fdr/{tf}_empirical_fdr.tsv",tf=TFSOI),
         expand("results/motifs/{prog}_per_tf/{tf}/",prog= ["meme","streme","homer"], tf=TFSOI),
         expand("results/motifs/comparison/{tf}_denovo_comparison.{p}.rds", tf=["pan"],p=["meme"]),
         "results/motifs/n_denovo_vs_sig_coef.pan.rds",
