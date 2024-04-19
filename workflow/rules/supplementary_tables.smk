@@ -54,6 +54,14 @@ rule metacell_table:
     script:
         "../scripts/tables/metacell_table.R"
 
+rule significant_pairs:
+    input:
+        config.get("MERGED_MODELS")
+    output:
+        xlsx = "results/tables/significant_pairs.xlsx",
+    script:
+        "../scripts/tables/significant_pairs.R"
+
 rule tables:
     input:
         "results/tables/table_te_regulator_chip_prox.docx",
@@ -63,3 +71,4 @@ rule tables:
         "results/tables/csem_mosaics_regioner_table.xlsx",
         "results/tables/phylosignal_results.xlsx",
         "results/tables/metacell_results.xlsx",
+        "results/tables/significant_pairs.xlsx",
