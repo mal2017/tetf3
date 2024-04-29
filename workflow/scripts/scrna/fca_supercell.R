@@ -23,23 +23,19 @@ tfs <- read_tsv("resources/Drosophila_melanogaster_TF.txt")
 tes <- jsonlite::read_json("upstream/te_element_lookup.json") %>%
   names()
 
-lms <- read_tsv("upstream/final-models.collected-info.tsv.gz")
-
 rownames(GE) <- map_chr(rownames(GE),~{if_else(.x %in% names(lkup),lkup[.x],.x)})
 
 GE_all <- GE
 
-GE_tf_te_ix <- (rownames(GE) %in% c(tfs$Symbol,tes))
+#GE_tf_te_ix <- (rownames(GE) %in% c(tfs$Symbol,tes))
 GE_rowsds0_ix <- rowSds(GE) == 0
 
-GE <- GE[GE_tf_te_ix & !GE_rowsds0_ix,]
+GE <- GE[!GE_rowsds0_ix,]
 
 
 # ------------------------------------------------------------------------------
 # correlations
 # ------------------------------------------------------------------------------
-
-
 get_weighted_cor <- function(x, n) {
   cm <- t(x) |>
     as.matrix() |>
@@ -76,7 +72,7 @@ cormat2tbl <- function(x,n) {
   x |> 
     as_tibble(rownames = "feature") |>
     pivot_longer(-feature,names_to = "y", values_to = "coef") |>
-    filter(feature %in% tfs$Symbol & y %in% tes & feature!=y) |>
+    filter(y %in% tes & feature!=y) |>
     mutate(p=map_dbl(coef,get_p_from_r,n=n)) |>
     mutate(padj = p.adjust(p,method="BH"))
 } 
@@ -93,8 +89,12 @@ df <- split(SC$lineage,SC$lineage) |>
 
 df <- filter(df, lineage %in% c("all_cells"))
 
+print("checkpoint0")
+
 # get weighted correlation
 df <- mutate(df, cor.raw = map2(GE_mat, SC_sizes, get_weighted_cor))
+
+print("checkpoint1")
 
 # get average expression used for spqn
 df <- mutate(df, ave_GE = map(GE_mat, ~log2(rowMeans(2^(.x)-1)+1))) # scater/scran/scanpy uses log2 by default
@@ -102,24 +102,12 @@ df <- mutate(df, ave_GE = map(GE_mat, ~log2(rowMeans(2^(.x)-1)+1))) # scater/scr
 # get spqn-corrected weighted correlation
 df <- mutate(df, cor.spqn = map2(cor.raw, ave_GE, get_corrected_cor))
 
+print("checkpoint2")
+
 # get pvals and coefs and annotations in tbl format
 df <- mutate(df, res.raw = map2(cor.raw, n, cormat2tbl),
              res.spqn  = map2(cor.spqn, n, cormat2tbl) )
 
-
+# export results
 write_rds(df, snakemake@output$df)
-
 write_rds(list(GE=GE_all,SC=SC),snakemake@output$supercell)
-
-#g_pan_highly_corr_with_tes <- 
-#df %>%
-#  dplyr::select(lineage,res=res.spqn) |>
-#  unnest(res) |>
-#  filter(sex %in% c("female","male")) |> # only look at TEs/feature pairs that were modelable in male or female DGRP data
-#  dplyr::select(feature,y,coef,p,padj) |>
-#    distinct() |>
-#  mutate(feature2 = if_else(feature%in%c("pan","Unr","CG16779","vvl","NfI"),feature,"other")) |>
-#  mutate(feature2 = fct_reorder(feature2,coef)) |>
-#  mutate(feature2 = fct_relevel(feature2,"other")) |>
-#  ggplot(aes(feature2,coef)) +
-#    geom_boxplot()

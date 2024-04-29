@@ -32,6 +32,18 @@ rule figure1_supp_01:
     script:
         "../scripts/figures/extra-overview.R"
 
+
+rule figure1_supp_02:
+    input:
+        rules.fca_heads_reanalysis.output,
+    output:
+        pdf="results/figures/panels/figure1_supp_02.fca.pdf",
+    params:
+        figtitle="Supplement 02 to Figure 1"
+    script:
+        "../scripts/figures/flycellatlas_01.R"
+
+
 # ---------------------------------------------------------------------------------------------------
 # figures related to results section 2
 # ---------------------------------------------------------------------------------------------------
@@ -146,10 +158,11 @@ rule figure4_supp_04:
         rules.fca_heads_reanalysis.output,
     output:
         pdf="results/figures/panels/figure4_supp_04.fca.pdf",
+        xlsx="results/figures/data/figure4_supp_04.fca.xlsx"
     params:
         figtitle="Supplement 04 to Figure 4"
     script:
-        "../scripts/figures/flycellatlas.R"
+        "../scripts/figures/flycellatlas_02.R"
 
 # ---------------------------------------------------------------------------------------------------
 # figures related to results section 5
@@ -173,7 +186,7 @@ rule figure5_supp_01:
     input:
         "results/te_sequence_similarity/te_sketch_tidytree.rds",
     output:
-        pdf="results/figures//panels/figure5_supp_01.dashing2-tree.pdf"
+        pdf="results/figures/panels/figure5_supp_01.dashing2-tree.pdf"
     params:
         figtitle="Supplement 01 to Figure 5"
     script:
@@ -240,6 +253,7 @@ rule figures:
     input:
         rules.figure1.output.pdf,
         rules.figure1_supp_01.output.pdf,
+        rules.figure1_supp_02.output.pdf,
         rules.figure2.output.pdf,
         rules.figure3.output.pdf,
         rules.figure3_supp_01.output.pdf,
@@ -266,6 +280,7 @@ rule figuredata:
         rules.figure1.output.xlsx,
         rules.figure1_supp_01.output.xlsx,
         rules.figure2.output.xlsx,
+        rules.figure4_supp_04.output.xlsx,
     output:
         xlsx="results/figures/figuredata.xlsx"
     script:
