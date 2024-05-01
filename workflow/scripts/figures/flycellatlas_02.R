@@ -11,6 +11,11 @@ library(tidyverse)
 library(SuperCell)
 library(patchwork)
 
+tfs <- read_tsv("resources/Drosophila_melanogaster_TF.txt")
+
+tes <- jsonlite::read_json("upstream/te_element_lookup.json") %>%
+  names()
+
 # read in TE TF correlations we identifed from the supercell results
 tf_te_correlations <- read_rds("results/calderon22/fca_reanalysis_correlations.rds") |>
   dplyr::select(lineage,res=res.spqn) |>

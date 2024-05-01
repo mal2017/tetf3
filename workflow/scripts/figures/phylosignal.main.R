@@ -20,6 +20,7 @@ library(ggpp)
 # ------------------------------------------------------------------------------
 
 crlg_gs <- read_rds("results/phylosignal/main_fig_correlograms.gg.rds")
+ripseq_crlg_gs <- read_rds("results/ripseq/unr_ripseq_phylosignal.crlg.gg.rds")
 
 g_b <- crlg_gs$random
 
@@ -27,7 +28,7 @@ g_c <- crlg_gs$bm
 
 g_d <- crlg_gs$female_score_pan
 
-g_e <- crlg_gs$male_score_vvl
+g_e <- ripseq_crlg_gs
 
 # ------------------------------------------------------------------------------
 # get tree

@@ -175,6 +175,7 @@ rule figure5:
         control_crlg = rules.plot_control_correlograms.output.rds,
         tre = "results/te_sequence_similarity/te_sketch_tidytree.rds",
         crlgs = rules.plot_main_fig_correlograms.output.rds,
+        ripseq_crlg = "results/ripseq/unr_ripseq_phylosignal.crlg.gg.rds",
     output:
         pdf="results/figures/panels/figure5_main.phylosignal.pdf"
     params:
@@ -272,6 +273,7 @@ rule figures:
         "results/figures/figures.pdf"
     shell:
         """
+        for f in {input}; do convert -trim -density 600 -quality 100 "$f" "${{f%pdf}}jpg"; done
         gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
         """
 

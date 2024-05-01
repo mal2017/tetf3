@@ -40,16 +40,16 @@ g_supercell_size <- SC$supercell_size |>
 
 # asking if pan is highly correlated with TEs in general
 g_pan_highly_corr_with_tes <- 
-tf_te_correlations %>%
+feature_correlations %>%
   filter(feature %in% tfs$Symbol & y %in% tes) |>
-  dplyr::select(feature,y,coef,p,padj) |>
+  dplyr::select(y,feature,coef,p,padj) |>
     distinct() |>
   mutate(feature2 = if_else(feature%in%c("pan","Unr","vvl","NfI","CG16779"),feature,"other")) |>
   mutate(feature2 = fct_reorder(feature2,coef)) |>
   mutate(feature2 = fct_relevel(feature2,"other")) |>
   ggplot(aes(feature2,coef)) +    
   geom_boxplot() +
-  ggpubr::stat_compare_means(ref="other",size=2) +
+  ggpubr::stat_compare_means(ref="other",size=1) +
   xlab("") + ylab("weighted correlation")
 
 
@@ -82,18 +82,6 @@ export_svg(g_a) |>
 g_a_cartoon <- magick::image_read_svg(cartoon_temp) |> magick::image_ggplot(interpolate = T)
 
 
-# ------------------------------------------------------------------------------
-# plot tf vs other te correlations
-# ------------------------------------------------------------------------------
-feature_correlations |>
-  filter(y %in% tes) |>
-  filter(!feature %in% tes) |>
-  filter(feature!=y) |>
-  mutate(type = if_else(feature %in% tfs$Symbol,"TF","other")) |> pull(type) |> table()
-  ggplot(aes(abs(coef),fill=type)) +
-  geom_density()
-
-
 # plotting page 1 --------------------------------------------------------------------
 theme_set(theme_classic() + theme(text=element_text(size=unit(7,"pt"))))
 
@@ -109,7 +97,7 @@ plotText(label = "A", x = 1, y = 0.5)
 pb <- plotGG(plot = g_supercell_size, x = 4.5, y=0.5, width = 3, height=2.25)
 plotText(label = "B", x = 4.5, y = 0.5)
 
-pc <- plotGG(plot = g_pan_highly_corr_with_tes, x = 1,  y=3, width = 6.25, height=2.25)
+pc <- plotGG(plot = g_pan_highly_corr_with_tes, x = 1,  y=3, width = 3.25, height=2.25)
 plotText(label = "C", x = 1, y = 3)
 
 
