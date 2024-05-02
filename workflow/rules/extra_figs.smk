@@ -114,3 +114,39 @@ rule plot_motif_and_coex_on_tree:
         "../scripts/integrative/plot_motif_and_coex_on_tree2.R"
 
 
+rule calderon22_reanalysis:
+    input:
+        "upstream/calderon22_supercells.rds",
+        "resources/Drosophila_melanogaster_TF.txt",
+        "upstream/te_element_lookup.json",
+        "upstream/final-models.collected-info.tsv.gz",
+    output:
+        df = "results/calderon22/calderon22_reanalysis_correlations.rds",
+        supercell = "results/calderon22/calderon22_reanalysis_supercell.rds",
+    script:
+        "../scripts/scrna/calderon22.v2.R"
+
+rule coex_vs_seq_similarity:
+    """
+    generate a tbl relating coexpression distance to sequence distance
+    """
+    input:
+        coex_dist = rules.get_coex_distance.output.rds,
+        seq_dist = rules.process_sketch_dist.output.dist,
+        te_classes = config.get("TE_CLASSES"),
+    output:
+        rds = "results/te_sequence_similarity/coex_vs_seq_similarity.rds"
+    script:
+        "../scripts/te_sequence_similarity/coex_vs_seq_similarity.R"
+
+rule get_coex_distance:
+    input:
+        mods = config.get("MERGED_MODELS"),
+        zads = rules.get_zad_genes.output.tsv,
+        tfs = config.get("TFS"),
+    output:
+        rds = "results/te_sequence_similarity/coex_dist_df.rds",
+        male_dist = "results/te_sequence_similarity/te_male-coex_dist.rds",
+        female_dist = "results/te_sequence_similarity/te_female-coex_dist.rds",
+    script:
+        "../scripts/te_sequence_similarity/get_coex_distance_combined_sexes.R"

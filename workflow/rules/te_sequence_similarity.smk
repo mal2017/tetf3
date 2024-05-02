@@ -1,16 +1,3 @@
-rule get_coex_distance:
-    input:
-        mods = config.get("MERGED_MODELS"),
-        zads = rules.get_zad_genes.output.tsv,
-        tfs = config.get("TFS"),
-    output:
-        rds = "results/te_sequence_similarity/coex_dist_df.rds",
-        male_dist = "results/te_sequence_similarity/te_male-coex_dist.rds",
-        female_dist = "results/te_sequence_similarity/te_female-coex_dist.rds",
-    script:
-        "../scripts/te_sequence_similarity/get_coex_distance_combined_sexes.R"
-
-
 rule get_sketch_dist:
     """
     currently dashing v2.1.19
@@ -56,22 +43,8 @@ rule make_te_tree_from_dist:
         "../scripts/te_sequence_similarity/make_te_tree_from_dist.R"
 
 
-rule coex_vs_seq_similarity:
-    """
-    generate a tbl relating coexpression distance to sequence distance
-    """
-    input:
-        coex_dist = rules.get_coex_distance.output.rds,
-        seq_dist = rules.process_sketch_dist.output.dist,
-        te_classes = config.get("TE_CLASSES"),
-    output:
-        rds = "results/te_sequence_similarity/coex_vs_seq_similarity.rds"
-    script:
-        "../scripts/te_sequence_similarity/coex_vs_seq_similarity.R"
-
 rule te_sequence_similarity:
     input:
         rules.process_sketch_dist.output.dist,
         expand("results/te_sequence_similarity/te_{dist_type}_tidytree.rds",dist_type=["male-coex","female-coex","sketch"]),
-        rules.coex_vs_seq_similarity.output.rds,
 
