@@ -29,5 +29,4 @@ rule all:
         rules.figures.output,
         rules.figuredata.output,
         rules.tables.output,
-        rules.collect_stats.output
 

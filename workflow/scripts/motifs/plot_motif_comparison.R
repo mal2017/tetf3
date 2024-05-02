@@ -34,11 +34,10 @@ g_rnks <- which.motifs |>
   mutate(g_rnk = map2(denovo,known,
                      ~{
                        dat <- filter(motif_comp2plot,denovo==.x)
-                       max_p <- filter(dat, universalmotif_padj < 0.1) |> pull(universalmotif_pval) |> max()
                        ggplot(dat,aes(rank,-log10(universalmotif_padj))) +
                          geom_point() +
-                         ggrepel::geom_text_repel(data= \(x) filter(x,known==.y), aes(label=label),color="black") +
-                         geom_hline(yintercept = -log10(max_p), linetype="dashed", color="darkgray") +
+                         ggrepel::geom_text_repel(data= \(x) filter(x,known==.y), aes(label=label),color="black",force = 100,min.segment.length = 0.001) +
+                         geom_hline(yintercept = -log10(0.1), linetype="dashed", color="darkgray") +
                          ylab("-log10(BH-adjusted p-value)")
                        
                        }))
