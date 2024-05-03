@@ -24,6 +24,7 @@ rule all:
     input:
         rules.figures.input,
         rules.figures.output,
+        rules.supp_figures.output,  
         rules.figuredata.output,
-        rules.tables.output,
+        rules.tables.input,
 

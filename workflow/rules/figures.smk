@@ -38,6 +38,7 @@ rule figure1_supp_02:
         rules.fca_heads_reanalysis.output,
     output:
         pdf="results/figures/panels/figure1_supp_02.fca.pdf",
+        xlsx="results/figures/data/figure1_supp_02.fca.xlsx"
     params:
         figtitle="Supplement 02 to Figure 1"
     script:
@@ -69,7 +70,8 @@ rule figure3:
         rules.plot_ourKD_gsea_randomwalks.output,
         rules.plot_ourKD_gsea_barplots.output,
     output:
-        pdf = "results/figures/panels/figure3_main.knockdowns.pdf"
+        pdf = "results/figures/panels/figure3_main.knockdowns.pdf",
+        xlsx = "results/figures/data/figure3_main.knockdowns.xlsx"
     params:
         figtitle="Figure 3"
     script:
@@ -83,7 +85,8 @@ rule figure3_supp_01:
         rules.plot_ourKD_gsea_randomwalks.output,
         rules.plot_ourKD_gsea_barplots.output,
     output:
-        pdf="results/figures/panels/figure3_supp_01.factor_specific_gsea.pdf"
+        pdf="results/figures/panels/figure3_supp_01.factor_specific_gsea.pdf",
+        xlsx="results/figures/data/figure3_supp_01.factor_specific_gsea.xlsx"
     params:
         figtitle="Supplement 01 to Figure 3"
     script:
@@ -100,7 +103,8 @@ rule figure4:
         "results/ripseq/unr_ripseq_au_richness.boxplot.gg_list.rds",
         "results/ripseq/unr_ripseq_attta_richness.boxplot.gg_list.rds",
     output:
-       pdf="results/figures/panels/figure4_main.pan-motifs.pdf"
+       pdf="results/figures/panels/figure4_main.pan-motifs.pdf",
+       xlsx="results/figures/data/figure4_main.pan-motifs.xlsx"
     params:
         figtitle="Figure 4"
     script:
@@ -112,8 +116,9 @@ rule figure4_supp_01:
         rules.csem_peaks_regioner.output,
     output:
         pdf="results/figures/panels/figure4_supp_01.csem-regioner.pdf",
+        xlsx="results/figures/data/figure4_supp_01.csem-regioner.xlsx",
     params:
-        figtitle="Supplement 01 to Figure 4"
+        figtitle="Supplement 01 to Figure 4",
     script:
         "../scripts/figures/csem-regioner.R"
 
@@ -129,7 +134,8 @@ rule figure4_supp_02:
         denovo_comparison_gg = "results/motifs/comparison/pan_within_denovo.gg.rds",
         sea_csem = 'results/motifs/upstream_csem_known_pan_sea.gg.rds',
     output:
-        pdf="results/figures/panels/figure4_supp_02.denovo-motif-pan-supp.pdf"
+        pdf="results/figures/panels/figure4_supp_02.denovo-motif-pan-supp.pdf",
+        xlsx="results/figures/data/figure4_supp_02.denovo-motif-pan-supp.xlsx",
     params:
         figtitle="Supplement 02 to Figure 4"
     script:
@@ -144,11 +150,14 @@ rule figure4_supp_03:
         attta_in_region = "results/ripseq/unr_ripseq_features_attta_sites_in_region.tsv.gz",
         gsea = "results/ripseq/unr_bound_tx_in_kd.gsea.rds",
         p4d = "results/ripseq/unr_ripseq_phylosignal.p4d.rds",
+        au_richness = rules.plot_au_richness.output.lineplot,
+        atta_richness = rules.plot_attta_richness.output.boxplot,
     params:
         relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION"),
         figtitle="Supplement 03 to Figure 4"
     output:
         pdf="results/figures/panels/figure4_supp_03.ripseq-ares.pdf",
+        xlsx="results/figures/data/figure4_supp_03.ripseq-ares.xlsx",
     script:
         "../scripts/figures/unr_ripseq.R"
 
@@ -177,7 +186,8 @@ rule figure5:
         crlgs = rules.plot_main_fig_correlograms.output.rds,
         ripseq_crlg = "results/ripseq/unr_ripseq_phylosignal.crlg.gg.rds",
     output:
-        pdf="results/figures/panels/figure5_main.phylosignal.pdf"
+        pdf="results/figures/panels/figure5_main.phylosignal.pdf",
+        xlsx="results/figures/data/figure5_main.phylosignal.xlsx",
     params:
         figtitle="Figure 5"
     script:
@@ -187,7 +197,8 @@ rule figure5_supp_01:
     input:
         "results/te_sequence_similarity/te_sketch_tidytree.rds",
     output:
-        pdf="results/figures/panels/figure5_supp_01.dashing2-tree.pdf"
+        pdf="results/figures/panels/figure5_supp_01.dashing2-tree.pdf",
+        xlsx="results/figures/data/figure5_supp_01.dashing2-tree.xlsx",
     params:
         figtitle="Supplement 01 to Figure 5"
     script:
@@ -207,7 +218,8 @@ rule figure5_supp_02:
         relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION"),
         figtitle="Supplement 03 to Figure 5"
     output:
-        pdf="results/figures/panels/figure5_supp_02.ripseq-phylosignal.pdf"
+        pdf="results/figures/panels/figure5_supp_02.ripseq-phylosignal.pdf",
+        xlsx="results/figures/data/figure5_supp_02.ripseq-phylosignal.xlsx",
     script:
         "../scripts/figures/unr_ripseq_phylosignal.R"
 
@@ -215,7 +227,8 @@ rule figure5_supp_03:
     input:
         rules.plot_de_volcanos.output,
     output:
-        pdf="results/figures/panels/figure5_supp_03.pirna-volcano.pdf"
+        pdf="results/figures/panels/figure5_supp_03.pirna-volcano.pdf",
+        xlsx="results/figures/data/figure5_supp_03.pirna-volcano.xlsx",
     params:
         figtitle="Supplement 03 to Figure 5"
     script:
@@ -225,7 +238,8 @@ rule figure5_supp_04:
     input:
         rds = rules.plot_ourKD_gsea_randomwalks.output.gg_df,
     output:
-        pdf="results/figures/panels/figure5_supp_04.knockdowns_silencer_enrichment.pdf"
+        pdf="results/figures/panels/figure5_supp_04.knockdowns_silencer_enrichment.pdf",
+        xlsx="results/figures/data/figure5_supp_04.knockdowns_silencer_enrichment.xlsx",
     params:
         figtitle="Supplement 04 to Figure 5"
     script:
@@ -277,12 +291,47 @@ rule figures:
         gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
         """
 
+rule supp_figures:
+    input:
+        rules.figure1_supp_01.output.pdf,
+        rules.figure1_supp_02.output.pdf,
+        rules.figure3_supp_01.output.pdf,
+        rules.figure4_supp_01.output.pdf,
+        rules.figure4_supp_02.output.pdf,
+        rules.figure4_supp_03.output.pdf,
+        rules.figure4_supp_04.output.pdf,
+        rules.figure5_supp_01.output.pdf,
+        rules.figure5_supp_02.output.pdf,
+        rules.figure5_supp_03.output.pdf,
+        rules.figure5_supp_04.output.pdf,
+        rules.methods_figs.output.pdf,
+    output:
+        "results/figures/supp_figures.pdf"
+    shell:
+        """
+        gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
+        """
+
+
+
+
 rule figuredata:
     input:
         rules.figure1.output.xlsx,
         rules.figure1_supp_01.output.xlsx,
+        rules.figure1_supp_02.output.xlsx,
         rules.figure2.output.xlsx,
+        rules.figure3.output.xlsx,
+        rules.figure3_supp_01.output.xlsx,
+        rules.figure4.output.xlsx,
+        rules.figure4_supp_01.output.xlsx,
+        rules.figure4_supp_02.output.xlsx,
+        rules.figure4_supp_03.output.xlsx,
         rules.figure4_supp_04.output.xlsx,
+        rules.figure5.output.xlsx,
+        rules.figure5_supp_01.output.xlsx,
+        rules.figure5_supp_02.output.xlsx,
+        rules.figure5_supp_03.output.xlsx,
     output:
         xlsx="results/figures/figuredata.xlsx"
     script:
