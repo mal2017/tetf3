@@ -1,3 +1,7 @@
+
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
 library(tidyverse)
 
 teregs_fl <- "results/resources/pirna_pathway.tsv"

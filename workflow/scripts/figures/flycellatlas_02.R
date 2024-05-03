@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 # read in results of supercell analysis
 supercell <- readRDS("results/calderon22/fca_reanalysis_supercell.rds")
 

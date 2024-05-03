@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(tidyverse)
 
 motif_cmp_fl <- "results/motifs/comparison/pan_denovo_comparison.meme.rds"

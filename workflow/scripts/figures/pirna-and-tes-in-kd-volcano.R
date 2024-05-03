@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(tidyverse)
 library(clusterProfiler)
 library(patchwork)
@@ -29,3 +33,7 @@ plotGG(g_a, x = 0.5, y=0.5, width = 7.5,height = 5)
 
 dev.off()
 
+writexl::write_xlsx(list(A=g_a$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))

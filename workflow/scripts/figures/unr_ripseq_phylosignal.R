@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(tidyverse)
 library(plotgardener)
 
@@ -22,3 +26,8 @@ plotGG(gtr+guides(fill="none"), x = .5, y=0.5, width = 7,height = 5.5)
 plotText("A", x = .5, y=0.5)
 
 dev.off()
+
+writexl::write_xlsx(list(A=gtr$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))

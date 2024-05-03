@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(tidyverse)
 
 pkgs <- read_lines(pipe("grep library workflow/scripts/*/*R")) |>

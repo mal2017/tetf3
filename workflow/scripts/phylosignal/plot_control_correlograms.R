@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(phylosignal)
 
 ps_fl <- "results/phylosignal/phylosignal.rds"

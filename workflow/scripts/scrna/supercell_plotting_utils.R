@@ -1,3 +1,6 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
 # get a correlation weighted by the number of cells represented in each supercell/metacell
 get_weighted_cor <- function(x, n) {
   cm <- t(x) |>

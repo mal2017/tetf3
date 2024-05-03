@@ -1,3 +1,6 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
 library(SuperCell)
 
 fl <-  ifelse(exists("snakemake"),snakemake@input$supercell, "upstream/fca_supercells.rds")

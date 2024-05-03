@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(tidyverse)
 library(plotgardener)
 library(patchwork)
@@ -67,28 +71,48 @@ pageCreate(height = 11, showGuides=interactive())
 figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
 plotText(figtitle,x=0,y=0,just = c("left","top"))
 
-plotGG(h3k9me3_all_te, x = 0.5, y=0.5, width = 3.5,height = 2.25)
+g_a <- h3k9me3_all_te
+plotGG(g_a, x = 0.5, y=0.5, width = 3.5,height = 2.25)
 plotText("A", x = 0.5, y=0.5)
 
-plotGG(gro_all_te, x = 4.5, y=0.5, width = 3.5,height = 2.25)
+g_b <- gro_all_te
+plotGG(g_b, x = 4.5, y=0.5, width = 3.5,height = 2.25)
 plotText("B", x = 4.5, y=.5)
 
-plotGG(pan_pan_te, x = 0.5, y=3, width = 3.5,height = 2.25)
+g_c <- pan_pan_te
+plotGG(g_c, x = 0.5, y=3, width = 3.5,height = 2.25)
 plotText("C", x = 0.5, y=3)
 
-plotGG(pan_all_te, x = 4.5, y=3, width = 3.5,height = 2.25)
+g_d <- pan_all_te
+plotGG(g_d, x = 4.5, y=3, width = 3.5,height = 2.25)
 plotText("D", x = 4.5, y=3)
 
-plotGG(pan_euch_all_te, x = 0.5, y=5.75, width = 3.5,height = 2.25)
+g_e <- pan_euch_all_te
+plotGG(g_e, x = 0.5, y=5.75, width = 3.5,height = 2.25)
 plotText("E", x = 0.5, y=5.5)
 
-plotGG(vvl_all_te, x = 4.5, y=5.75, width = 3.5,height = 2.25)
+g_f <- vvl_all_te
+plotGG(g_f, x = 4.5, y=5.75, width = 3.5,height = 2.25)
 plotText("F", x = 4.5, y=5.5)
 
-plotGG(nfi_all_te, x = 0.5, y=8, width = 3.5,height = 2.25)
+g_g <- nfi_all_te
+plotGG(g_g, x = 0.5, y=8, width = 3.5,height = 2.25)
 plotText("G", x = 0.5, y=8)
 
-plotGG(cg16779_all_te, x = 4.5, y=8, width = 3.5,height = 2.25)
+g_h <- cg16779_all_te
+plotGG(g_h, x = 4.5, y=8, width = 3.5,height = 2.25)
 plotText("H", x = 4.5, y=8)
 
 dev.off()
+
+writexl::write_xlsx(list(A=g_a$data,
+                         B=g_b$data,
+                         C=g_c$data,
+                         D=g_d$data,
+                         E=g_e$data,
+                         `F`=g_f$data,
+                         G=g_g$data,
+                         H=g_h$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))

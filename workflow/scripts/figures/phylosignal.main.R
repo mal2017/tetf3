@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(tidyverse)
 library(patchwork)
 library(plotgardener)
@@ -72,6 +76,13 @@ plotText("D", x = 3.25, y=3.25)
 plotGG(g_e, x = 5.75, y=3.25, width = 2.25,height = 2)
 plotText("E", x = 5.75, y=3.25)
 
-
-
 dev.off()
+
+writexl::write_xlsx(list(A=g_a$data,
+                         B=g_b$data,
+                         C=g_c$data,
+                         D=g_d$data,
+                         E=g_e$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))

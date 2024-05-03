@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 library(tidyverse)
 
 #seas <- Sys.glob("results/motifs/sea_csem_peaks/pan/*/sea.tsv")

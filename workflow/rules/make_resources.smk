@@ -49,8 +49,8 @@ rule make_txdb:
 rule get_zad_genes:
     output:
         tsv = "results/resources/zad_genes.tsv"
-    conda:
-        "../envs/biomart.yaml"
+    #conda:
+    #    "../envs/biomart.yaml"
     script:
         "../scripts/make_resources/get_zad_genes.R"
 

@@ -1,3 +1,7 @@
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
+
 # read in results of supercell analysis
 supercell <- readRDS("results/calderon22/fca_reanalysis_supercell.rds")
 
@@ -102,3 +106,9 @@ plotText(label = "C", x = 1, y = 3)
 
 
 dev.off()
+
+writexl::write_xlsx(list(B=g_supercell_size$data,
+                         C=g_pan_highly_corr_with_tes$data),
+                    path = ifelse(exists("snakemake"),
+                                  snakemake@output$xlsx,
+                                  "~/Downloads/test.xlsx"))

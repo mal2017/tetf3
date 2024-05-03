@@ -1,11 +1,11 @@
-library(biomaRt)
+Sys.setenv(R_PROFILE=".Rprofile")
+source(Sys.getenv("R_PROFILE"))
+
 library(tidyverse)
-library("org.Dm.eg.db")
+library(org.Dm.eg.db)
+library(biomaRt)
 
 ensembl <- useEnsembl(biomart = "genes", dataset = "dmelanogaster_gene_ensembl")
-
-#listFilters(ensembl)
-#listAttributes(ensembl)
 
 ids <- getBM(filters = "interpro",
     values = "IPR012934",
