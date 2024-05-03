@@ -31,7 +31,7 @@ import2 <- function(x) {
 # sheet 1-3 de novo
 pages <- list(`MEME results`=Sys.glob("results/motifs/meme_per_tf/*/meme.txt") |> map_df(import2) |> dplyr::select(-pval),
            `STREME results`=Sys.glob("results/motifs/streme_per_tf/*/streme.txt") |> map_df(import2) |> dplyr::select(-pval),
-           `HOMER results`=Sys.glob("results/motifs/homer_per_tf/*/homerMotifs.all.motifs") |> map_df(import2) |> dplyr::select(-pval)
+           `HOMER results`=Sys.glob("results/motifs/homer_per_tf/*/homerMotifs.all.motifs") |> map_df(import2) |> dplyr::select(-eval)
   )
 
 
