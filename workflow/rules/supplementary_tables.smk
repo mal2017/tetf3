@@ -68,6 +68,7 @@ rule phylosignal_table:
     input:
         unr_phylosignal = "results/ripseq/unr_ripseq_phylosignal.tbl.rds",
         overall_phylosignal = "results/phylosignal/phylosignal_df.rds",
+        filtered = "results/phylosignal/phylosignal_filtered_hits.tsv.gz",
     output:
         xlsx= "results/tables/phylosignal_results.xlsx",
     script:
