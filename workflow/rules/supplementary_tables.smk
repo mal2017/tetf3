@@ -83,6 +83,16 @@ rule ripseq_table:
     script:
         "../scripts/tables/ripseq_table.R"
 
+rule interesting_genes_table:
+    input:
+        config.get("MERGED_MODELS"),
+    output:
+        xlsx= "results/tables/interesting_genes_table.xlsx",
+    script:
+        "../scripts/tables/interesting_genes_table.R"
+
+
+
 # rule our_kd_stats:
 #     input:
 #         gg_pirna_in_kds = rules.plot_pirna_genes_in_our_kd_all.output.rds,
@@ -128,3 +138,4 @@ rule tables:
         "results/tables/ripseq_table.xlsx",
         "results/tables/csem_mosaics_regioner_table.xlsx",
         "results/tables/phylosignal_results.xlsx",
+        "results/tables/interesting_genes_table.xlsx",
