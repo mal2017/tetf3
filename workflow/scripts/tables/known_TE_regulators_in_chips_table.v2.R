@@ -5,6 +5,7 @@ library(tidyverse)
 library(GenomicRanges)
 library(gt)
 library(plyranges)
+library(writexl)
 
 te_regulators <- read_tsv("results/resources/pirna_pathway.tsv")
 lkup <-read_tsv("results/resources/gene_symbol_lookup.tsv.gz")
@@ -27,24 +28,9 @@ dx <- d |>
   inner_join(oi) |>
   dplyr::select(feature="gene_id",gene_symbol,ChIP,distance) |>
   distinct() |>
-  #filter(distance < 5000) |>
+  filter(distance < 5000) |>
   pivot_wider(names_from = ChIP, values_from = distance) |>
   dplyr::rename(`gene ID`=feature, `symbol`=gene_symbol) |>
   dplyr::select(-`gene ID`)
 
-gx <- gt(dx)
-
-gx <- tab_style(gx,style = cell_text(style="italic"),
-          locations = cells_body(columns=c("symbol")))
-
-gx <- tab_style(gx,style = cell_text(style="italic"),
-                locations = cells_column_labels(columns=-c("symbol")))
-
-#gx <- gx |>
-#  data_color(columns=-c("symbol"),
-#             direction="row",
-#             method="bin", palette = "Greens",reverse=T,bins=c(0,100,500,1000,5000,1e7))
-
-dir.create("results/tables/")
-gtsave(gx,snakemake@output$docx)
-gtsave(gx,"~/Downloads/test.docx")
+write_xlsx(list(`Closest ChIP peak to piRNA pathway promoters`=dx),snakemake@output$xlsx)
