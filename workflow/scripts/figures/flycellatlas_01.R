@@ -16,6 +16,7 @@ library(DiagrammeRsvg)
 library(rsvg)
 library(DiagrammeR)
 library(SuperCell)
+library(patchwork)
 
 tfs <- read_tsv("resources/Drosophila_melanogaster_TF.txt")
 
@@ -26,6 +27,39 @@ tes <- jsonlite::read_json("upstream/te_element_lookup.json") %>%
 feature_correlations <- read_rds("results/calderon22/fca_reanalysis_correlations.rds") |>
   dplyr::select(lineage,res=res.spqn) |>
   unnest(res)
+
+
+mods <- read_tsv("upstream/final-models.collected-info.tsv.gz")
+
+
+sc_bulk_comparison <- feature_correlations |>
+  inner_join(mods,by=c(feature="gene_symbol",y="feature.y")) |>
+  mutate(agreement = case_when(padj > 0.1 & !significant_x ~"no coex evidence",
+                           padj < 0.1 & significant_x ~ "coex in scRNA & bulk",
+                           padj < 0.1 | significant_x ~ "coex in scRNA or bulk")) |>
+  mutate(model = sprintf("%s bulk RNA-seq coexpression",model)) |> 
+  dplyr::select(agreement,feature,y,coef,padj,significant_x,`bulk coex. sex`=model,estimate.qnorm,) |>
+  group_by(agreement) |>
+  mutate(agreement=sprintf("%s\n(n=%s)",agreement,n()))  |>
+  ungroup()
+
+
+g_c <- (ggplot(sc_bulk_comparison,aes(agreement,abs(estimate.qnorm))) +
+  geom_boxplot(outlier.shape = NA) + 
+    ylab("abs(bulk coex. score)") + 
+    ggpubr::stat_compare_means(size=2) + 
+    facet_wrap(~`bulk coex. sex`,) +
+    xlab("")) +
+(ggplot(sc_bulk_comparison,aes(agreement,abs(coef),)) +
+  geom_boxplot(outlier.shape = NA) + 
+   ylab("abs(scRNA correlation coef.") + 
+   facet_wrap(~`bulk coex. sex`) + 
+   ggpubr::stat_compare_means(size=2) +
+   xlab("agreement between scRNA and bulk coexpression")) + 
+  plot_layout(ncol=1,guides="collect")
+
+# g_c summary - so xlsx compatible
+gc_summary <- summarise(group_by(sc_bulk_comparison,agreement,`bulk coex. sex`),across(c(coef,estimate.qnorm),.fns=list(median_abs=~median(abs(.x))),.names = "{.fn}_{.col}"))
 
 # ------------------------------------------------------------------------------
 # plot supercell sizes to help explain that analysis
@@ -52,8 +86,8 @@ feature_correlations %>%
   mutate(feature2 = fct_reorder(feature2,coef)) |>
   mutate(feature2 = fct_relevel(feature2,"other")) |>
   ggplot(aes(feature2,coef)) +    
-  geom_boxplot() +
-  ggpubr::stat_compare_means(ref="other",size=1) +
+  geom_boxplot(outlier.size = 0.2) +
+  ggpubr::stat_compare_means(ref="other",size=1.75) +
   xlab("") + ylab("weighted correlation")
 
 
@@ -101,14 +135,17 @@ plotText(label = "A", x = 1, y = 0.5)
 pb <- plotGG(plot = g_supercell_size, x = 4.5, y=0.5, width = 3, height=2.25)
 plotText(label = "B", x = 4.5, y = 0.5)
 
-pc <- plotGG(plot = g_pan_highly_corr_with_tes, x = 1,  y=3, width = 3.25, height=2.25)
-plotText(label = "C", x = 1, y = 3)
+pc <- plotGG(plot = g_c, x = 0.5,  y=3, width = 7.5, height=4)
+plotText(label = "C", x = 0.5, y = 3)
 
+pd <- plotGG(plot = g_pan_highly_corr_with_tes, x = 0.5,  y=7, width = 5, height=2.25)
+plotText(label = "D", x = 0.5, y = 7)
 
 dev.off()
 
 writexl::write_xlsx(list(B=g_supercell_size$data,
-                         C=g_pan_highly_corr_with_tes$data),
+                         C=gc_summary,
+                         D=g_pan_highly_corr_with_tes$data),
                     path = ifelse(exists("snakemake"),
                                   snakemake@output$xlsx,
                                   "~/Downloads/test.xlsx"))
