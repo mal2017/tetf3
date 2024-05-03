@@ -867,16 +867,6 @@
       ],
       "Hash": "b2b424a6a2b373ce31aae864f4331d7d"
     },
-    "PlotTools": {
-      "Package": "PlotTools",
-      "Version": "0.3.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R"
-      ],
-      "Hash": "b33b8c81fac3b64ebef1c78c90c40d29"
-    },
     "ProtGenerics": {
       "Package": "ProtGenerics",
       "Version": "1.28.0",
@@ -885,36 +875,6 @@
         "methods"
       ],
       "Hash": "6c29e31b2944baca5cc86276803e5a49"
-    },
-    "R.cache": {
-      "Package": "R.cache",
-      "Version": "0.16.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "R.methodsS3",
-        "R.oo",
-        "R.utils",
-        "digest",
-        "utils"
-      ],
-      "Hash": "fe539ca3f8efb7410c3ae2cf5fe6c0f8"
-    },
-    "R.devices": {
-      "Package": "R.devices",
-      "Version": "2.17.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "R.methodsS3",
-        "R.oo",
-        "R.utils",
-        "base64enc",
-        "grDevices"
-      ],
-      "Hash": "4628c6870355385c20ea1a6829c0da58"
     },
     "R.methodsS3": {
       "Package": "R.methodsS3",
@@ -1154,20 +1114,6 @@
       ],
       "Hash": "15b2a1d05d59110afc61be7b789325fe"
     },
-    "Rdpack": {
-      "Package": "Rdpack",
-      "Version": "2.5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "methods",
-        "rbibutils",
-        "tools",
-        "utils"
-      ],
-      "Hash": "2a4dbc2502d3fd9f1c5d24b14a223583"
-    },
     "Rhtslib": {
       "Package": "Rhtslib",
       "Version": "1.28.0",
@@ -1362,37 +1308,6 @@
         "vegan"
       ],
       "Hash": "d739ba761b44f654ef1e52a4859853fe"
-    },
-    "TreeTools": {
-      "Package": "TreeTools",
-      "Version": "1.10.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "PlotTools",
-        "R",
-        "R.cache",
-        "RCurl",
-        "Rcpp",
-        "Rdpack",
-        "ape",
-        "bit64",
-        "colorspace",
-        "fastmatch",
-        "lifecycle",
-        "methods"
-      ],
-      "Hash": "a6da29060e1fc953d5938a65d8fb4eca"
-    },
-    "TxDb.Dmelanogaster.UCSC.dm6.ensGene": {
-      "Package": "TxDb.Dmelanogaster.UCSC.dm6.ensGene",
-      "Version": "3.12.0",
-      "Source": "Bioconductor",
-      "Requirements": [
-        "AnnotationDbi",
-        "GenomicFeatures"
-      ],
-      "Hash": "0d43b563d590cdb2e9a513c12a489e77"
     },
     "V8": {
       "Package": "V8",
@@ -2653,22 +2568,6 @@
         "methods"
       ],
       "Hash": "47b5f30c720c23999b913a1a635cf0bb"
-    },
-    "furrr": {
-      "Package": "furrr",
-      "Version": "0.3.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "future",
-        "globals",
-        "lifecycle",
-        "purrr",
-        "rlang",
-        "vctrs"
-      ],
-      "Hash": "da7a4c32196cb2262a41dd5a25d486ff"
     },
     "futile.logger": {
       "Package": "futile.logger",
@@ -4072,31 +3971,6 @@
       ],
       "Hash": "7ce2733a9826b3aeb1775d56fd305472"
     },
-    "marge": {
-      "Package": "marge",
-      "Version": "0.0.4.9999",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "marge",
-      "RemoteUsername": "robertamezquita",
-      "RemoteRef": "master",
-      "RemoteSha": "102dc0285ddddfbc466bd269e2a227f88658525f",
-      "Requirements": [
-        "R",
-        "dplyr",
-        "lazyeval",
-        "magrittr",
-        "purrr",
-        "readr",
-        "rlang",
-        "stringr",
-        "tibble",
-        "tidyr",
-        "utils"
-      ],
-      "Hash": "6908abc74060e4fe751051d1390e8807"
-    },
     "markdown": {
       "Package": "markdown",
       "Version": "1.11",
@@ -5019,18 +4893,6 @@
         "R"
       ],
       "Hash": "5e3c5dc0b071b21fa128676560dbe94d"
-    },
-    "rbibutils": {
-      "Package": "rbibutils",
-      "Version": "2.2.16",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "tools",
-        "utils"
-      ],
-      "Hash": "8c06968e0a5b0209c5f34239b1302336"
     },
     "reactR": {
       "Package": "reactR",
@@ -6112,15 +5974,14 @@
     },
     "treeio": {
       "Package": "treeio",
-      "Version": "1.23.0",
+      "Version": "1.27.1",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "treeio",
       "RemoteUsername": "GuangchuangYu",
-      "RemotePkgRef": "GuangchuangYu/treeio",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "db8580345375480eb31ab99c139c59bb8fcdad9b",
+      "RemoteRepo": "treeio",
+      "RemoteRef": "devel",
+      "RemoteSha": "a91faf4b27064db82056a3c3b32084899df08249",
       "Requirements": [
         "R",
         "ape",
@@ -6129,11 +5990,13 @@
         "magrittr",
         "methods",
         "rlang",
+        "stats",
         "tibble",
         "tidytree",
-        "utils"
+        "utils",
+        "yulab.utils"
       ],
-      "Hash": "3dfee2bc1e3db2aec21c56463e52396f"
+      "Hash": "2c3e9fd9cf42f345bc89807d684563c5"
     },
     "tweenr": {
       "Package": "tweenr",
@@ -6525,9 +6388,9 @@
     },
     "yulab.utils": {
       "Package": "yulab.utils",
-      "Version": "0.1.0",
+      "Version": "0.1.4",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Requirements": [
         "cli",
         "digest",
@@ -6538,7 +6401,7 @@
         "tools",
         "utils"
       ],
-      "Hash": "792b3c5bc98f04a7d49cbd8c55fe0770"
+      "Hash": "60ee2aaa179dc282e9fa7367bad76e89"
     },
     "zip": {
       "Package": "zip",
