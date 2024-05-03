@@ -36,8 +36,8 @@ uniq_greater_than_pan <- tibble(unique(c(male_med_abs_greater_than_pan$gene_symb
 
 res <- list(`at least 1 coex TE`=more_than_1_coex,
      `more coex TEs vs pan`=more_coex_tes_than_pan,
-     `higher M median abs score vs pan`=male_med_abs_greater_than_pan,
-     `higher F median abs score vs pan`=female_med_abs_greater_than_pan,
-     `higher median abs score vs pan either sex`=uniq_greater_than_pan)
+     `higher M med abs score vs pan`=male_med_abs_greater_than_pan,
+     `higher F med abs score vs pan`=female_med_abs_greater_than_pan,
+     `combined higher score vs pan`=uniq_greater_than_pan)
 
 write_xlsx(res,snakemake@output$xlsx)
