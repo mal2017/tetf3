@@ -7,6 +7,10 @@ library(gt)
 library(plyranges)
 library(writexl)
 
+head_expr <- read_tsv("resources/female_head_expressed.mated_unmated_very_low.FlyBase_IDs.txt",col_names = "gene_id")
+
+
+
 te_regulators <- read_tsv("results/resources/pirna_pathway.tsv")
 lkup <-read_tsv("results/resources/gene_symbol_lookup.tsv.gz")
 
@@ -31,6 +35,7 @@ dx <- d |>
   filter(distance < 5000) |>
   pivot_wider(names_from = ChIP, values_from = distance) |>
   dplyr::rename(`gene ID`=feature, `symbol`=gene_symbol) |>
-  dplyr::select(-`gene ID`)
+  mutate(`expressed in female head`=`gene ID` %in% head_expr$gene_id) |>
+  dplyr::relocate(`expressed in female head`,.after=symbol)
 
 write_xlsx(list(`Closest ChIP peak to piRNA pathway promoters`=dx),snakemake@output$xlsx)

@@ -108,6 +108,7 @@ rule table_te_regulator_chip_prox:
         "results/resources/pirna_pathway.tsv",
         "results/resources/gene_symbol_lookup.tsv.gz",
         "results/pirna/encode_peaks_dist_to_pirna.gr.rds",
+        "resources/female_head_expressed.mated_unmated_very_low.FlyBase_IDs.txt",
     output:
         xlsx= "results/tables/te_regulator_chip_prox.xlsx",
     script:
