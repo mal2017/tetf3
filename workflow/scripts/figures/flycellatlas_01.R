@@ -28,7 +28,6 @@ feature_correlations <- read_rds("results/calderon22/fca_reanalysis_correlations
   dplyr::select(lineage,res=res.spqn) |>
   unnest(res)
 
-
 mods <- read_tsv("upstream/final-models.collected-info.tsv.gz")
 
 
@@ -72,23 +71,6 @@ g_supercell_size <- SC$supercell_size |>
   xlab("barcodes per supercell") + ylab("N") +
   scale_x_log10()
 
-# ------------------------------------------------------------------------------
-# plot results of supercell correlation analysis
-# ------------------------------------------------------------------------------
-
-# asking if pan is highly correlated with TEs in general
-g_pan_highly_corr_with_tes <- 
-feature_correlations %>%
-  filter(feature %in% tfs$Symbol & y %in% tes) |>
-  dplyr::select(y,feature,coef,p,padj) |>
-    distinct() |>
-  mutate(feature2 = if_else(feature%in%c("pan","Unr","vvl","NfI","CG16779"),feature,"other")) |>
-  mutate(feature2 = fct_reorder(feature2,coef)) |>
-  mutate(feature2 = fct_relevel(feature2,"other")) |>
-  ggplot(aes(feature2,coef)) +    
-  geom_boxplot(outlier.size = 0.2) +
-  ggpubr::stat_compare_means(ref="other",size=1.75) +
-  xlab("") + ylab("weighted correlation")
 
 
 g_a <- grViz("
@@ -138,14 +120,10 @@ plotText(label = "B", x = 4.5, y = 0.5)
 pc <- plotGG(plot = g_c, x = 0.5,  y=3, width = 7.5, height=4)
 plotText(label = "C", x = 0.5, y = 3)
 
-pd <- plotGG(plot = g_pan_highly_corr_with_tes, x = 0.5,  y=7, width = 5, height=2.25)
-plotText(label = "D", x = 0.5, y = 7)
-
 dev.off()
 
 writexl::write_xlsx(list(B=g_supercell_size$data,
-                         C=gc_summary,
-                         D=g_pan_highly_corr_with_tes$data),
+                         C=gc_summary),
                     path = ifelse(exists("snakemake"),
                                   snakemake@output$xlsx,
                                   "~/Downloads/test.xlsx"))

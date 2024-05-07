@@ -84,6 +84,7 @@ rule figure3_supp_01:
     input:
         rules.plot_ourKD_gsea_randomwalks.output,
         rules.plot_ourKD_gsea_barplots.output,
+        rules.fca_heads_reanalysis.output,
     output:
         pdf="results/figures/panels/figure3_supp_01.factor_specific_gsea.pdf",
         xlsx="results/figures/data/figure3_supp_01.factor_specific_gsea.xlsx"
