@@ -37,8 +37,8 @@ sc_bulk_comparison <- feature_correlations |>
                            padj < 0.1 & significant_x ~ "coex in scRNA & bulk",
                            padj < 0.1 | significant_x ~ "coex in scRNA or bulk")) |>
   mutate(model = sprintf("%s bulk RNA-seq coexpression",model)) |> 
-  dplyr::select(agreement,model,feature,y,coef,padj,significant_x,`bulk coex. sex`=model,estimate.qnorm,) |>
-  group_by(agreement,model) |>
+  dplyr::select(agreement,feature,y,coef,padj,significant_x,`bulk coex. sex`=model,estimate.qnorm) |>
+  group_by(agreement,`bulk coex. sex`) |>
   mutate(agreement=sprintf("%s\n(n=%s)",agreement,n()))  |>
   ungroup()
 
