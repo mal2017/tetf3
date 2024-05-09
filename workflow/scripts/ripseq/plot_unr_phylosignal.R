@@ -94,11 +94,11 @@ crlg_to_plot_df <- crlg_df |>
 plot_crlg <- function(df) {
   key <- dplyr::select(df, coef, label) |> distinct()
   dfnpc <- tibble(x = 1, y = 1, tb = list(key))
-  g <- ggplot(df,aes(x,color=color,label=coef, y=y)) +
+  g <- ggplot(df,aes(x,color=color,y=y)) +
     geom_path(aes(group=label, linetype=linetype)) +
     geom_path(aes(y=ci.upper), linetype="dotted") +
     geom_path(aes(y=ci.lower), linetype="dotted") +
-    ggrepel::geom_text_repel(data= \(dat) {slice_min(group_by(dat,coef),x)},seed = 1,force_pull = 1000,force = 2.5,direction = "both",size=rel(3), 
+    ggrepel::geom_text_repel(data= \(dat) {slice_min(group_by(dat,coef),x)},label="Unr (RIP-seq)",seed = 1,force_pull = 1000,force = 2.5,direction = "both",size=rel(3), 
                              position = position_nudge_keep(x = -0.03), max.iter = 11,color="black") +
     xlab("patristic distance") + ylab("coex. score autocorrelation") +
     geom_hline(yintercept = h0, color="gray") +
