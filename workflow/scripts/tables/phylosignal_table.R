@@ -5,11 +5,11 @@ library(tidyverse)
 library(writexl)
 
 fully_filtered <- read_tsv("results/phylosignal/phylosignal_filtered_hits.tsv.gz") |>
-  filter(score_type == "score" & n_tests_sig >=3) |>
+  filter(score_type == "score" & n_tests_sig >=1) |>
   dplyr::select(TF) |>
   distinct()
 
-x <- list(`coexpression score phyloSignal results`=read_rds("results/phylosignal/phylosignal_df.rds"),
+x <- list(`coexpression score phyloSignal results`=read_rds("results/phylosignal/phylosignal_df.rds") |> filter(metric!="Lambda"),
      `Unr RIP-seq phyloSignal`=read_rds("results/ripseq/unr_ripseq_phylosignal.tbl.rds"),
      `>=3 significant tests M or F`=fully_filtered)
 
