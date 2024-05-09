@@ -62,7 +62,7 @@ plotText(figtitle,x=0,y=0,just = c("left","top"))
 
 plotGG(g, x = 1, y=0.5, width = 7,height = 2.75)
 plotText("A", x = 1.25, y=0.5)
-plotText("B", x = 4.25, y=0.5)
+plotText("B", x = 4.625, y=0.5)
 
 dev.off()
 
