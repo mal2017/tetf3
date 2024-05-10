@@ -33,18 +33,6 @@ rule figure1_supp_01:
         "../scripts/figures/extra-overview.R"
 
 
-rule figure1_supp_02:
-    input:
-        rules.fca_heads_reanalysis.output,
-    output:
-        pdf="results/figures/panels/figure1_supp_02.fca.pdf",
-        xlsx="results/figures/data/figure1_supp_02.fca.xlsx"
-    params:
-        figtitle="Supplement 02 to Figure 1"
-    script:
-        "../scripts/figures/flycellatlas_01.R"
-
-
 # ---------------------------------------------------------------------------------------------------
 # figures related to results section 2
 # ---------------------------------------------------------------------------------------------------
@@ -92,6 +80,18 @@ rule figure3_supp_01:
         figtitle="Supplement 01 to Figure 3"
     script:
         "../scripts/figures/our-kd-factor-specific-gsea.R"
+
+rule figure3_supp_02:
+    input:
+        rules.fca_heads_reanalysis.output,
+    output:
+        pdf="results/figures/panels/figure3_supp_02.fca.pdf",
+        xlsx="results/figures/data/figure3_supp_02.fca.xlsx"
+    params:
+        figtitle="Supplement 02 to Figure 3"
+    script:
+        "../scripts/figures/flycellatlas_01.R"
+
 
 # ---------------------------------------------------------------------------------------------------
 # figures related to results section 4
@@ -269,10 +269,10 @@ rule figures:
     input:
         rules.figure1.output.pdf,
         rules.figure1_supp_01.output.pdf,
-        rules.figure1_supp_02.output.pdf,
         rules.figure2.output.pdf,
         rules.figure3.output.pdf,
         rules.figure3_supp_01.output.pdf,
+        rules.figure3_supp_02.output.pdf,
         rules.figure4.output.pdf,
         rules.figure4_supp_01.output.pdf,
         rules.figure4_supp_02.output.pdf,
@@ -295,8 +295,8 @@ rule figures:
 rule supp_figures:
     input:
         rules.figure1_supp_01.output.pdf,
-        rules.figure1_supp_02.output.pdf,
         rules.figure3_supp_01.output.pdf,
+        rules.figure3_supp_02.output.pdf,
         rules.figure4_supp_01.output.pdf,
         rules.figure4_supp_02.output.pdf,
         rules.figure4_supp_03.output.pdf,
@@ -320,10 +320,10 @@ rule figuredata:
     input:
         rules.figure1.output.xlsx,
         rules.figure1_supp_01.output.xlsx,
-        rules.figure1_supp_02.output.xlsx,
         rules.figure2.output.xlsx,
         rules.figure3.output.xlsx,
         rules.figure3_supp_01.output.xlsx,
+        rules.figure3_supp_02.output.xlsx,
         rules.figure4.output.xlsx,
         rules.figure4_supp_01.output.xlsx,
         rules.figure4_supp_02.output.xlsx,
