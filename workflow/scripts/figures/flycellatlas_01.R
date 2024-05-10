@@ -42,20 +42,24 @@ sc_bulk_comparison <- feature_correlations |>
   mutate(agreement=sprintf("%s\n(n=%s)",agreement,n()))  |>
   ungroup()
 
+plot_bulk_comparison <- function(bulk_coex_sex,score_type,x=sc_bulk_comparison) {
+  x |>
+    filter(`bulk coex. sex`==bulk_coex_sex) |>
+    dplyr::rename(score=all_of(score_type)) |>
+  ggplot(aes(agreement,abs(score))) +
+    geom_boxplot(outlier.shape = NA) + 
+    ylab(sprintf("abs(%s)",score_type)) + 
+    ggpubr::stat_compare_means(size=3) + 
+    facet_wrap(~`bulk coex. sex`,scales="free_x") +
+    xlab("") +
+    theme(axis.text.x=element_text(angle=45,hjust=1))
+}
 
-g_c <- (ggplot(sc_bulk_comparison,aes(agreement,abs(estimate.qnorm))) +
-  geom_boxplot(outlier.shape = NA) + 
-    ylab("abs(bulk coex. score)") + 
-    ggpubr::stat_compare_means(size=2) + 
-    facet_wrap(~`bulk coex. sex`,) +
-    xlab("")) +
-(ggplot(sc_bulk_comparison,aes(agreement,abs(coef),)) +
-  geom_boxplot(outlier.shape = NA) + 
-   ylab("abs(scRNA correlation coef.") + 
-   facet_wrap(~`bulk coex. sex`) + 
-   ggpubr::stat_compare_means(size=2) +
-   xlab("agreement between scRNA and bulk coexpression")) + 
-  plot_layout(ncol=1,guides="collect")
+g_c <- (plot_bulk_comparison("female bulk RNA-seq coexpression","estimate.qnorm") + ylab("abs(bulk coex. score)")) +
+(plot_bulk_comparison("female bulk RNA-seq coexpression","coef") + ylab("abs(bulk scRNA. correlation coef)")) +
+(plot_bulk_comparison("male bulk RNA-seq coexpression","estimate.qnorm")  + ylab("abs(bulk coex. score)")) +
+(plot_bulk_comparison("male bulk RNA-seq coexpression","coef")  + ylab("abs(bulk scRNA. correlation coef)")) +
+  plot_layout(ncol=2,guides="collect")
 
 # g_c summary - so xlsx compatible
 gc_summary <- summarise(group_by(sc_bulk_comparison,agreement,`bulk coex. sex`),across(c(coef,estimate.qnorm),.fns=list(median_abs=~median(abs(.x))),.names = "{.fn}_{.col}"))
@@ -117,7 +121,7 @@ plotText(label = "A", x = 1, y = 0.5)
 pb <- plotGG(plot = g_supercell_size, x = 4.5, y=0.5, width = 3, height=2.25)
 plotText(label = "B", x = 4.5, y = 0.5)
 
-pc <- plotGG(plot = g_c, x = 0.5,  y=3, width = 7.5, height=4)
+pc <- plotGG(plot = g_c, x = 0.5,  y=3, width = 6, height=6)
 plotText(label = "C", x = 0.5, y = 3)
 
 dev.off()
