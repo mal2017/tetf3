@@ -25,9 +25,10 @@ g_upstream_sea <- read_rds("results/motifs/upstream_csem_known_pan_sea.gg.rds")
 # create page
 # ------------------------------------------------------------------------------
 
-g_a <- g_meme_boxplot
-g_b <- g_denovo_motifs
-g_c <- g_upstream_sea
+g_a <- g_upstream_sea
+g_b <- g_meme_boxplot
+g_c <- g_denovo_motifs
+
 
 theme_set(theme_classic() + 
             theme(text = element_text(size=7))
@@ -41,14 +42,14 @@ pageCreate(height = 11, showGuides=interactive())
 figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
 plotText(figtitle,x=0,y=0,just = c("left","top"))
 
-plotGG(g_a, x=0.75, y=0.75, width = 2, height=2.25)
-plotText("A", x = 0.5, y=0.5)
+plotGG(g_a, x = 0.5, y=0.5, width = 7.5,height = 2.75)
+plotText("A", x = 0.5, y=.5)
 
-plotGG(g_b, x = 3, y=0.5, width = 5,height = 2.8)
-plotText("B", x = 3, y=0.5)
+plotGG(g_b, x=0.75, y=3.75, width = 2, height=2.25)
+plotText("B", x = 0.5, y=3.75)
 
-plotGG(g_c, x = 0.5, y=3.5, width = 7.5,height = 2.75)
-plotText("C", x = 0.5, y=3.5)
+plotGG(g_c, x = 3, y=3.75, width = 5,height = 2.8)
+plotText("C", x = 3, y=3.75)
 
 dev.off()
 
