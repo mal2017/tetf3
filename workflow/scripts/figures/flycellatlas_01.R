@@ -49,7 +49,7 @@ plot_bulk_comparison <- function(bulk_coex_sex,score_type,x=sc_bulk_comparison) 
   ggplot(aes(agreement,abs(score))) +
     geom_boxplot(outlier.shape = NA) + 
     ylab(sprintf("abs(%s)",score_type)) + 
-    ggpubr::stat_compare_means(size=3) + 
+    ggpubr::stat_compare_means(size=2) + 
     facet_wrap(~`bulk coex. sex`,scales="free_x") +
     xlab("") +
     theme(axis.text.x=element_text(angle=45,hjust=1))
@@ -63,6 +63,21 @@ g_c <- (plot_bulk_comparison("female bulk RNA-seq coexpression","estimate.qnorm"
 
 # g_c summary - so xlsx compatible
 gc_summary <- summarise(group_by(sc_bulk_comparison,agreement,`bulk coex. sex`),across(c(coef,estimate.qnorm),.fns=list(median_abs=~median(abs(.x))),.names = "{.fn}_{.col}"))
+
+# asking if our tfs are highly correlated with TEs in general
+g_d <- 
+  feature_correlations %>%
+  filter(feature %in% tfs$Symbol & y %in% tes) |>
+  dplyr::select(y,feature,coef,p,padj) |>
+  distinct() |>
+  mutate(feature2 = if_else(feature%in%c("pan","Unr","vvl","NfI","CG16779"),feature,"other")) |>
+  mutate(feature2 = fct_reorder(feature2,coef)) |>
+  mutate(feature2 = fct_relevel(feature2,"other")) |>
+  ggplot(aes(feature2,coef)) +    
+  geom_boxplot(outlier.size = 0.2) +
+  ggpubr::stat_compare_means(ref="other",size=2,label = "p.format") +
+  xlab("") + ylab("weighted correlation")
+
 
 # ------------------------------------------------------------------------------
 # plot supercell sizes to help explain that analysis
@@ -121,13 +136,17 @@ plotText(label = "A", x = 1, y = 0.5)
 pb <- plotGG(plot = g_supercell_size, x = 4.5, y=0.5, width = 3, height=2.25)
 plotText(label = "B", x = 4.5, y = 0.5)
 
-pc <- plotGG(plot = g_c, x = 0.5,  y=3, width = 6, height=6)
+pc <- plotGG(plot = g_c, x = 0.5,  y=3, width = 4, height=5)
 plotText(label = "C", x = 0.5, y = 3)
+
+pd <- plotGG(g_d, x = 4.75, y=3, width = 3.25,height = 3)
+plotText("D", x = 4.75, y=3)
 
 dev.off()
 
 writexl::write_xlsx(list(B=g_supercell_size$data,
-                         C=gc_summary),
+                         C=gc_summary,
+                         D=g_d$data),
                     path = ifelse(exists("snakemake"),
                                   snakemake@output$xlsx,
                                   "~/Downloads/test.xlsx"))

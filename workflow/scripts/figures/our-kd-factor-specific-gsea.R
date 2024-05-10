@@ -33,27 +33,6 @@ tfs <- read_tsv("resources/Drosophila_melanogaster_TF.txt")
 tes <- jsonlite::read_json("upstream/te_element_lookup.json") %>%
   names()
 
-# read in TE TF correlations we identifed from the supercell results
-feature_correlations <- read_rds("results/calderon22/fca_reanalysis_correlations.rds") |>
-  dplyr::select(lineage,res=res.spqn) |>
-  unnest(res)
-
-# asking if pan is highly correlated with TEs in general
-g_d <- 
-  feature_correlations %>%
-  filter(feature %in% tfs$Symbol & y %in% tes) |>
-  dplyr::select(y,feature,coef,p,padj) |>
-  distinct() |>
-  mutate(feature2 = if_else(feature%in%c("pan","Unr","vvl","NfI","CG16779"),feature,"other")) |>
-  mutate(feature2 = fct_reorder(feature2,coef)) |>
-  mutate(feature2 = fct_relevel(feature2,"other")) |>
-  ggplot(aes(feature2,coef)) +    
-  geom_boxplot(outlier.size = 0.2) +
-  ggpubr::stat_compare_means(ref="other",size=2,label = "p.format") +
-  xlab("") + ylab("weighted correlation")
-
-
-
 # ------------------------------------------------------------------------------
 # create page
 
@@ -77,9 +56,6 @@ plotText("B", x = 4.5, y=0.5)
 
 plotGG(g_c, x = .5, y=3.5, width = 3.25,height = 2.5)
 plotText("C", x = .5, y=3.5)
-
-plotGG(g_d, x = 4.25, y=3.5, width = 3.25,height = 2.5)
-plotText("D", x = 4.25, y=3.5)
 
 dev.off()
 
