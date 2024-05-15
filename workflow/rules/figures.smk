@@ -218,7 +218,7 @@ rule figure5_supp_02:
         tree = "results/ripseq/unr_ripseq_phylosignal.tree.gg.rds"
     params:
         relpos = config.get("UNR_RIPSEQ_TX_RELATIVE_POSITION"),
-        figtitle="Supplement 03 to Figure 5"
+        figtitle="Supplement 02 to Figure 5"
     output:
         pdf="results/figures/panels/figure5_supp_02.ripseq-phylosignal.pdf",
         xlsx="results/figures/data/figure5_supp_02.ripseq-phylosignal.xlsx",
