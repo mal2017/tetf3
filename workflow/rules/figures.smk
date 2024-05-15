@@ -251,15 +251,15 @@ rule figure5_supp_04:
 # figures related to minor details in methods
 # ---------------------------------------------------------------------------------------------------
 
-rule methods_figs:
-    input:
-        rules.plot_check_kds_by_chip_prox.output,
-    output:
-        pdf="results/figures/panels/methods_supp_01.pdf"
-    params:
-        figtitle="Supplement 01 to Methods"
-    script:
-        "../scripts/figures/methods_supp_01.R"
+# rule methods_figs:
+#     input:
+#         rules.plot_check_kds_by_chip_prox.output,
+#     output:
+#         pdf="results/figures/panels/methods_supp_01.pdf"
+#     params:
+#         figtitle="Supplement 01 to Methods"
+#     script:
+#         "../scripts/figures/methods_supp_01.R"
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -284,7 +284,6 @@ rule figures:
         rules.figure5_supp_02.output.pdf,
         rules.figure5_supp_03.output.pdf,
         rules.figure5_supp_04.output.pdf,
-        rules.methods_figs.output.pdf,
     output:
         "results/figures/figures.pdf"
     shell:
@@ -306,7 +305,6 @@ rule supp_figures:
         rules.figure5_supp_02.output.pdf,
         rules.figure5_supp_03.output.pdf,
         rules.figure5_supp_04.output.pdf,
-        rules.methods_figs.output.pdf,
     output:
         "results/figures/supp_figures.pdf"
     shell:
