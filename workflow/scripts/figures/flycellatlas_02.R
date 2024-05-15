@@ -163,7 +163,7 @@ plotText(label = "H", x = 6.15, y = 3.05)
 
 plotGG(g_summed_corrs,x=0.4,y=5.6,width=3.8,height=2.5)
 plotText(label = "I", x = 0.5, y = 5.6)
-plotText(label = "J", x = 2.6, y = 5.6)
+plotText(label = "J", x = 2.4, y = 5.6)
 
 
 dev.off()
