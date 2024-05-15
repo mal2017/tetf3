@@ -26,6 +26,45 @@ tf_te_correlations <- read_rds("results/calderon22/fca_reanalysis_correlations.r
   unnest(res)
 
 # ------------------------------------------------------------------------------
+# plot summed counts
+# ------------------------------------------------------------------------------
+
+# get weighted correlations
+get_weighted_cor <- function(x, n) {
+  cm <- t(x) |>
+    as.matrix() |>
+    psych::cor.wt(w = n)
+  
+  cm$r
+}
+
+run_weighted_corr <-  function(cols,dat) {
+  mat <- dat[,cols] |> as.matrix() |> t()
+  return(get_weighted_cor(mat,dat$size)[cols[1],cols[2]])
+}
+
+summed_normcounts <- read_tsv("results/calderon22/pan_unr_summed_te_counts.rds")
+
+
+plot_summed_normcount_corr <- function(cols,title,dat=summed_normcounts) {
+  wcorr <- run_weighted_corr(cols,dat=dat)
+  g <- dat |>
+    mutate(across(cols,~{log2(.x+1)})) |>
+    ggplot(aes_string(cols[1], cols[2])) +
+    ggrastr::rasterise(geom_point(size=0.5,alpha=0.5),dpi=300) +
+    xlab(cols[1]) +
+    ylab(cols[2]) +
+    labs(title=title,subtitle = sprintf("weighted corr:%s",round(wcorr,digits = 3))) +
+    geom_smooth(method="lm",se=F,color="red",linetype="dashed",linewidth=1)
+  return(g)
+}
+
+
+g_unr_unrbound <- plot_summed_normcount_corr(c("Unr","Unr.bound"),"Unr vs. Unr-bound TEs")
+g_pan_pancoex <- plot_summed_normcount_corr(c("pan","pan.coexpressed"),"pan vs pan-coexpressed TEs")
+
+g_summed_corrs <- g_pan_pancoex + g_unr_unrbound
+# ------------------------------------------------------------------------------
 # plot exemplary and control results from supercell analysis
 # ------------------------------------------------------------------------------
 
@@ -122,6 +161,11 @@ plotText(label = "F", x = 2.4, y = 3.05)
 plotText(label = "G", x = 4.15, y = 3.05)
 plotText(label = "H", x = 6.15, y = 3.05)
 
+plotGG(g_summed_corrs,x=0.4,y=5.6,width=3.8,height=2.5)
+plotText(label = "I", x = 0.5, y = 5.6)
+plotText(label = "J", x = 2.6, y = 5.6)
+
+
 dev.off()
 
 writexl::write_xlsx(list(`A`=g_pan_poscon$data,
@@ -131,7 +175,9 @@ writexl::write_xlsx(list(`A`=g_pan_poscon$data,
                          E=g_unr_1$data,
                          `F`=g_unr_2$data,
                          G=g_unr_3$data,
-                         H=g_unr_4$data),
+                         H=g_unr_4$data,
+                         I=g_pan_pancoex$data,
+                         J=g_unr_unrbound$data),
                     path = ifelse(exists("snakemake"),
                                   snakemake@output$xlsx,
                                   "~/Downloads/test.xlsx"))

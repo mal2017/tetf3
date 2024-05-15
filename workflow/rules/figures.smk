@@ -84,6 +84,7 @@ rule figure3_supp_01:
 rule figure3_supp_02:
     input:
         rules.fca_heads_reanalysis.output,
+        rules.pan_unr_summed_te_counts.output,
     output:
         pdf="results/figures/panels/figure3_supp_02.fca.pdf",
         xlsx="results/figures/data/figure3_supp_02.fca.xlsx"
