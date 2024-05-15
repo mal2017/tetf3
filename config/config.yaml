@@ -70,6 +70,13 @@ DASHING_TYPE: "distance" # 'distance' or 'similarity'. Used determing whether to
 DASHING_PATH: "/home/mlawlor/repos/dashing2/dashing2" # currently 2.1.19
 
 #############################################################################
+# FCA data
+#############################################################################
+FCA_METACELLS: upstream/fca_supercells_sce.rds
+FCA_METACELLS_SCE: resources/all.usa.fca_annot.supercell.sce.rds
+
+
+#############################################################################
 # ChIP-seq data/repetitive element enrichment
 #############################################################################
 ENCODE_SAMPLE_SHEET: resources/sample_table_encode.csv

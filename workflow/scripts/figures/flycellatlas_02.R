@@ -54,7 +54,7 @@ plot_summed_normcount_corr <- function(cols,title,dat=summed_normcounts) {
     ggrastr::rasterise(geom_point(size=0.5,alpha=0.5),dpi=300) +
     xlab(cols[1]) +
     ylab(cols[2]) +
-    labs(title=title,subtitle = sprintf("weighted corr:%s",round(wcorr,digits = 3))) +
+    labs(title=title,subtitle = sprintf("raw eighted corr:%s",round(wcorr,digits = 3))) +
     geom_smooth(method="lm",se=F,color="red",linetype="dashed",linewidth=1)
   return(g)
 }
