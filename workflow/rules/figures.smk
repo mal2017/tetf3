@@ -225,25 +225,25 @@ rule figure5_supp_02:
     script:
         "../scripts/figures/unr_ripseq_phylosignal.R"
 
-rule figure5_supp_03:
-    input:
-        rules.plot_de_volcanos.output,
-    output:
-        pdf="results/figures/panels/figure5_supp_03.pirna-volcano.pdf",
-        xlsx="results/figures/data/figure5_supp_03.pirna-volcano.xlsx",
-    params:
-        figtitle="Supplement 03 to Figure 5"
-    script:
-        "../scripts/figures/pirna-and-tes-in-kd-volcano.R"
+# rule figure5_supp_03:
+#     input:
+#         rules.plot_de_volcanos.output,
+#     output:
+#         pdf="results/figures/panels/figure5_supp_03.pirna-volcano.pdf",
+#         xlsx="results/figures/data/figure5_supp_03.pirna-volcano.xlsx",
+#     params:
+#         figtitle="Supplement 03 to Figure 5"
+#     script:
+#         "../scripts/figures/pirna-and-tes-in-kd-volcano.R"
 
-rule figure5_supp_04:
+rule figure5_supp_03:
     input:
         rds = rules.plot_ourKD_gsea_randomwalks.output.gg_df,
     output:
         pdf="results/figures/panels/figure5_supp_04.knockdowns_silencer_enrichment.pdf",
         xlsx="results/figures/data/figure5_supp_04.knockdowns_silencer_enrichment.xlsx",
     params:
-        figtitle="Supplement 04 to Figure 5"
+        figtitle="Supplement 03 to Figure 5"
     script:
         "../scripts/figures/knockdowns.silencer_enrichment.R"
 
@@ -283,7 +283,6 @@ rule figures:
         rules.figure5_supp_01.output.pdf,
         rules.figure5_supp_02.output.pdf,
         rules.figure5_supp_03.output.pdf,
-        rules.figure5_supp_04.output.pdf,
     output:
         "results/figures/figures.pdf"
     shell:
@@ -304,7 +303,6 @@ rule supp_figures:
         rules.figure5_supp_01.output.pdf,
         rules.figure5_supp_02.output.pdf,
         rules.figure5_supp_03.output.pdf,
-        rules.figure5_supp_04.output.pdf,
     output:
         "results/figures/supp_figures.pdf"
     shell:
@@ -312,7 +310,19 @@ rule supp_figures:
         gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
         """
 
-
+rule main_figures:
+    input:
+        rules.figure1.output.pdf,
+        rules.figure2.output.pdf,
+        rules.figure3.output.pdf,
+        rules.figure4.output.pdf,
+        rules.figure5.output.pdf,
+    output:
+        "results/figures/main_figures.pdf"
+    shell:
+        """
+        gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
+        """
 
 
 rule figuredata:

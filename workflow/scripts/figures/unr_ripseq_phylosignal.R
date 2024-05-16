@@ -23,7 +23,6 @@ figtitle = ifelse(exists("snakemake"),snakemake@params$figtitle,"Figure X")
 plotText(figtitle,x=0,y=0,just = c("left","top"))
 
 plotGG(gtr+guides(fill="none"), x = .5, y=0.5, width = 7,height = 5.5)
-plotText("A", x = .5, y=0.5)
 
 dev.off()
 
