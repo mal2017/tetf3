@@ -22,10 +22,10 @@ include: "rules/motifs_cg16779.smk"
 
 rule all:
     input:
-        rules.figures.input,
-        rules.figures.output,
-        rules.supp_figures.output,  
-        rules.main_figures.output,
-        rules.figuredata.output,
-        rules.tables.input,
+        rules.collect_figures.input,
+        # rules.figures.output,
+        # rules.supp_figures.output,  
+        # rules.main_figures.output,
+        # rules.figuredata.output,
+        # rules.tables.input,
 

@@ -266,63 +266,82 @@ rule figure5_supp_03:
 # bring it together
 # ---------------------------------------------------------------------------------------------------
 
-rule figures:
+rule collect_figures:
     input:
-        rules.figure1.output.pdf,
-        rules.figure1_supp_01.output.pdf,
-        rules.figure2.output.pdf,
-        rules.figure3.output.pdf,
-        rules.figure3_supp_01.output.pdf,
-        rules.figure3_supp_02.output.pdf,
-        rules.figure4.output.pdf,
-        rules.figure4_supp_01.output.pdf,
-        rules.figure4_supp_02.output.pdf,
-        rules.figure4_supp_03.output.pdf,
-        rules.figure4_supp_04.output.pdf,
-        rules.figure5.output.pdf,
-        rules.figure5_supp_01.output.pdf,
-        rules.figure5_supp_02.output.pdf,
-        rules.figure5_supp_03.output.pdf,
-    output:
-        "results/figures/figures.pdf"
-    shell:
-        """
-        for f in {input}; do convert -trim -density 600 -quality 100 "$f" "${{f%pdf}}jpg"; done
-        gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
-        """
+        rules.figure1.output,
+        rules.figure1_supp_01.output,
+        rules.figure2.output,
+        rules.figure3.output,
+        rules.figure3_supp_01.output,
+        rules.figure3_supp_02.output,
+        rules.figure4.output,
+        rules.figure4_supp_01.output,
+        rules.figure4_supp_02.output,
+        rules.figure4_supp_03.output,
+        rules.figure4_supp_04.output,
+        rules.figure5.output,
+        rules.figure5_supp_01.output,
+        rules.figure5_supp_02.output,
+        rules.figure5_supp_03.output,
 
-rule supp_figures:
-    input:
-        rules.figure1_supp_01.output.pdf,
-        rules.figure3_supp_01.output.pdf,
-        rules.figure3_supp_02.output.pdf,
-        rules.figure4_supp_01.output.pdf,
-        rules.figure4_supp_02.output.pdf,
-        rules.figure4_supp_03.output.pdf,
-        rules.figure4_supp_04.output.pdf,
-        rules.figure5_supp_01.output.pdf,
-        rules.figure5_supp_02.output.pdf,
-        rules.figure5_supp_03.output.pdf,
-    output:
-        "results/figures/supp_figures.pdf"
-    shell:
-        """
-        gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
-        """
 
-rule main_figures:
-    input:
-        rules.figure1.output.pdf,
-        rules.figure2.output.pdf,
-        rules.figure3.output.pdf,
-        rules.figure4.output.pdf,
-        rules.figure5.output.pdf,
-    output:
-        "results/figures/main_figures.pdf"
-    shell:
-        """
-        gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
-        """
+# rule figures:
+#     input:
+#         rules.figure1.output.pdf,
+#         rules.figure1_supp_01.output.pdf,
+#         rules.figure2.output.pdf,
+#         rules.figure3.output.pdf,
+#         rules.figure3_supp_01.output.pdf,
+#         rules.figure3_supp_02.output.pdf,
+#         rules.figure4.output.pdf,
+#         rules.figure4_supp_01.output.pdf,
+#         rules.figure4_supp_02.output.pdf,
+#         rules.figure4_supp_03.output.pdf,
+#         rules.figure4_supp_04.output.pdf,
+#         rules.figure5.output.pdf,
+#         rules.figure5_supp_01.output.pdf,
+#         rules.figure5_supp_02.output.pdf,
+#         rules.figure5_supp_03.output.pdf,
+#     output:
+#         "results/figures/figures.pdf"
+#     shell:
+#         """
+#         for f in {input}; do convert -trim -density 600 -quality 100 "$f" "${{f%pdf}}jpg"; done
+#         gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
+#         """
+
+# rule supp_figures:
+#     input:
+#         rules.figure1_supp_01.output.pdf,
+#         rules.figure3_supp_01.output.pdf,
+#         rules.figure3_supp_02.output.pdf,
+#         rules.figure4_supp_01.output.pdf,
+#         rules.figure4_supp_02.output.pdf,
+#         rules.figure4_supp_03.output.pdf,
+#         rules.figure4_supp_04.output.pdf,
+#         rules.figure5_supp_01.output.pdf,
+#         rules.figure5_supp_02.output.pdf,
+#         rules.figure5_supp_03.output.pdf,
+#     output:
+#         "results/figures/supp_figures.pdf"
+#     shell:
+#         """
+#         gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
+#         """
+
+# rule main_figures:
+#     input:
+#         rules.figure1.output.pdf,
+#         rules.figure2.output.pdf,
+#         rules.figure3.output.pdf,
+#         rules.figure4.output.pdf,
+#         rules.figure5.output.pdf,
+#     output:
+#         "results/figures/main_figures.pdf"
+#     shell:
+#         """
+#         gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile={output} {input}
+#         """
 
 
 rule figuredata:
